@@ -12,5 +12,7 @@ namespace BiomeMap.Output
 
         void WriteChunk(ChunkData data);
 
+        void OnUpdateStart();
+        void OnUpdateEnd();
     }
 }

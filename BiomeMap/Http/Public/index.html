@@ -10,6 +10,10 @@
           crossorigin="" />
     <style>
         #map {
+            background-color: #000;
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100vw;
             height: 100vh;
         }
@@ -22,10 +26,18 @@
     <script src="https://code.jquery.com/jquery-1.12.4.min.js"
             integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ="
             crossorigin="anonymous"></script>
-    <script src="https://unpkg.com/leaflet@1.1.0/dist/leaflet.js"
-            integrity="sha512-mNqn2Wg7tSToJhvHcqfzLMU6J4mkOImSPTxVZAdo+lcPlk+GhZmYgACEe0x35K7YzW1zJ7XyJV/TT1MrdXvMcA=="
-            crossorigin=""></script>
+<script src="https://unpkg.com/leaflet@1.1.0/dist/leaflet.js"
+        integrity="sha512-mNqn2Wg7tSToJhvHcqfzLMU6J4mkOImSPTxVZAdo+lcPlk+GhZmYgACEe0x35K7YzW1zJ7XyJV/TT1MrdXvMcA=="
+        crossorigin=""></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reconnecting-websocket/1.0.0/reconnecting-websocket.min.js"></script>
     <script type="text/javascript">
+        var val={
+            item: Math.random(),
+            toString: function(){
+                return this.item;
+            }
+        };
+
         var map = L.map('map',
             {
                 center: new L.LatLng(0, 0),
@@ -54,25 +66,87 @@
                     }),
                 continuousWorld: true,
                 worldCopyJump: false,
-                maxBounds: bounds,
+               // maxBounds: bounds,
                 attributionControl: false,
                 zoomAnimation: true,
                 zoomControl: true,
                 zoomReverse: true
-            }).setView([0, 0], 1);
+            }).setView([0, 0], -3);
 
-        var southWest = L.latLng(-1024, -1024),
+        /*var southWest = L.latLng(-1024, -1024),
             northEast = L.latLng(1024, 1024),
             bounds = L.latLngBounds(southWest, northEast);
-
-        L.tileLayer('http://localhost:8123/tile/{y}/{x}/{z}.png', {
-            bounds: bounds,
+        */
+        var layer = L.tileLayer('http://' + window.location.host + '/tile/{y}/{x}/{z}.png?{test}', {
+           // bounds: bounds,
             continuousWorld: true,
             noWrap: false,
-            zoomReverse: true,
             maxZoom: 9,
-            minZoom: 0
+            minZoom: -18,
+            maxNativeZoom: 0,
+            minNativeZoom: 0,
+            tileSize: 512,
+            test: val
         }).addTo(map);
+
+        var players = {};
+
+
+        var socket = new ReconnectingWebSocket("ws://" + window.location.host + "/");
+        socket.onmessage = function(e) {
+            console.log(e);
+            if (e.data === "reload") {
+                layer.redraw();
+            } else {
+                var c = e.data.split(':');
+                console.log(c, players);
+                if (c[0] === "player") {
+                    if (c[1] === "join") {
+                        var pos = c[3].split(",");
+                        var id = c[2];
+
+                        if (id in players) {
+                            return;
+                        }
+
+                        var player = players[id] = L.marker([parseInt(pos[0]), parseInt(pos[1])],
+                            {
+                                icon: L.icon({
+                                    iconUrl: "/head/" + id + ".png",
+
+                                    iconSize: [32, 32],
+                                    shadowSize: [0, 0],
+                                    iconAnchor: [0, 0],
+                                    shadowAnchor: [0, 0],
+                                    popupAnchor: [0, 0]
+                                }),
+                                title: c[4]
+                            });
+                        player.addTo(map);
+                    }
+                    else if (c[1] === "quit") {
+                        players[c[2]].remove();
+                        players[c[2]] = null;
+                    }
+                    else if (c[1] === "move") {
+                        var pos = c[3].split(",");
+                        players[c[2]].setLatLng([parseInt(pos[0]), parseInt(pos[1])]);
+                    }
+                }
+            }
+        };
+
+        socket.open();
+
+
+        $.getJSON("/regions/Overworld.json",
+            function(data) {
+                console.log(data);
+                $.each(data,
+                    function(key, value) {
+                        L.polygon(value, { color: 'red' }).addTo(map);
+                    });
+            });
     </script>
 </body>
 </html>

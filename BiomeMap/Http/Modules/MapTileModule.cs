@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BiomeMap.Http.Response;
 using Nancy;
+using Newtonsoft.Json;
 using ResponseExtensions = BiomeMap.Http.Response.ResponseExtensions;
 
 namespace BiomeMap.Http.Modules
@@ -19,7 +20,64 @@ namespace BiomeMap.Http.Modules
 
         public MapTileModule()
         {
-            Get["/tile/{y}/{x}/{z}.png"] = GetTile;
+            Get["/tile/{y}/{x}/{z}.png"] = GetRegionTile;
+            Get["/head/{player}.png"] = GetPlayerHead;
+            Get["/regions/{level}.json"] = GetRegions;
+        }
+
+        private dynamic GetRegions(dynamic o)
+        {
+            BiomeMapLevelHandler handler = BiomeMapPlugin.GetMapHandler(o.level);
+            if (handler == null) return null;
+
+            var regions = handler.GetBiomeRegions();
+
+            return JsonConvert.SerializeObject(regions.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Points.Select(p => new []{p.X, p.Y})));
+        }
+
+        private dynamic GetPlayerHead(dynamic o)
+        {
+            var player = o.player;
+
+            var path = Path.Combine(OutputPath, "PlayerHead", player + ".png");
+
+            if (File.Exists(path))
+            {
+                byte[] img = File.ReadAllBytes(path);
+                return ResponseExtensions.FromByteArray(Response, img, "image/png");
+            }
+            return null;
+        }
+
+        private dynamic GetChunkTile(dynamic o)
+        {
+            var z = int.Parse(o.z);
+            var x = int.Parse(o.x);
+            var y = int.Parse(o.y);
+
+            var path = Path.Combine(OutputPath, "Raw", x + "_" + y + ".png");
+
+            if (File.Exists(path))
+            {
+                byte[] img = File.ReadAllBytes(path);
+                return ResponseExtensions.FromByteArray(Response, img, "image/png");
+            }
+            return null;
+        }
+        private dynamic GetRegionTile(dynamic o)
+        {
+            var z = int.Parse(o.z);
+            var x = int.Parse(o.x);
+            var y = int.Parse(o.y);
+
+            var path = Path.Combine(OutputPath, "Region", "r." + x + "_" + y + ".png");
+
+            if (File.Exists(path))
+            {
+                byte[] img = File.ReadAllBytes(path);
+                return ResponseExtensions.FromByteArray(Response, img, "image/png");
+            }
+            return null;
         }
 
         private dynamic GetTile(dynamic o)

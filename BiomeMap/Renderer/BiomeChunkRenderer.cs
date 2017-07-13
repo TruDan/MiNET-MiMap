@@ -33,13 +33,26 @@ namespace BiomeMap.Renderer
                 for (int z = 0; z < 16; z++)
                 {
                     var biomeId = chunk.GetBiome(x, z);
-                    var highest = chunk.GetHeight(x, z);
+                    var highest = GetHeight(chunk, x, z);
 
                     d.BlockColors[x * 16 + z] = GetBlockColor(biomeId, highest);
                 }
             }
 
             return d;
+        }
+
+        private byte GetHeight(ChunkColumn chunk, int x, int z)
+        {
+            for (byte y = 0; y < 256; y++)
+            {
+                if (chunk.GetBlock(x, y, z) > 0)
+                {
+                    return y;
+                }
+            }
+
+            return 255;
         }
 
         private Color GetBlockColor(byte biomeId, byte maxHeight)
