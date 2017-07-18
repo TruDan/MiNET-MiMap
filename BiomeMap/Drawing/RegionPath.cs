@@ -5,19 +5,60 @@ using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ClipperLib;
+using Newtonsoft.Json;
 
 namespace BiomeMap.Drawing
 {
     public class RegionPath
     {
-        public Point[] Points { get; private set; } = new Point[0];
+        public IntPoint[][] Points { get; private set; } = new IntPoint[0][];
 
         private List<Point> _rawPoints = new List<Point>();
 
+        private bool _isDirty;
+
         public void AddPoint(int x, int y)
         {
-            _rawPoints.Add(new Point(x, y));
-            RecalculateOutline();
+            var p = new Point(x, y);
+            if (_rawPoints.Contains(p)) return;
+
+            _rawPoints.Add(p);
+            _isDirty = true;
+            //RecalculateBlocks();
+            //RecalculateOutline();
+        }
+
+        public void RecalculateBlocks()
+        {
+            if (!_isDirty) return;
+            _isDirty = false;
+
+            var c = new Clipper();
+            var rects = new List<List<IntPoint>>();
+
+            foreach (var p in _rawPoints.ToArray())
+            {
+                var polygon = new List<IntPoint>();
+                //var r = new Rectangle(p.X, p.Y, 1, 1);
+                polygon.Add(new IntPoint(p.X, p.Y));
+                polygon.Add(new IntPoint(p.X+1, p.Y));
+                polygon.Add(new IntPoint(p.X+1, p.Y+1));
+                polygon.Add(new IntPoint(p.X, p.Y+1));
+                rects.Add(polygon);
+            }
+
+            var paths = new List<List<IntPoint>>();
+
+            foreach (var r in rects)
+            {
+                c.AddPolygon(r, PolyType.ptClip);
+            }
+
+            c.Execute(ClipType.ctUnion, paths, PolyFillType.pftNonZero, PolyFillType.pftNonZero);
+
+
+            Points = paths.Select(p => p.ToArray()).ToArray();
         }
 
         private void RecalculateOutline()
@@ -95,7 +136,7 @@ namespace BiomeMap.Drawing
                 }
             }
 
-            Points = orderedPoints.ToArray();
+            //Points = orderedPoints.ToArray();
         }
 
         private bool HasUpper(IEnumerable<Point> points, Point point)

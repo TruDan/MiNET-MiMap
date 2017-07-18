@@ -1,0 +1,35 @@
+﻿{
+  "TilesDirectory": "C:\\Users\\truda\\Source\\Repos\\BiomeMap\\BiomeMap\\Http\\Public\\tiles",
+  "Levels": [
+    {
+      "LevelId": "Overworld",
+      "Label": "Overworld",
+      "Enabled": true,
+      "DefaultZoom": 0,
+      "MinZoom": 0,
+      "MaxZoom": 2,
+      "TileSize":  128, 
+      "BaseLayer": "Default",
+      "Layers": [
+        {
+          "LayerId": "BiomeFoilage",
+          "Label": "Foilage",
+          "Enabled": true,
+          "Renderer": "BiomeFoilage"
+        },
+        {
+          "LayerId": "BiomeTemperature",
+          "Label": "Temperature",
+          "Enabled": true,
+          "Renderer": "BiomeTemperature"
+        },
+        {
+          "LayerId": "HeightMap",
+          "Label": "Height Map",
+          "Enabled": true,
+          "Renderer": "HeightMap"
+        }
+      ]
+    }
+  ]
+}

@@ -85,6 +85,9 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
+    <None Include="biomemap.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
     <None Include="server.truda.conf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

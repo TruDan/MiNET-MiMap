@@ -22,14 +22,14 @@ using MiNET.Worlds;
 namespace BiomeMap
 {
 
-    [Plugin(PluginName = "BiomeMap")]
+    [Plugin(PluginName = "BiomeMapManager")]
     public class BiomeMapPlugin : Plugin
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(BiomeMapPlugin));
 
         private static BiomeMapPlugin _instance;
 
-        private Dictionary<string, BiomeMapLevelHandler> _handlers = new Dictionary<string, BiomeMapLevelHandler>();
+        private readonly Dictionary<string, BiomeMapLevelHandler> _handlers = new Dictionary<string, BiomeMapLevelHandler>();
 
         private BiomeMapWebServer _webServer;
 
@@ -44,6 +44,7 @@ namespace BiomeMap
 
             _webServer = new BiomeMapWebServer();
             _webServer.Start();
+
             Context.LevelManager.LevelCreated += LevelManagerOnLevelCreated;
             Context.Server.PlayerFactory.PlayerCreated += PlayerFactoryOnPlayerCreated;
         }
@@ -63,7 +64,6 @@ namespace BiomeMap
         {
             BiomeMapSocketServer.OnPlayerJoin(playerEventArgs.Player);
         }
-
         
         [PacketHandler, Receive]
         public void OnPlayerMove(McpeMovePlayer packet, Player player)
@@ -79,15 +79,14 @@ namespace BiomeMap
             Log.InfoFormat("Started handler for level {0}", levelEventArgs.Level.LevelId);
             h.Start();
 
-            if (Config.GetProperty("GenChunks", true))
+            var chunkGen = Config.GetProperty("GenChunks", 64);
+            if (chunkGen > 0)
             {
-                ThreadPool.QueueUserWorkItem((o) =>
+                ThreadPool.QueueUserWorkItem(o =>
                 {
                     var level = levelEventArgs.Level;
-
-                    var r = 64;
-
-                    for (int i = 0; i < r; i++)
+                    
+                    for (int i = 0; i < chunkGen; i++)
                     {
                         GenerateChunks(level, i);
                     }
@@ -103,6 +102,11 @@ namespace BiomeMap
             return handler;
         }
 
+        public static string[] GetLevelNames()
+        {
+            return _instance._handlers.Keys.ToArray();
+        }
+
         private void GenerateChunks(Level level, int r)
         {
             Log.InfoFormat("Generating chunks for radius {0}", r);
@@ -110,7 +114,7 @@ namespace BiomeMap
             {
                 for (var z = -r; z <= r; z++)
                 {
-                    if(Math.Abs(x) != r && Math.Abs(z) != r)
+                    if(x > -r && x < r && z >-r && z < r)
                         continue;
                     
                     level.GetChunk(new ChunkCoordinates(x, z));
@@ -127,7 +131,6 @@ namespace BiomeMap
                 h.Stop();
             }
             base.OnDisable();
-
         }
     }
 }

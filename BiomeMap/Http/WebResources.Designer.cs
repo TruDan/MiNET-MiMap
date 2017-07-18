@@ -39,7 +39,7 @@ namespace BiomeMap.Http {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("BiomeMap.Http.WebResources", typeof(WebResources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("BiomeMapManager.Http.WebResources", typeof(WebResources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -66,7 +66,7 @@ namespace BiomeMap.Http {
         ///&lt;html lang=&quot;en&quot; xmlns=&quot;http://www.w3.org/1999/xhtml&quot;&gt;
         ///&lt;head&gt;
         ///    &lt;meta charset=&quot;utf-8&quot; /&gt;
-        ///    &lt;title&gt;BiomeMap&lt;/title&gt;
+        ///    &lt;title&gt;BiomeMapManager&lt;/title&gt;
         ///
         ///    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://unpkg.com/leaflet@1.1.0/dist/leaflet.css&quot;
         ///          integrity=&quot;sha512-wcw6ts8Anuw10Mzh9Ytw4pylW8+NAD4ch3lqm9lzAsTxg0GFeJgoAtxuCLREZSC5lUXdVyo/7yfsqFjQ4S+aKw==&quot;

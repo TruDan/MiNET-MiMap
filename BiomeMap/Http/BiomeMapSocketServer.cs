@@ -140,7 +140,7 @@ namespace BiomeMap.Http
                         }
                     }
 
-                    head.Save(Path.Combine(BitmapOutput.OutputPath, "PlayerHead", player.ClientUuid + ".png"));
+                    head.Save(Path.Combine(BitmapOutput.PlayersPath, "PlayerHead", player.ClientUuid + ".png"));
                 }
             }
 

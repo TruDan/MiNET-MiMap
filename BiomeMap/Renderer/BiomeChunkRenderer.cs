@@ -44,7 +44,7 @@ namespace BiomeMap.Renderer
 
         private byte GetHeight(ChunkColumn chunk, int x, int z)
         {
-            for (byte y = 0; y < 256; y++)
+            for (byte y = 255; y > 0; y--)
             {
                 if (chunk.GetBlock(x, y, z) > 0)
                 {
@@ -52,13 +52,13 @@ namespace BiomeMap.Renderer
                 }
             }
 
-            return 255;
+            return 0;
         }
 
         private Color GetBlockColor(byte biomeId, byte maxHeight)
         {
             var biomeColor = _biomeUtils.GetBiome(biomeId).Foliage;
-            var alphaOverlay = ((maxHeight / 128) - 1) * 0.25;
+            var alphaOverlay = ((maxHeight / 192f) - 1) * 0.5f;
 
             var c = Color.FromArgb(biomeColor);
 

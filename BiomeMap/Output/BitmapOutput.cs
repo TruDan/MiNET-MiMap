@@ -9,76 +9,147 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using BiomeMap.Data;
+using BiomeMap.Drawing;
 using log4net;
+using Microsoft.IO;
 using MiNET.Utils;
 
 namespace BiomeMap.Output
 {
-    public class BitmapOutput : IRenderOutput
+    public partial class BitmapOutput : IRenderOutput
     {
-        public const int TileSize = 256;
-        public const int MaxZoom = 9;
+
+        protected BiomeMapLevelHandler Handler { get; }
+
+        public const int RegionSize = 16;
+
+        public const int TileSize = RegionSize * 16;
+
+        public const int MaxZoom = 3;
+
+        private static readonly Pen GridPen = new Pen(Color.FromArgb(50, Color.Gray), 1);
 
         private static readonly ILog Log = LogManager.GetLogger(typeof(BitmapOutput));
 
-        public static string OutputPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "RenderMaps");
+        public static string BasePath = Config.GetProperty("BiomeMapWebRoot", Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
+        public static string TilesPath = Path.Combine(BasePath, "tiles");
+        public static string PlayersPath = Path.Combine(BasePath, "players");
 
-        private Dictionary<ChunkCoordinates, Bitmap> _chunksCache = new Dictionary<ChunkCoordinates, Bitmap>();
-        private List<ChunkCoordinates> _updatedRegions = new List<ChunkCoordinates>();
+        private readonly Dictionary<int, Dictionary<Point, TileBitmap>> _tileCache = new Dictionary<int, Dictionary<Point, TileBitmap>>();
+        
+        private readonly Dictionary<Point, TileRegion> _regions = new Dictionary<Point, TileRegion>();
 
         public bool ReadOnly { get; set; } = false;
 
-        public BitmapOutput()
+        public BitmapOutput(BiomeMapLevelHandler handler)
         {
-            if (!Directory.Exists(OutputPath))
+            Handler = handler;
+
+            if (Directory.Exists(TilesPath))
             {
-                Directory.CreateDirectory(OutputPath);
+                Directory.Delete(TilesPath, true);
             }
 
-            var path = Path.Combine(OutputPath, "Raw");
-            if (!Directory.Exists(path))
+            Directory.CreateDirectory(TilesPath);
+
+            /*for (int i = 0; i <= MaxZoom; i++)
             {
-                Directory.CreateDirectory(path);
-            }
+                var p = Path.Combine(TilesPath, i.ToString());
+                Directory.CreateDirectory(p);
+            }*/
             
-            path = Path.Combine(OutputPath, "Region");
-            if (!Directory.Exists(path))
-            {
-                Directory.CreateDirectory(path);
-            }
+            Directory.CreateDirectory(PlayersPath);
+        }
 
-            path = Path.Combine(OutputPath, "PlayerHead");
-            if (!Directory.Exists(path))
+        private TileRegion GetRegion(int regionX, int regionZ)
+        {
+            TileRegion region;
+            if (!_regions.TryGetValue(new Point(regionX, regionZ), out region))
             {
-                Directory.CreateDirectory(path);
+                region = new TileRegion(Handler.Level.LevelId, regionX, regionZ);
+                _regions.Add(new Point(regionX, regionZ), region);
             }
+            return region;
         }
 
         public void WriteChunk(ChunkData data)
         {
-            using (var chunkImg = GetChunkBitmap(data))
+            var region = GetRegion(data.X >> 5, data.Z >> 5);
+            region.DrawChunk(data);
+
+            /*
+            var tiles = GetTiles(data.X, data.Z);
+            foreach (var tile in tiles)
             {
+                var offsetX = (data.X % tile.ChunkBounds.Width) * 16;
+                var offsetZ = (data.Z % tile.ChunkBounds.Height) * 16;
+                var scaleX = TileSize / (tile.ChunkBounds.Width * 16f);
+                var scaleY = TileSize / (tile.ChunkBounds.Width * 16f);
 
-                var path = Path.Combine(OutputPath, "Raw", data.X + "_" + data.Z + ".png");
-
-
-                if (File.Exists(path))
+                using (var g = tile.CreateGraphics())
                 {
-                    File.Delete(path);
+                    for (int x = 0; x < 16; x++)
+                    {
+                        for (int z = 0; z < 16; z++)
+                        {
+                            g.FillRectangle(new SolidBrush(data.BlockColors[x * 16 + z]), offsetX + x, offsetZ + z, scaleX, scaleY);
+                        }
+                    }
                 }
+            }
+            */
+        }
 
-                chunkImg.Save(path, ImageFormat.Png);
+        private TileBitmap[] GetTiles(int chunkX, int chunkZ)
+        {
+            //Log.InfoFormat("Getting Tiles for Chunk {0},{1}", chunkX, chunkZ);
 
-                var c = new ChunkCoordinates(data.X >> 5, data.Z >> 5);
+            var rC = new Point(chunkX, chunkZ);
 
-                if(!_updatedRegions.Contains(c))
-                    _updatedRegions.Add(c);
-                /*for (int zoom = 0; zoom <= MaxZoom; zoom++)
-                {
-                    DrawZoomLevel(chunkImg, data.X, data.Z, zoom);
-                }*/
+            var tiles = new List<TileBitmap>();
+
+            for (int i = 0; i <= MaxZoom; i++)
+            {
+                var p = GetTileCoordinates(rC, i);
+                
+                tiles.Add(GetTile(p, i));
             }
 
+            return tiles.ToArray();
+        }
+
+        private Point GetTileCoordinates(Point chunkCoords, int zoomLevel)
+        {
+            /*
+             * TileX            = (ChunkX / RegionSizeX) << Zoom
+             * TileX >> Zoom    = ChunkX / RegionSizeX
+             * (TileX >> Zoom) * RegionSizeX = ChunkX
+             */
+
+            var tiles = RegionSize >> zoomLevel;
+            var tX = chunkCoords.X % tiles;
+            var tY = chunkCoords.Y % tiles;
+
+            return new Point(tX, tY);
+        }
+
+        private TileBitmap GetTile(Point coords, int zoom)
+        {
+            Dictionary<Point, TileBitmap> zoomDict;
+            if (!_tileCache.TryGetValue(zoom, out zoomDict))
+            {
+                zoomDict = new Dictionary<Point, TileBitmap>();
+                _tileCache.Add(zoom, zoomDict);
+            }
+
+            TileBitmap tile;
+            if (!zoomDict.TryGetValue(coords, out tile))
+            {
+                tile = new TileBitmap(new Bitmap(TileSize, TileSize), "Overworld", coords.X, coords.Y, zoom);
+                zoomDict.Add(coords, tile);
+            }
+
+            return tile;
         }
 
         public void OnUpdateStart()
@@ -89,173 +160,77 @@ namespace BiomeMap.Output
         public void OnUpdateEnd()
         {
             var i = 0;
-
+            
             // update caches
-            foreach (var rC in _updatedRegions.ToArray())
+            /*foreach (var tiles in _tileCache.Values.ToArray())
             {
-                DrawRegion(rC.X, rC.Z);
-                i++;
-            }
-            _updatedRegions.Clear();
-            Log.InfoFormat("Update Completed, Saved {0} regions", i);
-        }
-
-        private const int RegionSize = 32;
-
-        private void DrawRegion(int regionX, int regionZ)
-        {
-            var xOffset = regionX * RegionSize;
-            var zOffset = regionZ * RegionSize;
-
-            using (var img = new Bitmap(16 * RegionSize, 16 * RegionSize))
-            {
-                using (var g = Graphics.FromImage(img))
+                foreach (var tile in tiles.Values.ToArray())
                 {
-                    for (int x = 0; x < RegionSize; x++)
+                    if(tile.Save())
+                        i++;
+                }
+            }*/
+
+            foreach (var region in _regions.Values.ToArray())
+            {
+                i += region.Save();
+            }
+            
+            Log.InfoFormat("Update Completed, Saved {0} tiles", i);
+        }
+        
+
+        private static Font DebugFont = new Font(FontFamily.GenericMonospace, 12, GraphicsUnit.Pixel);
+
+        private void DrawRegionZoom(int regionX, int regionZ, Bitmap regionBase, int zoomLevel)
+        {
+            
+            
+            var xOffset = regionX << zoomLevel;
+            var zOffset = regionZ << zoomLevel;
+
+            //xOffset -= pow / (regionX < 0 ? -2 : 2);
+            //zOffset -= pow / (regionZ < 0 ? -2 : 2);
+
+            var tiles = 1 << zoomLevel;
+            var size = TileSize / tiles;
+
+            for (int x = 0; x < tiles; x++)
+            {
+                for (int z = 0; z < tiles; z++)
+                {
+                    using (var img = new Bitmap(TileSize, TileSize))
                     {
-                        for (int z = 0; z < RegionSize; z++)
+                        using (var g = Graphics.FromImage(img))
                         {
-                            using (var chunkImg = GetChunkBitmap(xOffset + x, zOffset + z))
-                            {
-                                var p = new Point(x * 16, z * 16);
-                                g.DrawImage(chunkImg, p);
-                            }
+                            //g.CompositingQuality = CompositingQuality.AssumeLinear;
+                            g.InterpolationMode = InterpolationMode.NearestNeighbor;
+                            g.PixelOffsetMode = PixelOffsetMode.HighQuality;
+                            //g.SmoothingMode = SmoothingMode.None;
+                            //g.PageUnit = GraphicsUnit.Pixel;
+
+                            //g.DrawImage(
+                            //   new Bitmap(regionBase), new Rectangle(0, 0, img.Width, img.Height), 0f, 0f, (float)size, (float)size, GraphicsUnit.Pixel);
+
+                            var src = new Rectangle(x*size, z*size, size, size);
+
+                            g.DrawImage(regionBase, new Rectangle(0, 0, TileSize, TileSize), src, GraphicsUnit.Pixel);
+
+                           // var debugText = (xOffset + x) + ", " + (zOffset +z) + " @ " + zoomLevel + "\nR:" + regionX + "," + regionZ + "(" + x + "," + z + ")\n" + src.ToString();
+
+                            //var s = g.MeasureString(debugText, DebugFont);
+
+                            //g.DrawString(debugText, DebugFont, Brushes.Black, (img.Width - s.Width) / 2f + 3, (img.Height - s.Height) / 2f + 3);
+                            //g.DrawString(debugText, DebugFont, Brushes.WhiteSmoke, (img.Width-s.Width)/2f, (img.Height-s.Height)/2f);
+
+                            g.Flush(FlushIntention.Flush);
                         }
+                        
+                       // img.SaveTile(xOffset + x, zOffset + z, zoomLevel);
                     }
                 }
-
-                var path = Path.Combine(OutputPath, "Region", "r." + regionX + "_" + regionZ + ".png");
-                if (File.Exists(path))
-                {
-                    File.Delete(path);
-                }
-
-                img.Save(path, ImageFormat.Png);
             }
-        }
-
-        private Bitmap GetChunkBitmap(int chunkX, int chunkZ)
-        {
-            var c = new ChunkCoordinates(chunkX, chunkZ);
-            Bitmap img;
-
-            if (!_chunksCache.TryGetValue(c, out img))
-            {
-
-                var path = Path.Combine(OutputPath, "Raw", chunkX + "_" + chunkZ + ".png");
-                if (File.Exists(path))
-                {
-                    var chunkImg = Image.FromFile(path);
-                    {
-                        img = new Bitmap(chunkImg);
-                    }
-                }
-                else
-                {
-                    img = new Bitmap(16, 16);
-                    using (var g = Graphics.FromImage(img))
-                    {
-                        g.FillRectangle(Brushes.Black, 0, 0, 16, 16);
-                    }
-                }
-                _chunksCache[c] = img;
-            }
-
-            return new Bitmap(img);
-        }
-
-        private void DrawZoomLevel(Bitmap chunkImg, int chunkX, int chunkZ, int zoomLevel)
-        {
-            var rX = (chunkX >> zoomLevel);
-            var rZ = (chunkZ >> zoomLevel);
-
-            var path = Path.Combine(OutputPath, zoomLevel.ToString(), rX + "_" + rZ + ".png");
-
-            var dir = Path.GetDirectoryName(path);
-
-            if (!Directory.Exists(dir))
-            {
-                Directory.CreateDirectory(dir);
-            }
-
-            Image img;
-
-            try
-            {
-                using (var r = Image.FromFile(path))
-                {
-                    img = new Bitmap(r);
-                }
-            }
-            catch (FileNotFoundException ex)
-            {
-                img = new Bitmap(256, 256);
-
-                using (var g = Graphics.FromImage(img))
-                {
-                    g.Clear(Color.Black);
-                }
-            }
-
-            using (img)
-            {
-                using (var g = Graphics.FromImage(img))
-                {
-                    g.Clear(Color.Black);
-                    var size = (TileSize >> zoomLevel);
-
-                    var x = (chunkX - (rX << zoomLevel)) * size;
-                    var z = (chunkZ - (rZ << zoomLevel)) * size;
-
-                    var rect = new Rectangle(
-                        x < 0 ? TileSize - x - size : x,
-                        z < 0 ? TileSize - z - size : z,
-                        size,
-                        size
-                    );
-                    Log.InfoFormat("Chunk@{8} {0},{1} => {2}_{3}.png @ ({4},{5}->{6},{7})",
-                        chunkX,
-                        chunkZ,
-                        rX,
-                        rZ,
-                        rect.X,
-                        rect.Y,
-                        rect.Width,
-                        rect.Height,
-                        zoomLevel
-                    );
-                    g.DrawImage(chunkImg, rect);
-                }
-
-                if (File.Exists(path))
-                {
-                    File.Delete(path);
-                }
-
-                img.Save(path);
-            }
-        }
-
-        private Bitmap GetChunkBitmap(ChunkData data)
-        {
-            var img = new Bitmap(16, 16);
-
-
-            using (var g = Graphics.FromImage(img))
-            {
-                g.Clear(Color.Black);
-                for (int x = 0; x < 16; x++)
-                {
-                    for (int z = 0; z < 16; z++)
-                    {
-                        g.FillRectangle(new SolidBrush(data.BlockColors[x * 16 + z]), x, z, 1, 1);
-                    }
-                }
-
-                //g.DrawString(data.X + "," + data.Z, SystemFonts.SmallCaptionFont, Brushes.White, 1, 1);
-            }
-
-            return img;
+            
         }
     }
 }
