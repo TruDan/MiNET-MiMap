@@ -3,13 +3,13 @@ using System.Reflection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace BiomeMap.Drawing
+namespace BiomeMap.Shared
 {
     public class BiomeMapConfig
     {
 
         public string TilesDirectory { get; set; } =
-            Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "BiomeMapManager");
+            Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "BiomeMapManager");
 
         public int SaveInterval { get; set; } = 5000;
 
@@ -59,6 +59,11 @@ namespace BiomeMap.Drawing
         public string Label { get; set; } = string.Empty;
 
         public bool Enabled { get; set; } = true;
+
+        public bool Default { get; set; } = false;
+
+        [JsonConverter(typeof(StringEnumConverter))]
+        public BlendMode BlendMode { get; protected set; } = BlendMode.Normal;
 
         [JsonConverter(typeof(StringEnumConverter))]
         public BiomeMapOverlayRenderer Renderer { get; set; }

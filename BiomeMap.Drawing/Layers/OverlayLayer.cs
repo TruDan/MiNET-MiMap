@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BiomeMap.Drawing.Data;
 using BiomeMap.Drawing.Renderers;
 using BiomeMap.Drawing.Renderers.Base;
+using BiomeMap.Drawing.Renderers.Overlay;
+using BiomeMap.Shared;
 
 namespace BiomeMap.Drawing.Layers
 {
@@ -19,8 +21,10 @@ namespace BiomeMap.Drawing.Layers
         public OverlayLayer(LevelMap map, BiomeMapLevelLayerConfig config) : base(map, Path.Combine(map.TilesDirectory, config.LayerId), GetLayerRenderer(config.Renderer))
         {
             Config = config;
+            Background = Color.Transparent;
+            BlendMode = config.BlendMode;
         }
-        
+
         private static ILayerRenderer GetLayerRenderer(BiomeMapOverlayRenderer overlayRenderer)
         {
             ILayerRenderer renderer = null;
@@ -34,9 +38,9 @@ namespace BiomeMap.Drawing.Layers
                 //case BiomeMapOverlayRenderer.BiomeTemperature:
 
                 //    break;
-                //case BiomeMapOverlayRenderer.HeightMap:
-
-                //    break;
+                case BiomeMapOverlayRenderer.HeightMap:
+                    renderer = new HeightMapOverlayRenderer();
+                    break;
 
                 default:
                     renderer = new DefaultLayerRenderer();

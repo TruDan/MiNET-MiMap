@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BiomeMap.Drawing.Data
+namespace BiomeMap.Shared.Data
 {
     public abstract class Position
     {
@@ -20,6 +20,17 @@ namespace BiomeMap.Drawing.Data
         public override string ToString()
         {
             return $"{X},{Z}";
+        }
+
+        public override bool Equals(object obj)
+        {
+            var b = obj as Position;
+            if (b != null)
+            {
+                return X == b.X && Z == b.Z;
+            }
+
+            return base.Equals(obj);
         }
     }
 }

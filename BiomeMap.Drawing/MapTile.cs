@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Numerics;
-using BiomeMap.Drawing.Data;
 using BiomeMap.Drawing.Layers;
+using BiomeMap.Shared.Data;
 using log4net;
 
 namespace BiomeMap.Drawing
@@ -16,7 +17,7 @@ namespace BiomeMap.Drawing
         public IMapLayer Layer { get; }
 
         public TilePosition Position { get; }
-        
+
         private string FilePath { get; }
 
         private Bitmap Bitmap { get; set; }
@@ -24,7 +25,9 @@ namespace BiomeMap.Drawing
         private RectangleF BitmapBounds { get; set; }
 
         private Graphics Graphics { get; set; }
-        
+
+        private bool IsNew { get; set; }
+
         public MapTile(IMapLayer layer, TilePosition pos)
         {
             Layer = layer;
@@ -51,26 +54,53 @@ namespace BiomeMap.Drawing
             else
             {
                 bitmap = new Bitmap(Layer.Map.Meta.TileSize.Width, Layer.Map.Meta.TileSize.Height);
+                IsNew = true;
             }
-            
+
             Bitmap = bitmap;
             BitmapBounds = new RectangleF(0, 0, Bitmap.Width, Bitmap.Height);
             Graphics = Graphics.FromImage(bitmap);
+            Graphics.SmoothingMode = SmoothingMode.HighQuality;
+            Graphics.CompositingQuality = CompositingQuality.HighQuality;
+            Graphics.InterpolationMode = InterpolationMode.NearestNeighbor;
+            Graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+            Graphics.PageUnit = GraphicsUnit.Pixel;
+
+            if (IsNew)
+            {
+                Graphics.Clear(Layer.Background);
+            }
         }
 
         private RectangleF GetBlockRectangle(BlockPosition blockPos)
         {
-
             var bounds = Position.GetBlockBounds();
 
-            var xSize = bounds.Width / (float)Bitmap.Width;
-            var ySize = bounds.Height / (float)Bitmap.Height;
-            var x = (int)Math.Floor((Math.Abs(blockPos.X - bounds.Min.X) / (float)bounds.Width) * (Bitmap.Width - xSize));
-            var y = (int)Math.Floor((Math.Abs(blockPos.Z - bounds.Min.Z) / (float)bounds.Height) * (Bitmap.Height - ySize));
-            return new RectangleF(
+            var xSize = Bitmap.Width / (float)bounds.Width;
+            var ySize = Bitmap.Height / (float)bounds.Height;
+            var x = ((blockPos.X % bounds.Width) / (float)bounds.Width) * Bitmap.Width;
+            var y = ((blockPos.Z % bounds.Height) / (float)bounds.Height) * Bitmap.Height;
+
+            if (x < 0)
+            {
+                x = Bitmap.Width + x;
+            }
+            if (y < 0)
+            {
+                y = Bitmap.Height + y;
+            }
+
+            var rect = new RectangleF(
                 x, y,
                 xSize, ySize
-                );
+            );
+
+            if (!BitmapBounds.Contains(rect))
+            {
+                Log.WarnFormat("Attempted to draw block outside the tile bounds, Block: {2}, Rect: {0}, Bitmap Bounds : {1}", rect, BitmapBounds, blockPos);
+            }
+
+            return rect;
         }
 
         public void Update(BlockColumnMeta update)
@@ -104,6 +134,7 @@ namespace BiomeMap.Drawing
             }
             Bitmap?.Dispose();
             Graphics?.Dispose();
+            IsNew = false;
         }
     }
 }

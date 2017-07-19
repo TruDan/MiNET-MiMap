@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using BiomeMap.Drawing;
 using BiomeMap.Runners;
+using BiomeMap.Shared;
 using log4net;
 using MiNET;
 using MiNET.Plugins;
@@ -36,7 +37,7 @@ namespace BiomeMap
                 if (!File.Exists(configPath))
                 {
                     // Create config file
-                    var newConfig = new BiomeMapConfig();
+                    var newConfig = new BiomeMapPluginConfig();
                     var newConfigJson = JsonConvert.SerializeObject(newConfig, Formatting.Indented);
                     File.WriteAllText(configPath, newConfigJson);
                     Log.InfoFormat("Generating Config...");
@@ -44,7 +45,7 @@ namespace BiomeMap
                 }
 
                 var json = File.ReadAllText(configPath);
-                var config = JsonConvert.DeserializeObject<BiomeMapConfig>(json);
+                var config = JsonConvert.DeserializeObject<BiomeMapPluginConfig>(json);
 
                 Log.InfoFormat("Config Loaded from {0}", configPath);
 

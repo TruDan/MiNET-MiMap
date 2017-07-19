@@ -94,4 +94,9 @@
     </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties biomemap_1json__JSONSchema="http://json.schemastore.org/bowerrc" />
+    </VisualStudio>
+  </ProjectExtensions>
 </Project>

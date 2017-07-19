@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using BiomeMap.Drawing;
-using BiomeMap.Drawing.Data;
+using BiomeMap.Shared.Data;
 using MiNET;
 using MiNET.Blocks;
 using MiNET.Utils;
@@ -14,6 +14,7 @@ namespace BiomeMap.Runners
     public class LevelRunner
     {
         public const int UpdateInterval = 1000;
+        public const int MaxChunksPerInterval = 10;
 
         private readonly MiNetServer _server;
 
@@ -64,15 +65,25 @@ namespace BiomeMap.Runners
             TryGetLevel();
             if (Level == null) return;
 
-            var newChunks = Level.GetLoadedChunks().Where(c => !_renderedChunks.Contains(new ChunkCoordinates(c.x, c.z))).ToArray();
+            var chunks = Level.GetLoadedChunks();
 
-            if (newChunks.Length == 0)
+            if (chunks.Length == 0)
                 return;
 
-            foreach (var chunk in newChunks)
+            var i = 0;
+            foreach (var chunk in chunks)
             {
+                if (i >= MaxChunksPerInterval)
+                    return;
+
+                var coords = new ChunkCoordinates(chunk.x, chunk.z);
+                if (_renderedChunks.Contains(coords))
+                    continue;
+
                 RenderChunk(chunk);
-                _renderedChunks.Add(new ChunkCoordinates(chunk.x, chunk.z));
+                _renderedChunks.Add(coords);
+
+                i++;
             }
         }
 
@@ -93,7 +104,8 @@ namespace BiomeMap.Runners
             var pos = new BlockPosition((chunk.x << 4) + x, (chunk.z << 4) + z);
 
             var highestBlock = GetHighestBlock(pos.X, pos.Z);
-            if (highestBlock == null) {
+            if (highestBlock == null)
+            {
                 return new BlockColumnMeta()
                 {
                     Position = pos,

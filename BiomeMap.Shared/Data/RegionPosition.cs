@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace BiomeMap.Drawing.Data
+﻿
+namespace BiomeMap.Shared.Data
 {
     public class RegionPosition : Position
     {
@@ -16,7 +10,7 @@ namespace BiomeMap.Drawing.Data
         public BlockBounds GetBlockBounds()
         {
             return new BlockBounds(
-                new BlockPosition(X << 9, Z << 9), 
+                new BlockPosition(X << 9, Z << 9),
                 new BlockPosition((X + 1) << 9, (Z + 1) << 9)
             );
         }

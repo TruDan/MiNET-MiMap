@@ -1,33 +1,35 @@
 ﻿{
-  "TilesDirectory": "C:\\Users\\truda\\Source\\Repos\\BiomeMap\\BiomeMap\\Http\\Public\\tiles",
+  "TilesDirectory": "S:\\Development\\Projects\\BiomeMap\\MiNET.Server\\bin\\Debug\\RenderMaps",
   "Levels": [
     {
       "LevelId": "Overworld",
       "Label": "Overworld",
       "Enabled": true,
-      "DefaultZoom": 0,
+      "DefaultZoom": 2,
       "MinZoom": 0,
-      "MaxZoom": 2,
-      "TileSize":  128, 
+      "MaxZoom": 5,
+      "TileSize": 256,
       "BaseLayer": "Default",
       "Layers": [
         {
           "LayerId": "BiomeFoilage",
           "Label": "Foilage",
-          "Enabled": true,
+          "Enabled": false,
           "Renderer": "BiomeFoilage"
         },
         {
           "LayerId": "BiomeTemperature",
           "Label": "Temperature",
-          "Enabled": true,
+          "Enabled": false,
           "Renderer": "BiomeTemperature"
         },
         {
           "LayerId": "HeightMap",
           "Label": "Height Map",
           "Enabled": true,
-          "Renderer": "HeightMap"
+          "Default": true,
+          "Renderer": "HeightMap",
+          "BlendMode": "Luminosity"
         }
       ]
     }

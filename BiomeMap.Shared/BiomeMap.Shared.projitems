@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>3cf2f2f5-a0ca-4b56-ac5c-3c5b98212fa3</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>BiomeMap.Shared</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)BiomeMapConfig.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BlendMode.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Data\BlockBounds.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Data\BlockColumnMeta.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Data\BlockPosition.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Data\Bounds.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Data\ChunkBounds.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Data\ChunkPosition.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Data\Position.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Data\RegionPosition.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Data\Size.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Data\TileBounds.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Data\TilePosition.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Data\TilePositionComparer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)LevelMeta.cs" />
+  </ItemGroup>
+</Project>

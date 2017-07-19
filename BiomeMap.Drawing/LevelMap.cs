@@ -1,15 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using BiomeMap.Drawing.Data;
 using BiomeMap.Drawing.Layers;
 using BiomeMap.Drawing.Renderers;
+using BiomeMap.Shared;
+using BiomeMap.Shared.Data;
 using log4net;
 using Newtonsoft.Json;
+using Size = BiomeMap.Shared.Data.Size;
 
 namespace BiomeMap.Drawing
 {
@@ -29,7 +32,7 @@ namespace BiomeMap.Drawing
 
         private IMapLayer[] Layers { get; }
 
-        private ChunkBounds ChunkBounds { get; set; }
+        private BlockBounds BlockBounds { get; set; }
 
         private Timer _timer;
         private readonly object _runSync = new object();
@@ -46,18 +49,25 @@ namespace BiomeMap.Drawing
                 MaxZoom = config.MaxZoom,
                 TileSize = new Size(config.TileSize, config.TileSize),
                 Size = new Size(),
-                Bounds = new ChunkBounds(new ChunkPosition(0,0), new ChunkPosition(0,0)),
+                Bounds = new BlockBounds(new BlockPosition(0, 0), new BlockPosition(0, 0)),
                 LastUpdate = DateTime.MinValue
             };
 
-            ChunkBounds = new ChunkBounds(new ChunkPosition(0,0), new ChunkPosition(0,0));
+            BlockBounds = new BlockBounds(new BlockPosition(0, 0), new BlockPosition(0, 0));
 
             TilesDirectory = Path.Combine(biomeMapManager.Config.TilesDirectory, config.LevelId);
             _metaPath = Path.Combine(TilesDirectory, "meta.json");
 
+#if DEBUG
+            if (Directory.Exists(TilesDirectory))
+            {
+                Directory.Delete(TilesDirectory, true);
+            }
+#endif
+
             Directory.CreateDirectory(TilesDirectory);
 
-            var layers = new IMapLayer[config.Layers.Length+1];
+            var layers = new IMapLayer[config.Layers.Length + 1];
             layers[0] = new BaseLayer(this);
 
             var i = 1;
@@ -73,7 +83,7 @@ namespace BiomeMap.Drawing
 
         public void Start()
         {
-            _timer.Change(BiomeMapManager.Config.SaveInterval, BiomeMapManager.Config.SaveInterval);
+            _timer.Change(0, BiomeMapManager.Config.SaveInterval);
             Log.InfoFormat("Level Map Started: {0}", Meta.Id);
         }
 
@@ -86,12 +96,11 @@ namespace BiomeMap.Drawing
         public void UpdateBlockColumn(BlockColumnMeta update)
         {
 
-            var chunkPos = update.Position.GetChunkPosition();
             //Log.InfoFormat("{0}", chunkPos);
-            ChunkBounds.Min.X = Math.Min(chunkPos.X, ChunkBounds.Min.X);
-            ChunkBounds.Min.Z = Math.Min(chunkPos.Z, ChunkBounds.Min.Z);
-            ChunkBounds.Max.X = Math.Max(chunkPos.X, ChunkBounds.Max.X);
-            ChunkBounds.Max.Z = Math.Max(chunkPos.Z, ChunkBounds.Max.Z);
+            BlockBounds.Min.X = Math.Min(update.Position.X, BlockBounds.Min.X);
+            BlockBounds.Min.Z = Math.Min(update.Position.Z, BlockBounds.Min.Z);
+            BlockBounds.Max.X = Math.Max(update.Position.X, BlockBounds.Max.X);
+            BlockBounds.Max.Z = Math.Max(update.Position.Z, BlockBounds.Max.Z);
 
             foreach (var layer in Layers)
             {
@@ -102,8 +111,8 @@ namespace BiomeMap.Drawing
         private void UpdateMeta()
         {
             Meta.LastUpdate = DateTime.UtcNow;
-            Meta.Size = new Size(ChunkBounds.Width, ChunkBounds.Height);
-            Meta.Bounds = ChunkBounds;
+            Meta.Size = new Size(BlockBounds.Width, BlockBounds.Height);
+            Meta.Bounds = BlockBounds;
 
             var json = JsonConvert.SerializeObject(Meta);
             File.WriteAllText(_metaPath, json);
@@ -118,12 +127,14 @@ namespace BiomeMap.Drawing
 
             try
             {
+                Directory.CreateDirectory(TilesDirectory);
+
                 UpdateMeta();
 
-                foreach (var layer in Layers)
+                Parallel.ForEach(Layers, (layer) =>
                 {
                     layer.ProcessUpdate();
-                }
+                });
             }
             finally
             {

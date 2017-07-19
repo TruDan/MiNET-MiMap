@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.15
+VisualStudioVersion = 15.0.26430.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BiomeMap", "BiomeMap\BiomeMap.csproj", "{39C88997-CB92-44F4-B5FF-863139C9BD6F}"
 EndProject
@@ -20,7 +20,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BiomeMap.Drawing", "BiomeMa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BiomeMap.Plugin", "BiomeMap.Plugin\BiomeMap.Plugin.csproj", "{6E162F70-881B-4CC7-A1F2-8BA10F1D7C7D}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BiomeMap.Web", "BiomeMap.Web\BiomeMap.Web.csproj", "{35C68E11-E308-4FB6-9618-EE60F5A87B54}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "BiomeMap.Shared", "BiomeMap.Shared\BiomeMap.Shared.shproj", "{3CF2F2F5-A0CA-4B56-AC5C-3C5B98212FA3}"
+EndProject
 Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		BiomeMap.Shared\BiomeMap.Shared.projitems*{3cf2f2f5-a0ca-4b56-ac5c-3c5b98212fa3}*SharedItemsImports = 13
+		BiomeMap.Shared\BiomeMap.Shared.projitems*{a020be16-ee06-4547-865a-715530a30193}*SharedItemsImports = 4
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
@@ -42,6 +50,10 @@ Global
 		{6E162F70-881B-4CC7-A1F2-8BA10F1D7C7D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6E162F70-881B-4CC7-A1F2-8BA10F1D7C7D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6E162F70-881B-4CC7-A1F2-8BA10F1D7C7D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{35C68E11-E308-4FB6-9618-EE60F5A87B54}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{35C68E11-E308-4FB6-9618-EE60F5A87B54}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{35C68E11-E308-4FB6-9618-EE60F5A87B54}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{35C68E11-E308-4FB6-9618-EE60F5A87B54}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

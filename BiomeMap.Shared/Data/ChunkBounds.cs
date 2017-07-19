@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BiomeMap.Drawing.Data
+namespace BiomeMap.Shared.Data
 {
     public class ChunkBounds : Bounds<ChunkPosition>
     {

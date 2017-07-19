@@ -36,6 +36,9 @@
     <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <HintPath>..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
     </Reference>
+    <Reference Include="MiNET">
+      <HintPath>..\Libs\MiNET.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -52,35 +55,20 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BiomeMapManager.cs" />
-    <Compile Include="BiomeMapConfig.cs" />
-    <Compile Include="Data\BlockColumnMeta.cs" />
-    <Compile Include="Data\BlockPosition.cs" />
-    <Compile Include="Data\BlockBounds.cs" />
-    <Compile Include="Data\Bounds.cs" />
-    <Compile Include="Data\ChunkBounds.cs" />
-    <Compile Include="Data\ChunkPosition.cs" />
-    <Compile Include="Data\Position.cs" />
-    <Compile Include="Data\RegionPosition.cs" />
-    <Compile Include="Data\TileBounds.cs" />
-    <Compile Include="Data\TilePosition.cs" />
     <Compile Include="Layers\BaseLayer.cs" />
     <Compile Include="Layers\IMapLayer.cs" />
     <Compile Include="Layers\OverlayLayer.cs" />
     <Compile Include="LevelMap.cs" />
-    <Compile Include="LevelMeta.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Renderers\Base\DefaultLayerRenderer.cs" />
     <Compile Include="Renderers\ILayerRenderer.cs" />
-    <Compile Include="Renderers\RangeOverlayRender.cs" />
-    <Compile Include="Renderers\SolidColorRender.cs" />
-    <Compile Include="Renderers\TextureRender.cs" />
+    <Compile Include="Renderers\Overlay\HeightMapOverlayRenderer.cs" />
     <Compile Include="MapTile.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Renderers\Overlay\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <Import Project="..\BiomeMap.Shared\BiomeMap.Shared.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

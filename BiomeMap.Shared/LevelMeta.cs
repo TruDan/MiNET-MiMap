@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Drawing;
-using BiomeMap.Drawing.Data;
+using BiomeMap.Shared.Data;
 
-namespace BiomeMap.Drawing
+namespace BiomeMap.Shared
 {
     public class LevelMeta
     {
@@ -18,10 +17,10 @@ namespace BiomeMap.Drawing
 
         public Size TileSize { get; set; }
 
-        public ChunkBounds Bounds { get; set; }
+        public BlockBounds Bounds { get; set; }
 
         public Size Size { get; set; }
-        
+
 
         public DateTime LastUpdate { get; set; }
     }
