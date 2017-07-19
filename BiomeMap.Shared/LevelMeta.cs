@@ -1,7 +1,7 @@
 ﻿using System;
-using BiomeMap.Shared.Data;
+using BiomeMap.Drawing.Data;
 
-namespace BiomeMap.Shared
+namespace BiomeMap.Drawing
 {
     public class LevelMeta
     {

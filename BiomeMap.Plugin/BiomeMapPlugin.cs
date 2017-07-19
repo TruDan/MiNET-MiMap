@@ -4,18 +4,17 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using BiomeMap.Drawing;
-using BiomeMap.Runners;
-using BiomeMap.Shared;
+using BiomeMap.Plugin.Runners;
+using BiomeMap.Shared.Configuration;
 using log4net;
 using MiNET;
-using MiNET.Plugins;
 using MiNET.Plugins.Attributes;
 using Newtonsoft.Json;
 
-namespace BiomeMap
+namespace BiomeMap.Plugin
 {
     [Plugin(PluginName = "BiomeMapPlugin")]
-    public class BiomeMapPlugin : Plugin
+    public class BiomeMapPlugin : MiNET.Plugins.Plugin
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(BiomeMapPlugin));
 

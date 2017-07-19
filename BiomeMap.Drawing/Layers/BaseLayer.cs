@@ -7,15 +7,23 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BiomeMap.Drawing.Data;
 using BiomeMap.Drawing.Renderers;
 using BiomeMap.Drawing.Renderers.Base;
-using BiomeMap.Shared;
-using BiomeMap.Shared.Data;
+using BiomeMap.Drawing.Renderers.Overlay;
+using BiomeMap.Drawing.Renderers.PostProcessors;
+using BiomeMap.Shared.Configuration;
+using log4net;
+using Size = BiomeMap.Drawing.Data.Size;
 
 namespace BiomeMap.Drawing.Layers
 {
     public class BaseLayer : IMapLayer
     {
+        private static readonly ILog Log = LogManager.GetLogger(typeof(BaseLayer));
+
+        private const int MaxUpdatesPerInterval = int.MaxValue;
+
         public LevelMap Map { get; }
 
         public string Directory { get; }
@@ -24,13 +32,17 @@ namespace BiomeMap.Drawing.Layers
 
         public ILayerRenderer Renderer { get; set; }
 
-        public Color Background { get; protected set; }
+        public IPostProcessor[] PostProcessors { get; protected set; } = { new LightingPostProcessor(), new HeightShadowPostProcessor() };
 
-        private readonly ConcurrentDictionary<TilePosition, List<BlockColumnMeta>> _tileUpdates = new ConcurrentDictionary<TilePosition, List<BlockColumnMeta>>(new TilePositionComparer());
+        private readonly ConcurrentQueue<BlockColumnMeta> _updates = new ConcurrentQueue<BlockColumnMeta>();
 
-        public BaseLayer(LevelMap map) : this(map, Path.Combine(map.TilesDirectory, "base"), GetLayerRenderer(map.Config.BaseLayer))
+        private readonly ConcurrentDictionary<TilePosition, List<BlockColumnMeta>> _tileUpdates =
+            new ConcurrentDictionary<TilePosition, List<BlockColumnMeta>>(new TilePositionComparer());
+
+        public BaseLayer(LevelMap map) : this(map, Path.Combine(map.TilesDirectory, "base"),
+            GetLayerRenderer(map.Config.BaseLayer))
         {
-            Background = Color.FromArgb(0x7F121212);
+
         }
 
         protected BaseLayer(LevelMap map, string directory, ILayerRenderer renderer)
@@ -41,6 +53,51 @@ namespace BiomeMap.Drawing.Layers
         }
 
         public void ProcessUpdate()
+        {
+            var i = 0;
+
+            var updates = new List<BlockColumnMeta>();
+
+            BlockColumnMeta update;
+            while (i < MaxUpdatesPerInterval && _updates.TryDequeue(out update))
+            {
+                updates.Add(update);
+                i++;
+            }
+
+            if (updates.Count == 0) return;
+
+            var tileCount = 0;
+            for (var z = Map.Meta.MinZoom; z <= Map.Meta.MaxZoom; z++)
+            {
+                tileCount += (int)Math.Pow(1 << z, 2);
+            }
+
+            var regions = updates.GroupBy(c => c.Position.GetRegionPosition());
+            //Parallel.ForEach(regions, (r) =>
+
+            foreach (var r in regions)
+            {
+                using (var region = new MapRegionLayer(this, r.Key))
+                {
+                    var j = 0;
+                    var sw = Stopwatch.StartNew();
+
+                    foreach (var u in r.ToArray())
+                    {
+                        region.Update(u);
+                        j++;
+                    }
+
+                    Log.InfoFormat("Saving Region {0} with {1} updates in {2}ms ({3} tiles)", r.Key, j, sw.ElapsedMilliseconds, tileCount);
+                }
+            };
+
+        }
+
+
+
+        public void ProcessUpdateOld()
         {
             foreach (var tilePos in _tileUpdates.Keys.ToArray())
             {
@@ -61,8 +118,12 @@ namespace BiomeMap.Drawing.Layers
 
         public void UpdateBlockColumn(BlockColumnMeta column)
         {
-            var tiles = GetTilePositionsForBlock(column.Position);
+            _updates.Enqueue(column);
+        }
 
+        public void UpdateBlockColumnOld(BlockColumnMeta column)
+        {
+            var tiles = GetTilePositionsForBlock(column.Position);
 
             foreach (var tilePos in tiles)
             {
@@ -85,7 +146,7 @@ namespace BiomeMap.Drawing.Layers
 
         private IEnumerable<TilePosition> GetTilePositionsForBlock(BlockPosition blockPos)
         {
-            //            return new TilePosition[] { new TilePosition(blockPos.X >> 9, blockPos.Z >> 9, 0) };
+            //return new TilePosition[] { new TilePosition(blockPos.X >> 9, blockPos.Z >> 9, 0) };
             for (int zoom = Map.Meta.MinZoom; zoom <= Map.Meta.MaxZoom; zoom++)
             {
                 yield return new TilePosition(blockPos.X >> (9 - zoom), blockPos.Z >> (9 - zoom), zoom);
@@ -101,12 +162,12 @@ namespace BiomeMap.Drawing.Layers
                 case BiomeMapLayerRenderer.Default:
                     renderer = new DefaultLayerRenderer();
                     break;
-                    //case BiomeMapLayerRenderer.SolidColor:
+                //case BiomeMapLayerRenderer.SolidColor:
 
-                    //    break;
-                    //case BiomeMapLayerRenderer.Texture:
-
-                    //    break;
+                //    break;
+                case BiomeMapLayerRenderer.Texture:
+                    renderer = new TextureLayerRenderer();
+                    break;
             }
 
             return renderer;

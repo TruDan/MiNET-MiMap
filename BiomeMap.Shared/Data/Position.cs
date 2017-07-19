@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace BiomeMap.Shared.Data
+﻿namespace BiomeMap.Drawing.Data
 {
     public abstract class Position
     {
@@ -31,6 +25,19 @@ namespace BiomeMap.Shared.Data
             }
 
             return base.Equals(obj);
+        }
+
+        protected bool Equals(Position other)
+        {
+            return X == other.X && Z == other.Z;
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return (X * 397) ^ Z;
+            }
         }
     }
 }

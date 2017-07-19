@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace BiomeMap.Shared.Data
+﻿namespace BiomeMap.Drawing.Data
 {
     public class Size
     {

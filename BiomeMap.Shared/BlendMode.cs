@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace BiomeMap.Shared
+﻿namespace BiomeMap.Drawing
 {
     public enum BlendMode
     {

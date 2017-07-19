@@ -9,8 +9,12 @@
     <Import_RootNamespace>BiomeMap.Shared</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)BiomeMapConfig.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Configuration\BiomeMapConfig.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BlendMode.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Configuration\BiomeMapLayerRenderer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Configuration\BiomeMapLevelConfig.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Configuration\BiomeMapLevelLayerConfig.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Configuration\BiomeMapOverlayRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Data\BlockBounds.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Data\BlockColumnMeta.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Data\BlockPosition.cs" />

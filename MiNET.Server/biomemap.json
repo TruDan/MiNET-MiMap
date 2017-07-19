@@ -1,36 +1,24 @@
 ﻿{
   "TilesDirectory": "S:\\Development\\Projects\\BiomeMap\\MiNET.Server\\bin\\Debug\\RenderMaps",
+  "SaveInterval": 1000,
   "Levels": [
     {
       "LevelId": "Overworld",
       "Label": "Overworld",
       "Enabled": true,
       "DefaultZoom": 2,
-      "MinZoom": 0,
-      "MaxZoom": 5,
+      "MinZoom": 2,
+      "MaxZoom": 2,
       "TileSize": 256,
-      "BaseLayer": "Default",
+      "BaseLayer": "Texture",
       "Layers": [
-        {
-          "LayerId": "BiomeFoilage",
-          "Label": "Foilage",
-          "Enabled": false,
-          "Renderer": "BiomeFoilage"
-        },
-        {
-          "LayerId": "BiomeTemperature",
-          "Label": "Temperature",
-          "Enabled": false,
-          "Renderer": "BiomeTemperature"
-        },
-        {
+        /*{
           "LayerId": "HeightMap",
           "Label": "Height Map",
           "Enabled": true,
-          "Default": true,
-          "Renderer": "HeightMap",
-          "BlendMode": "Luminosity"
-        }
+          "Default": false,
+          "Renderer": "HeightMap"
+        }*/
       ]
     }
   ]

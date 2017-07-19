@@ -8,7 +8,9 @@
   <ItemGroup>
     <Content Include="wwwroot\index.html" />
     <Content Include="wwwroot\Scripts\biomemap.js" />
+    <Content Include="wwwroot\Scripts\coordscontrol.js" />
     <Content Include="wwwroot\Scripts\layercontrol.js" />
+    <Content Include="wwwroot\Scripts\socket.js" />
     <Content Include="wwwroot\Styles\biomemap.min.css" />
     <Content Include="wwwroot\Styles\biomemap.scss" />
   </ItemGroup>

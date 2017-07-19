@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
-namespace BiomeMap.Shared.Data
+namespace BiomeMap.Drawing.Data
 {
     public class TilePositionComparer : IEqualityComparer<TilePosition>
     {

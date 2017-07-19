@@ -54,54 +54,47 @@ function LayerControlItemGroup(map, layerId, layer) {
         $this.$listCtrl.append(item.$ctrl);
         return item;
     };
-    this.show = function (visible) {
-        visible = typeof visible !== 'undefined' ? visible : $this._isVisible;
-        if ($this.$ctrl.is(':visible') && $this._isValidMapType()) {
-            $this.$ctrl.show();
-        } else {
-            $this.$ctrl.hide();
-        }
-
-        $this._isVisible = visible;
-    };
-
-    this._isValidMapType = function () {
-        return $.inArray($this._map.getMapTypeId(), ($this.layer && $this.layer.baseMapTypes) || []) > -1;
-    };
-
-    this._activateOverlay = function () {
-        var i, om = $this._map.overlayMapTypes;
-
-        $this.show();
-
-        if ($this._isActive && $this._isValidMapType()) {
-            if (!$this._isOnMap) {
-                om.insertAt(0, $this.layer);
-                $this._isOnMap = true;
-            }
-        } else {
-            for (i = 0; i < om.getLength(); i++) {
-                console.log(om);
-                if (om.getAt(i).name === 'Relief') {
-                    om.removeAt(i);
-                    i--;
-                }
-            }
-            $this._isOnMap = false;
-        }
-    };
 
     this.toggle = function () {
         $this._isActive = !$this._isActive;
 
-        if ($this._isActive) {
+        console.log($this._map.getMapTypeId(), $this.layerId);
+
+        if ($this._map.getMapTypeId() !== $this.layerId) {
+            $this._map.setMapTypeId($this.layerId);
+            this.init();
+        }
+    };
+
+    this._belongsToThis = function (layer) {
+        for (var i = 0; i < $this.layers.count; i++) {
+            var l = $this.layers[i];
+            if (l.layer === layer) {
+                return true;
+            }
+        }
+    };
+
+    this._clearLayers = function () {
+        var i, om = $this._map.overlayMapTypes;
+
+        for (i = 0; i < om.getLength(); i++) {
+            console.log(om);
+            if (this._belongsToThis(om.getAt(i))) {
+                om.removeAt(i);
+                i--;
+            }
+        }
+    };
+
+    this.updateclass = function () {
+        if ($this._map.getMapTypeId() === $this.layerId) {
             $this.$ctrl.addClass('active');
         } else {
+            $this._clearLayers();
             $this.$ctrl.removeClass('active');
         }
-
-        $this._activateOverlay();
-    };
+    }
 
     this.init = function () {
         $.each($this.layers,
@@ -112,7 +105,9 @@ function LayerControlItemGroup(map, layerId, layer) {
 
     this.$ctrl.append(this.$headerCtrl);
     this.$ctrl.append(this.$listCtrl);
+    this.$ctrl.click(this.toggle.bind(this));
     this._map.mapTypes.set(this.layerId, this.layer);
+    google.maps.event.addListener(this._map, 'maptypeid_changed', this.updateclass.bind(this));
 }
 
 function LayerControlItem(map, layerId, layer) {

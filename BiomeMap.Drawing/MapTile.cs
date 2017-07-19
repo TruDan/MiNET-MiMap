@@ -4,8 +4,8 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Numerics;
+using BiomeMap.Drawing.Data;
 using BiomeMap.Drawing.Layers;
-using BiomeMap.Shared.Data;
 using log4net;
 
 namespace BiomeMap.Drawing
@@ -68,7 +68,7 @@ namespace BiomeMap.Drawing
 
             if (IsNew)
             {
-                Graphics.Clear(Layer.Background);
+                Graphics.Clear(Layer.Renderer.Background);
             }
         }
 

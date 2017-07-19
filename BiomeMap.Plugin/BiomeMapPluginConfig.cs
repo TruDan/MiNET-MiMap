@@ -1,7 +1,6 @@
-﻿using BiomeMap.Drawing;
-using BiomeMap.Shared;
+﻿using BiomeMap.Shared.Configuration;
 
-namespace BiomeMap
+namespace BiomeMap.Plugin
 {
     public class BiomeMapPluginConfig : BiomeMapConfig
     {

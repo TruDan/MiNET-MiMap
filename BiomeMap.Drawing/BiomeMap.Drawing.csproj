@@ -45,6 +45,7 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -59,16 +60,37 @@
     <Compile Include="Layers\IMapLayer.cs" />
     <Compile Include="Layers\OverlayLayer.cs" />
     <Compile Include="LevelMap.cs" />
+    <Compile Include="MapRegionLayer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Renderers\Base\DefaultLayerRenderer.cs" />
+    <Compile Include="Renderers\Base\TextureLayerRenderer.cs" />
+    <Compile Include="Renderers\Base\TextureMap.cs" />
     <Compile Include="Renderers\ILayerRenderer.cs" />
+    <Compile Include="Renderers\IPostProcessor.cs" />
     <Compile Include="Renderers\Overlay\HeightMapOverlayRenderer.cs" />
     <Compile Include="MapTile.cs" />
+    <Compile Include="Renderers\PostProcessors\HeightShadowPostProcessor.cs" />
+    <Compile Include="Renderers\PostProcessors\LightingPostProcessor.cs" />
+    <Compile Include="Textures.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Textures.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Utils\ImageUtils.cs" />
+    <Compile Include="Utils\MathUtils.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Textures.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Textures.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="Resources\PureBDcraft  16x MC112.zip" />
+    <None Include="texturemap.json" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="..\BiomeMap.Shared\BiomeMap.Shared.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

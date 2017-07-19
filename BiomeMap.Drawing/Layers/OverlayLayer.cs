@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using BiomeMap.Drawing.Renderers;
 using BiomeMap.Drawing.Renderers.Base;
 using BiomeMap.Drawing.Renderers.Overlay;
-using BiomeMap.Shared;
+using BiomeMap.Shared.Configuration;
 
 namespace BiomeMap.Drawing.Layers
 {
@@ -21,7 +21,6 @@ namespace BiomeMap.Drawing.Layers
         public OverlayLayer(LevelMap map, BiomeMapLevelLayerConfig config) : base(map, Path.Combine(map.TilesDirectory, config.LayerId), GetLayerRenderer(config.Renderer))
         {
             Config = config;
-            Background = Color.Transparent;
             BlendMode = config.BlendMode;
         }
 

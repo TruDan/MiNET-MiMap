@@ -1,5 +1,5 @@
 ﻿
-namespace BiomeMap.Shared.Data
+namespace BiomeMap.Drawing.Data
 {
     public class RegionPosition : Position
     {

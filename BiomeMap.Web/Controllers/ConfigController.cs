@@ -1,7 +1,8 @@
 ﻿using System.IO;
 using System.IO.Compression;
 using System.Reflection;
-using BiomeMap.Shared;
+using BiomeMap.Drawing;
+using BiomeMap.Shared.Configuration;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 

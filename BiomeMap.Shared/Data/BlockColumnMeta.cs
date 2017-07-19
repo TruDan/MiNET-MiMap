@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace BiomeMap.Shared.Data
+﻿namespace BiomeMap.Drawing.Data
 {
     public class BlockColumnMeta
     {
@@ -17,5 +11,11 @@ namespace BiomeMap.Shared.Data
 
         public byte BiomeId { get; set; }
 
+        public int LightLevel { get; set; }
+
+        public override int GetHashCode()
+        {
+            return Position.GetHashCode();
+        }
     }
 }

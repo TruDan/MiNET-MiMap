@@ -6,13 +6,13 @@ using System.IO;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using BiomeMap.Drawing.Data;
 using BiomeMap.Drawing.Layers;
 using BiomeMap.Drawing.Renderers;
-using BiomeMap.Shared;
-using BiomeMap.Shared.Data;
+using BiomeMap.Shared.Configuration;
 using log4net;
 using Newtonsoft.Json;
-using Size = BiomeMap.Shared.Data.Size;
+using Size = BiomeMap.Drawing.Data.Size;
 
 namespace BiomeMap.Drawing
 {
@@ -61,7 +61,14 @@ namespace BiomeMap.Drawing
 #if DEBUG
             if (Directory.Exists(TilesDirectory))
             {
-                Directory.Delete(TilesDirectory, true);
+                try
+                {
+                    Directory.Delete(TilesDirectory, true);
+                }
+                catch
+                {
+
+                }
             }
 #endif
 
@@ -131,10 +138,7 @@ namespace BiomeMap.Drawing
 
                 UpdateMeta();
 
-                Parallel.ForEach(Layers, (layer) =>
-                {
-                    layer.ProcessUpdate();
-                });
+                Parallel.ForEach(Layers, (layer) => layer.ProcessUpdate());
             }
             finally
             {

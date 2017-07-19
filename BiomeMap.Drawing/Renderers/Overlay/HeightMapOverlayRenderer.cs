@@ -5,7 +5,8 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BiomeMap.Shared.Data;
+using BiomeMap.Drawing.Data;
+using Size = BiomeMap.Drawing.Data.Size;
 
 namespace BiomeMap.Drawing.Renderers.Overlay
 {
@@ -14,37 +15,42 @@ namespace BiomeMap.Drawing.Renderers.Overlay
         public const int Steps = 25;
         public const float MaxOpacity = 0.5f;
 
-        private SolidBrush[] Brushes { get; }
+        private Color[] Colors { get; }
 
         public HeightMapOverlayRenderer()
         {
             var alphaStep = 255f / Steps;
 
-            Brushes = new SolidBrush[Steps];
+            Colors = new Color[Steps];
 
             for (int i = 0; i < Steps; i++)
             {
                 var c = Math.Min(255, (int)Math.Round(alphaStep * i));
-                Debug.WriteLine("Brush {0}/{1}: argb({2},{3},{4},{5})", i, Steps, (int)(c * MaxOpacity), c, c, c);
-                Brushes[i] = new SolidBrush(Color.FromArgb((int)(c * MaxOpacity), c, c, c));
+
+                Debug.WriteLine("Brush {0}/{1}: argb({2},{3},{4},{5})", i, Steps, (int)((Math.Abs(i - (Steps / 2)) * 255f) * MaxOpacity), c, c, c);
+
+                Colors[i] = Color.FromArgb((int)(c * MaxOpacity), c, c, c);
             }
         }
 
 
+        public Color Background { get; } = Color.Transparent;
+        public Size RenderScale { get; } = new Size(1, 1);
 
         public void DrawBlock(Graphics graphics, RectangleF bounds, BlockColumnMeta blockColumn)
         {
             var i = blockColumn.Height % Steps;
-            graphics.FillRectangle(Brushes[i], bounds);
+            using (var brush = new SolidBrush(Colors[i]))
+            {
+                graphics.FillRectangle(brush, bounds);
+            }
+
         }
 
 
         public void Dispose()
         {
-            foreach (var b in Brushes)
-            {
-                b.Dispose();
-            }
+
         }
     }
 }

@@ -4,14 +4,19 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BiomeMap.Drawing.Data;
 using BiomeMap.Drawing.Layers;
-using BiomeMap.Shared.Data;
 using MiNET.Worlds;
+using Size = BiomeMap.Drawing.Data.Size;
 
 namespace BiomeMap.Drawing.Renderers.Base
 {
     public class DefaultLayerRenderer : ILayerRenderer
     {
+
+        public Color Background { get; } = Color.FromArgb(0x7F121212);
+        public Size RenderScale { get; } = new Size(1, 1);
+
         private BiomeUtils BiomeUtils { get; }
 
         private readonly Dictionary<int, SolidBrush> _brushCache = new Dictionary<int, SolidBrush>();

@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace BiomeMap.Shared.Data
+namespace BiomeMap.Drawing.Data
 {
     public abstract class Bounds<TPositionType> where TPositionType : Position
     {
