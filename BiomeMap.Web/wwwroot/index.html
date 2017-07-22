@@ -3,18 +3,23 @@
 <head>
     <meta charset="utf-8" />
     <title>Biome Map</title>
+    
+
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/icon?family=Material+Icons" />
+    <link rel="stylesheet" type="text/css" href="//openlayers.org/en/v4.2.0/css/ol.css">
 
     <link rel="stylesheet" type="text/css" href="Styles/biomemap.css" />
 </head>
 <body onload="initMap()">
     <div id="map"></div>
-    <script src="https://code.jquery.com/jquery-3.2.1.min.js"
-            integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
-            crossorigin="anonymous"></script>
+    <script src="//code.jquery.com/jquery-3.2.1.min.js"></script>
+    
+<script src="https://openlayers.org/en/v4.2.0/build/ol.js" type="text/javascript"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/reconnecting-websocket/1.0.0/reconnecting-websocket.min.js"></script>
 
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAb9uWFWp3XuqOiGWgT0ZIDu7qPG3a_884"></script>
     <script src="Scripts/coordscontrol.js"></script>
     <script src="Scripts/layercontrol.js"></script>
+    <script src="Scripts/socket.js"></script>
     <script src="Scripts/biomemap.js"></script>
 </body>
 </html>

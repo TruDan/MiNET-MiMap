@@ -56,6 +56,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BiomeMapManager.cs" />
+    <Compile Include="Events\TileUpdateEventArgs.cs" />
     <Compile Include="Layers\BaseLayer.cs" />
     <Compile Include="Layers\IMapLayer.cs" />
     <Compile Include="Layers\OverlayLayer.cs" />

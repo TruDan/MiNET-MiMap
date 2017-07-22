@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using BiomeMap.Drawing.Data;
+using BiomeMap.Drawing.Events;
 using BiomeMap.Drawing.Utils;
 using log4net;
 using Size = BiomeMap.Drawing.Data.Size;
@@ -17,18 +18,22 @@ namespace BiomeMap.Drawing
 {
     public class TileScaler
     {
+        public event EventHandler<TileUpdateEventArgs> OnTileUpdated;
 
         private TileScalerRunner[] _runners;
 
-        public TileScaler(string basePath, Size renderScale, Size tileSize, int minZoom, int maxZoom)
+        public string LayerId { get; }
+
+        public TileScaler(string basePath, Size renderScale, Size tileSize, int minZoom, int maxZoom, string layerId)
         {
+            LayerId = layerId;
             var size = maxZoom - minZoom + 1;
             _runners = new TileScalerRunner[size];
 
             var i = 0;
             for (int z = minZoom; z <= maxZoom; z++)
             {
-                _runners[i] = new TileScalerRunner(basePath, z, renderScale, tileSize);
+                _runners[i] = new TileScalerRunner(this, basePath, z, renderScale, tileSize);
                 i++;
             }
         }
@@ -62,7 +67,7 @@ namespace BiomeMap.Drawing
                 if (_bitmap == null) _bitmap = _region.GetBitmap();
                 lock (_bitmapSync)
                 {
-                    return (Bitmap) _bitmap.Clone();
+                    return (Bitmap)_bitmap.Clone();
                 }
             }
         }
@@ -73,7 +78,10 @@ namespace BiomeMap.Drawing
 
             public const int ExecInterval = 500;
 
+
             public int Zoom { get; }
+
+            protected TileScaler Scaler { get; }
 
             private int Scale { get; }
 
@@ -92,8 +100,9 @@ namespace BiomeMap.Drawing
             private Timer _timer;
             private readonly object _taskSync = new object();
 
-            public TileScalerRunner(string basePath, int zoom, Size renderScale, Size tileSize)
+            public TileScalerRunner(TileScaler baseScaler, string basePath, int zoom, Size renderScale, Size tileSize)
             {
+                Scaler = baseScaler;
                 BasePath = basePath;
                 Zoom = zoom;
                 Scale = 1 << Zoom;
@@ -142,7 +151,7 @@ namespace BiomeMap.Drawing
                         if (_processing.Contains(entry))
                         {
                             _updates.Enqueue(_updates.Dequeue());
-                            if(_updates.Peek() == entry)
+                            if (_updates.Peek() == entry)
                                 return;
                         }
 
@@ -172,7 +181,7 @@ namespace BiomeMap.Drawing
                 var sync = new object();
 
                 //Parallel.For(0, Scale, tX =>
-                for(int tX=0;tX<Scale;tX++)
+                for (int tX = 0; tX < Scale; tX++)
                 {
                     //Parallel.For(0, Scale, tZ =>
                     for (int tZ = 0; tZ < Scale; tZ++)
@@ -183,7 +192,10 @@ namespace BiomeMap.Drawing
                             img = baseImg.Clone(new Rectangle(tX * RegionTileSize.Width, tZ * RegionTileSize.Height, RegionTileSize.Width, RegionTileSize.Height), format);
                         }
 
-                        DrawTile(regionPos, img, tX, tZ);
+                        var tilePos = new TilePosition((regionPos.X << Zoom) + tX, (regionPos.Z << Zoom) + tZ, Zoom);
+
+                        Scaler.OnTileUpdated?.Invoke(this, new TileUpdateEventArgs(Scaler.LayerId, tilePos));
+                        DrawTile(regionPos, img, tilePos);
                     }//);
                 }//);
 
@@ -192,7 +204,7 @@ namespace BiomeMap.Drawing
                 Log.InfoFormat("Scaled Region {0} to Zoom Level {1} in {2}ms", regionPos, Zoom, sw.ElapsedMilliseconds);
             }
 
-            private void DrawTile(RegionPosition regionPos, Bitmap baseBitmap, int tX, int tZ)
+            private void DrawTile(RegionPosition regionPos, Bitmap baseBitmap, TilePosition tilePos)
             {
                 using (baseBitmap)
                 {
@@ -203,8 +215,8 @@ namespace BiomeMap.Drawing
                             g.DrawImage(baseBitmap, new Rectangle(0, 0, TileSize.Width, TileSize.Height));
                         }
 
-                        var tilePath = Path.Combine(BasePath, Zoom.ToString(),
-                            ((regionPos.X << Zoom) + tX) + "_" + ((regionPos.Z << Zoom) + tZ) + ".png");
+                        var tilePath = Path.Combine(BasePath, tilePos.Zoom.ToString(),
+                            tilePos.X + "_" + tilePos.Z + ".png");
                         tileImg.SaveToFile(tilePath);
                     }
                 }

@@ -20,11 +20,7 @@ namespace BiomeMap.Drawing.Utils
             using (var ms = new MemoryStream())
             {
                 bitmap.Save(ms, ImageFormat.Png);
-                using (var fs = new FileStream(filePath, FileMode.OpenOrCreate, FileAccess.Write))
-                {
-                    byte[] bytes = ms.ToArray();
-                    fs.Write(bytes, 0, bytes.Length);
-                }
+                File.WriteAllBytes(filePath, ms.ToArray());
             }
         }
 

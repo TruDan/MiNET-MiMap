@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using BiomeMap.Drawing.Data;
+using BiomeMap.Drawing.Events;
 using BiomeMap.Drawing.Layers;
 using BiomeMap.Drawing.Renderers;
 using BiomeMap.Shared.Configuration;
@@ -19,6 +20,8 @@ namespace BiomeMap.Drawing
     public class LevelMap
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(LevelMap));
+
+        public event EventHandler<TileUpdateEventArgs> OnTileUpdated;
 
         protected BiomeMapManager BiomeMapManager { get; }
 
@@ -75,12 +78,16 @@ namespace BiomeMap.Drawing
             Directory.CreateDirectory(TilesDirectory);
 
             var layers = new IMapLayer[config.Layers.Length + 1];
-            layers[0] = new BaseLayer(this);
+            var baseLayer = new BaseLayer(this, config.LevelId);
+            baseLayer.OnTileUpdated += (s, e) => OnTileUpdated?.Invoke(s, e);
+            layers[0] = baseLayer;
 
             var i = 1;
             foreach (var layer in config.Layers)
             {
-                layers[i] = new OverlayLayer(this, layer);
+                var overlayerLayer = new OverlayLayer(this, layer);
+                overlayerLayer.OnTileUpdated += (s, e) => OnTileUpdated?.Invoke(s, e);
+                layers[i] = overlayerLayer;
                 i++;
             }
 

@@ -3,9 +3,23 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp1.1</TargetFramework>
     <PackageTargetFallback>portable-net45+win8</PackageTargetFallback>
+    <PreBuildEvent></PreBuildEvent>
+    <PostBuildEvent></PostBuildEvent>
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="wwwroot\tiles\**" />
+    <Content Remove="wwwroot\tiles\**" />
+    <EmbeddedResource Remove="wwwroot\tiles\**" />
+    <None Remove="wwwroot\tiles\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="wwwroot/Scripts\Net\packet.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="wwwroot\bower.json" />
     <Content Include="wwwroot\index.html" />
     <Content Include="wwwroot\Scripts\biomemap.js" />
     <Content Include="wwwroot\Scripts\coordscontrol.js" />

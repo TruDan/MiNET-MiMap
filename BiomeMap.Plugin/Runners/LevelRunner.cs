@@ -5,6 +5,10 @@ using System.Linq;
 using System.Threading;
 using BiomeMap.Drawing;
 using BiomeMap.Drawing.Data;
+using BiomeMap.Drawing.Events;
+using BiomeMap.Plugin.Net;
+using BiomeMap.Shared.Net;
+using BiomeMap.Shared.Net.Data;
 using log4net;
 using MiNET;
 using MiNET.Blocks;
@@ -32,14 +36,31 @@ namespace BiomeMap.Plugin.Runners
 
         private readonly Timer _timer;
         private readonly object _updateSync = new object();
-        
+
 
         public LevelRunner(MiNetServer server, LevelMap map)
         {
             _server = server;
             Map = map;
+
+            Map.OnTileUpdated += MapOnOnTileUpdated;
+
             _timer = new Timer(DoUpdate);
         }
+
+        private void MapOnOnTileUpdated(object sender, TileUpdateEventArgs e)
+        {
+            WsServer.BroadcastPacket(new TileUpdatePacket()
+            {
+                Tile = new Tile()
+                {
+                    X = e.TileX,
+                    Y = e.TileY,
+                    Zoom = e.TileZoom
+                }
+            });
+        }
+
         public void Start()
         {
             _timer.Change(UpdateInterval, UpdateInterval);
@@ -83,7 +104,7 @@ namespace BiomeMap.Plugin.Runners
                     {
                         //for (int j = 0; j < chunkGen; j++)
                         //{
-                            GenerateChunks(Level, chunkGen);
+                        GenerateChunks(Level, chunkGen);
                         //}
                     });
                 }
@@ -211,6 +232,15 @@ namespace BiomeMap.Plugin.Runners
             Level = lm.Levels.FirstOrDefault(l => l != null &&
                                                   l.LevelId.Equals(Map.Config.LevelId,
                                                       StringComparison.InvariantCultureIgnoreCase));
+
+            if (Level != null)
+            {
+                WsServer.BroadcastPacket(new LevelMetaPacket()
+                {
+                    LevelId = Level.LevelId,
+                    Meta = Map.Meta
+                });
+            }
         }
     }
 }

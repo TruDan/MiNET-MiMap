@@ -1,6 +1,6 @@
 ﻿{
-  //"TilesDirectory": "S:\\Development\\Projects\\BiomeMap\\MiNET.Server\\bin\\Debug\\RenderMaps",
-  "TilesDirectory": "C:\\Users\\truda\\Documents\\GitHub\\BiomeMap\\MiNET.Server\\bin\\Debug\\RenderMaps",
+  "TilesDirectory": "S:\\Development\\Projects\\BiomeMap\\BiomeMap.Web\\wwwroot\\tiles",
+  //"TilesDirectory": "C:\\Users\\truda\\Documents\\GitHub\\BiomeMap\\MiNET.Server\\bin\\Debug\\RenderMaps",
   "SaveInterval": 1000,
   "Levels": [
     /*{
@@ -21,13 +21,13 @@
           "Renderer": "Biome",
           "BlendMode": "Color"
         }*/
-      //]
+    //]
     //},
     {
       "LevelId": "Overworld",
-      "Label": "KennyGen",
+      "Label": "Winterfell",
       "Enabled": true,
-      "DefaultZoom": 5,
+      "DefaultZoom": 0,
       "MinZoom": 0,
       "MaxZoom": 4,
       "TileSize": 256,

@@ -28,5 +28,15 @@
     <Compile Include="$(MSBuildThisFileDirectory)Data\TilePosition.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Data\TilePositionComparer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LevelMeta.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Net\Data\Player.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Net\Data\Position.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Net\Data\Tile.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Net\IPacket.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Net\LevelMetaPacket.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Net\ListPlayersPacket.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Net\MapConfigPacket.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Net\Serialization\PacketSerializer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Net\TileUpdatePacket.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Net\NullPacket.cs" />
   </ItemGroup>
 </Project>

@@ -80,7 +80,7 @@ namespace BiomeMap.Drawing
                         using (var sr = new StreamReader(gs))
                         {
                             var json = sr.ReadToEnd();
-                            Blocks = JsonConvert.DeserializeObject<Dictionary<BlockPosition,BlockColumnMeta>>(json);
+                            Blocks = JsonConvert.DeserializeObject<Dictionary<BlockPosition, BlockColumnMeta>>(json);
                         }
                     }
                 }
@@ -95,7 +95,7 @@ namespace BiomeMap.Drawing
                 Graphics.Clear(Layer.Renderer.Background);
             }
         }
-        
+
         public void Save()
         {
             //PostProcess();
@@ -120,7 +120,7 @@ namespace BiomeMap.Drawing
                     }
                 }
             }
-            
+
         }
 
         private void SplitRegionForZoom(int zoomLevel)
@@ -177,10 +177,10 @@ namespace BiomeMap.Drawing
 
         public Bitmap GetBitmap()
         {
-            return Bitmap;
+            //return Bitmap;
             lock (_bitmapSync)
             {
-                return (Bitmap) Bitmap.Clone();
+                return (Bitmap)Bitmap.Clone();
             }
         }
 

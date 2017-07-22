@@ -18,7 +18,7 @@ namespace BiomeMap.Drawing.Layers
         public BiomeMapLevelLayerConfig Config { get; }
 
 
-        public OverlayLayer(LevelMap map, BiomeMapLevelLayerConfig config) : base(map, Path.Combine(map.TilesDirectory, config.LayerId), GetLayerRenderer(config.Renderer))
+        public OverlayLayer(LevelMap map, BiomeMapLevelLayerConfig config) : base(map, Path.Combine(map.TilesDirectory, config.LayerId), GetLayerRenderer(config.Renderer), map.Config.LevelId + "_" + config.LayerId)
         {
             Config = config;
             BlendMode = config.BlendMode;

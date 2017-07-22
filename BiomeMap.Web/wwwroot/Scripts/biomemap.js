@@ -9,23 +9,23 @@
     this.layerControl = null;
     this.coordsControl = null;
     this.levelMeta = {};
+    this.layers = {};
+    this.socket = new BiomeMapWebSocket();
 
-    this.loadConfig = function () {
-        $.getJSON("/config.json",
-            function (config) {
-                // init levels
-                $this._config = config;
+    this.init = function (config) {
+        // init levels
+        $this._config = config;
 
-                $this.initMap(config);
+        $this.initMap(config);
 
-                $.each(config.levels,
-                    function (key, value) {
-                        $this.initLevel(value);
-                    });
-
-                $this.layerControl.init();
-                $this.coordsControl.init();
+        $.each(config.levels,
+            function (key, value) {
+                $this.initLevel(value);
             });
+
+        $this.layerControl.init();
+        $this.coordsControl.init();
+        $this.socket.init($this.map);
     };
 
     this.getTileUrlFunc = function (levelId, layerId) {
@@ -48,7 +48,7 @@
             }
 
 
-            return "/tiles/" + levelId + "/" + layerId + "/" + zoom + "/" + coord.x + "_" + coord.y + ".png";
+            return window.location.pathname + "tiles/" + levelId + "/" + layerId + "/" + zoom + "/" + coord.x + "_" + coord.y + ".png";
         };
     }
 
@@ -71,6 +71,7 @@
             maxZoom: levelConfig.maxZoom,
             minZoom: levelConfig.minZoom
         });
+        $this.layers[levelConfig.levelId] = layer;
 
         var levelLayerCtrl = this.layerControl.addLayer(levelConfig.levelId, layer);
 
@@ -84,6 +85,7 @@
                     name: value.label || value.levelId,
                     blendMode: value.blendMode
                 });
+                $this.layers[levelConfig.levelId + "_" + value.layerId] = overlayLayer;
 
                 overlayLayer.baseMapTypes = [levelConfig.levelId];
 
@@ -94,11 +96,8 @@
             });
     };
 
-    this.updateLevelMeta = function (levelId) {
-        $.getJSON("/meta/" + levelId + ".json",
-            function (meta) {
-                $this.levelMeta[levelId] = meta;
-            });
+    this.updateLevelMeta = function (levelId, meta) {
+        $this.levelMeta[levelId] = meta;
     }
 
     this.initMap = function (config) {
@@ -153,7 +152,14 @@
         this.coordsControl = new CoordsControl($this.map);
     };
 
-    this.loadConfig();
+    this.refreshTile = function (layerId, tileX, tileY, tileZoom) {
+        if (layerId in $this.layers) {
+            var layer = $this.layers[layerId];
+            layer.refreshTile(tileX, tileY, tileZoom);
+        }
+    };
+
+    this.socket.open();
 }
 
 function BiomeMapLayer(options) {
@@ -164,6 +170,7 @@ function BiomeMapLayer(options) {
     this.tileSize = options.tileSize;
     this.minZoom = options.minZoom;
     this.maxZoom = options.maxZoom;
+    this.loadedTiles = {};
 
     //this.projection = google.maps.MapCanvasProjection;
 
@@ -173,29 +180,85 @@ function BiomeMapLayer(options) {
 //BiomeMapLayer.prototype.constructor = BiomeMapLayer;
 
 BiomeMapLayer.prototype.getTile = function (coord, zoom, ownerDocument) {
+    var tileId = 'x_' + coord.x + '_y_' + coord.y + '_zoom_' + zoom;
     //var div = google.maps.ImageMapType.prototype.getTile.call(this, coord, zoom, ownerDocument);
 
 
-    var div = ownerDocument.createElement('div');
+    var tile = ownerDocument.createElement('div');
+    tile.style.backgroundPosition = 'center center';
+    tile.style.backgroundRepeat = 'no-repeat';
+    tile.style.textAlign = 'center';
+    tile.style.display = 'flex';
+    tile.style.flexDirection = 'column';
+    tile.style.justifyContent = 'center';
+    tile.style.borderWidth = '1px';
+    tile.style.borderColor = '#000000';
+    tile.style.borderStyle = 'solid';
+    tile.style.color = '#f1f1f1';
+    tile.style.opacity = '0.25';
+    tile.style.textShadow = '0 0 3px #000000';
+    tile.innerHTML = "<span>" + tileId + "</span>";
 
-    div.style.width = this.tileSize.width + 'px';
-    div.style.height = this.tileSize.height + 'px';
-
-    var src = this.getTileUrl(coord, zoom);
-    if (src !== null) {
-        var img = new Image();
-        img.style.display = 'none';
-        div.appendChild(img);
-        img.onload = function () {
-            img.style.display = 'inline';
-        }
-        img.src = src;
-
-    }
+    tile.style.width = this.tileSize.width + 'px';
+    tile.style.height = this.tileSize.height + 'px';
 
     if (this.blendMode !== undefined)
-        div.style.mixBlendMode = this.blendMode;
-    return div;
+        tile.style.mixBlendMode = this.blendMode;
+
+
+    var tileUrl = this.getTileUrl(coord, zoom);
+
+    tile.tileId = tileId; //	do not use 'id' as new custom property as it's a native property of all HTML elements
+    tile.tileUrl = tileUrl;
+
+    this.loadedTiles[tileId] = tile;
+
+    if (tileUrl !== null) {
+        tileUrl += '?timestamp=' + new Date().getTime();
+
+        var img = new Image();
+        img.onload = function () {
+            tile.style.backgroundImage = 'url(' + tileUrl + ')';
+            tile.style.opacity = '1';
+            img.onload = null;
+            img = null;
+        }
+        img.src = tileUrl;
+    }
+
+    return tile;
+};
+
+BiomeMapLayer.prototype.refreshTiles = function () {
+    for (var tileId in this.loadedTiles) {
+        this.refreshTileById(tileId);
+    }
+};
+
+BiomeMapLayer.prototype.refreshTile = function (x, y, zoom) {
+    var tileId = 'x_' + x + '_y_' + y + '_zoom_' + zoom;
+    this.refreshTileById(tileId);
+}
+
+BiomeMapLayer.prototype.refreshTileById = function (tileId) {
+    function onloadCallback(tile2, tileUrl2) {
+        return function () {
+            tile2.style.backgroundImage = 'url(' + tileUrl2 + ')';
+        };
+    }
+
+    var tile = this.loadedTiles[tileId];
+    if (tile !== undefined && tile !== null) {
+        var tileUrl = tile.tileUrl + '?timestamp=' + new Date().getTime();
+        var img = new Image();
+        img.onload = onloadCallback(tile, tileUrl);
+        img.src = tileUrl;
+    }
+};
+
+BiomeMapLayer.prototype.releaseTile = function (tile) {
+    delete this.loadedTiles[tile.tileId];
+    tile = null;
 };
 
 function initMap() {

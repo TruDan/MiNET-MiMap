@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using BiomeMap.Drawing;
+using BiomeMap.Plugin.Net;
 using BiomeMap.Plugin.Runners;
 using BiomeMap.Shared.Configuration;
 using log4net;
@@ -18,17 +19,29 @@ namespace BiomeMap.Plugin
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(BiomeMapPlugin));
 
+        public static BiomeMapConfig Config { get; }
+
+        public static BiomeMapPlugin Instance { get; private set; }
+
         public BiomeMapManager BiomeMapManager { get; }
+
+        public LevelRunner[] LevelRunners => _levelRunners.Values.ToArray();
 
         private readonly Dictionary<string, LevelRunner> _levelRunners = new Dictionary<string, LevelRunner>();
 
+        static BiomeMapPlugin()
+        {
+            Config = GetConfig();
+        }
+
         public BiomeMapPlugin()
         {
-            BiomeMapManager = new BiomeMapManager(GetConfig());
+            Instance = this;
+            BiomeMapManager = new BiomeMapManager(Config);
             //Log.InfoFormat("Config Loaded\n{0}", JsonConvert.SerializeObject(BiomeMapManager.Config, Formatting.Indented));
         }
 
-        private BiomeMapConfig GetConfig()
+        private static BiomeMapConfig GetConfig()
         {
             try
             {
@@ -74,6 +87,8 @@ namespace BiomeMap.Plugin
         protected override void OnEnable()
         {
             base.OnEnable();
+            WsServer.Start();
+
             BiomeMapManager.Initialise();
             InitLevelRunners();
             BiomeMapManager.Start();
@@ -93,6 +108,7 @@ namespace BiomeMap.Plugin
 
             BiomeMapManager.Stop();
             _levelRunners.Clear();
+            WsServer.Stop();
             base.OnDisable();
 
         }

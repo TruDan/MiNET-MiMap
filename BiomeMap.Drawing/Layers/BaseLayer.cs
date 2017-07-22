@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using BiomeMap.Drawing.Data;
+using BiomeMap.Drawing.Events;
 using BiomeMap.Drawing.Renderers;
 using BiomeMap.Drawing.Renderers.Base;
 using BiomeMap.Drawing.Renderers.Overlay;
@@ -26,6 +27,10 @@ namespace BiomeMap.Drawing.Layers
         private const int MaxUpdatesPerInterval = int.MaxValue;
         private static readonly TimeSpan CleanupTimespan = TimeSpan.FromSeconds(30);
 
+        public event EventHandler<TileUpdateEventArgs> OnTileUpdated;
+
+        public string LayerId { get; }
+
         public LevelMap Map { get; }
 
         public string Directory { get; }
@@ -40,24 +45,25 @@ namespace BiomeMap.Drawing.Layers
         private readonly object _cleanupSync = new object();
 
         private readonly ConcurrentQueue<BlockColumnMeta> _updates = new ConcurrentQueue<BlockColumnMeta>();
-        
+
         private TileScaler Scaler { get; }
 
         private Timer _cleanupTimer { get; }
 
-        public BaseLayer(LevelMap map) : this(map, Path.Combine(map.TilesDirectory, "base"),
-            GetLayerRenderer(map.Config.BaseLayer))
+        public BaseLayer(LevelMap map, string layerId) : this(map, Path.Combine(map.TilesDirectory, "base"),
+            GetLayerRenderer(map.Config.BaseLayer), layerId)
         {
 
         }
 
-        protected BaseLayer(LevelMap map, string directory, ILayerRenderer renderer)
+        protected BaseLayer(LevelMap map, string directory, ILayerRenderer renderer, string layerId)
         {
             Map = map;
             Directory = directory;
             Renderer = renderer;
 
-            Scaler = new TileScaler(directory, renderer.RenderScale, map.Meta.TileSize, map.Meta.MinZoom, map.Meta.MaxZoom);
+            Scaler = new TileScaler(directory, renderer.RenderScale, map.Meta.TileSize, map.Meta.MinZoom, map.Meta.MaxZoom, LayerId);
+            Scaler.OnTileUpdated += (s, e) => OnTileUpdated?.Invoke(s, e);
             //_cleanupTimer = new Timer(CleanupCallback, null, 5000, 5000);
         }
 
@@ -107,14 +113,14 @@ namespace BiomeMap.Drawing.Layers
             }
 
             if (updates.Count == 0) return;
-            
+
             var regions = updates.GroupBy(c => c.Position.GetRegionPosition());
             //Parallel.ForEach(regions, (r) =>
 
             foreach (var r in regions)
             {
                 var region = GetRegionLayer(r.Key);
-                
+
                 var j = 0;
                 var sw = Stopwatch.StartNew();
 
@@ -128,11 +134,11 @@ namespace BiomeMap.Drawing.Layers
                 Log.InfoFormat("Saving Region {0} with {1} updates in {2}ms", r.Key, j, sw.ElapsedMilliseconds);
             }
 
-            if(updateSw.ElapsedMilliseconds > 500)
+            if (updateSw.ElapsedMilliseconds > 500)
                 Log.InfoFormat("Layer {0} updated in {1}ms", GetType().Name, updateSw.ElapsedMilliseconds);
         }
 
-        
+
         public void UpdateBlockColumn(BlockColumnMeta column)
         {
             _updates.Enqueue(column);
