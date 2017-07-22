@@ -24,6 +24,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BiomeMap.Web", "BiomeMap.We
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "BiomeMap.Shared", "BiomeMap.Shared\BiomeMap.Shared.shproj", "{3CF2F2F5-A0CA-4B56-AC5C-3C5B98212FA3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BiomeMap.GeneratorPlugin", "BiomeMap.GeneratorPlugin\BiomeMap.GeneratorPlugin.csproj", "{9F6676F8-F6BE-41A2-880B-806263FD54E5}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		BiomeMap.Shared\BiomeMap.Shared.projitems*{3cf2f2f5-a0ca-4b56-ac5c-3c5b98212fa3}*SharedItemsImports = 13
@@ -54,6 +56,10 @@ Global
 		{35C68E11-E308-4FB6-9618-EE60F5A87B54}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{35C68E11-E308-4FB6-9618-EE60F5A87B54}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{35C68E11-E308-4FB6-9618-EE60F5A87B54}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9F6676F8-F6BE-41A2-880B-806263FD54E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F6676F8-F6BE-41A2-880B-806263FD54E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9F6676F8-F6BE-41A2-880B-806263FD54E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9F6676F8-F6BE-41A2-880B-806263FD54E5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

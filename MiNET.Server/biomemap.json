@@ -1,25 +1,38 @@
 ﻿{
-  "TilesDirectory": "S:\\Development\\Projects\\BiomeMap\\MiNET.Server\\bin\\Debug\\RenderMaps",
+  //"TilesDirectory": "S:\\Development\\Projects\\BiomeMap\\MiNET.Server\\bin\\Debug\\RenderMaps",
+  "TilesDirectory": "C:\\Users\\truda\\Documents\\GitHub\\BiomeMap\\MiNET.Server\\bin\\Debug\\RenderMaps",
   "SaveInterval": 1000,
   "Levels": [
-    {
+    /*{
       "LevelId": "Overworld",
-      "Label": "Overworld",
+      "Label": "KennyGen",
       "Enabled": true,
       "DefaultZoom": 2,
-      "MinZoom": 2,
-      "MaxZoom": 2,
+      "MinZoom": 0,
+      "MaxZoom": 4,
       "TileSize": 256,
       "BaseLayer": "Texture",
       "Layers": [
         /*{
-          "LayerId": "HeightMap",
-          "Label": "Height Map",
+          "LayerId": "Biome",
+          "Label": "Biomes",
           "Enabled": true,
           "Default": false,
-          "Renderer": "HeightMap"
+          "Renderer": "Biome",
+          "BlendMode": "Color"
         }*/
-      ]
+      //]
+    //},
+    {
+      "LevelId": "Overworld",
+      "Label": "KennyGen",
+      "Enabled": true,
+      "DefaultZoom": 5,
+      "MinZoom": 0,
+      "MaxZoom": 4,
+      "TileSize": 256,
+      "BaseLayer": "Texture",
+      "Layers": []
     }
   ]
 }

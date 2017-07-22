@@ -40,6 +40,9 @@ namespace BiomeMap.Drawing.Layers
                 case BiomeMapOverlayRenderer.HeightMap:
                     renderer = new HeightMapOverlayRenderer();
                     break;
+                case BiomeMapOverlayRenderer.Biome:
+                    renderer = new BiomeOverlayRenderer();
+                    break;
 
                 default:
                     renderer = new DefaultLayerRenderer();

@@ -30,10 +30,9 @@ namespace BiomeMap.Plugin.Runners
 
         private readonly List<ChunkCoordinates> _renderedChunks = new List<ChunkCoordinates>();
 
-        private Timer _timer;
+        private readonly Timer _timer;
         private readonly object _updateSync = new object();
-
-        private SkyLightCalculations _skyLightCalculations = new SkyLightCalculations();
+        
 
         public LevelRunner(MiNetServer server, LevelMap map)
         {
@@ -82,14 +81,14 @@ namespace BiomeMap.Plugin.Runners
                 {
                     ThreadPool.QueueUserWorkItem(o =>
                     {
-                        for (int j = 0; j < chunkGen; j++)
-                        {
-                            GenerateChunks(Level, j);
-                        }
+                        //for (int j = 0; j < chunkGen; j++)
+                        //{
+                            GenerateChunks(Level, chunkGen);
+                        //}
                     });
                 }
             }
-
+            return;
             var sw = Stopwatch.StartNew();
 
             var chunks = Level.GetLoadedChunks();
@@ -108,7 +107,6 @@ namespace BiomeMap.Plugin.Runners
                     continue;
 
                 RenderChunk(chunk);
-                _renderedChunks.Add(coords);
 
                 i++;
             }
@@ -121,24 +119,26 @@ namespace BiomeMap.Plugin.Runners
 
         private void GenerateChunks(Level level, int r)
         {
-            //Log.InfoFormat("Generating chunks for radius {0}", r);
-            for (var x = -r; x <= r; x++)
-            {
-                for (var z = -r; z <= r; z++)
-                {
-                    if (x != r && z != r)
-                        continue;
 
-                    //ThreadPool.QueueUserWorkItem((o) =>
-                    //{
-                    level.GetChunk(new ChunkCoordinates(x, z));
-                    //});
+            for (int dx = -r; dx <= r; dx++)
+            {
+                for (int dz = -r; dz <= r; dz++)
+                {
+
+                    var coords = new ChunkCoordinates(dx, dz);
+                    //ThreadPool.QueueUserWorkItem(c => level.GetChunk((ChunkCoordinates) c), coords);
+
+                    var chunk = level.GetChunk(coords);
+                    RenderChunk(chunk);
+                    (level.WorldProvider as ICachingWorldProvider)?.ClearCachedChunks();
+
                 }
             }
         }
 
         private void RenderChunk(ChunkColumn chunk)
         {
+            _renderedChunks.Add(new ChunkCoordinates(chunk.x, chunk.z));
             chunk.RecalcHeight();
 
             for (int x = 0; x < 16; x++)

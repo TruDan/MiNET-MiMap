@@ -67,6 +67,7 @@
     <Compile Include="Renderers\Base\TextureMap.cs" />
     <Compile Include="Renderers\ILayerRenderer.cs" />
     <Compile Include="Renderers\IPostProcessor.cs" />
+    <Compile Include="Renderers\Overlay\BiomeOverlayRenderer.cs" />
     <Compile Include="Renderers\Overlay\HeightMapOverlayRenderer.cs" />
     <Compile Include="MapTile.cs" />
     <Compile Include="Renderers\PostProcessors\HeightShadowPostProcessor.cs" />
@@ -76,6 +77,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Textures.resx</DependentUpon>
     </Compile>
+    <Compile Include="TileScaler.cs" />
     <Compile Include="Utils\ImageUtils.cs" />
     <Compile Include="Utils\MathUtils.cs" />
   </ItemGroup>
@@ -87,6 +89,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="Resources\default.zip" />
     <None Include="Resources\PureBDcraft  16x MC112.zip" />
     <None Include="texturemap.json" />
   </ItemGroup>

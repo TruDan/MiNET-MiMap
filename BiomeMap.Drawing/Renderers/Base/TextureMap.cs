@@ -21,7 +21,7 @@ namespace BiomeMap.Drawing.Renderers.Base
 
         private ZipArchive ResourcePack { get; }
 
-        public TextureMap() : this(new MemoryStream(Textures.PureBDCraft_x16))
+        public TextureMap() : this(new MemoryStream(Textures._default))
         {
 
         }
@@ -101,15 +101,15 @@ namespace BiomeMap.Drawing.Renderers.Base
             return false;
         }
 
-        public Bitmap GetTexture(byte blockId)
+        public TextureBrush GetTexture(byte blockId)
         {
             Bitmap bitmap;
             if (_textures.TryGetValue(blockId, out bitmap))
             {
-                return bitmap;
+                return new TextureBrush(bitmap);
             }
 
-            return _noTexture;
+            return new TextureBrush(_noTexture);
         }
 
         public void Dispose()

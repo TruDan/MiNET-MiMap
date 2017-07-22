@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,6 +12,7 @@ using BiomeMap.Drawing.Data;
 using BiomeMap.Drawing.Layers;
 using BiomeMap.Drawing.Utils;
 using log4net;
+using Newtonsoft.Json;
 
 namespace BiomeMap.Drawing
 {
@@ -23,7 +25,9 @@ namespace BiomeMap.Drawing
 
         public RegionPosition Position { get; }
 
-        public Dictionary<BlockPosition, BlockColumnMeta> Blocks { get; } = new Dictionary<BlockPosition, BlockColumnMeta>();
+        public Dictionary<BlockPosition, BlockColumnMeta> Blocks { get; private set; } = new Dictionary<BlockPosition, BlockColumnMeta>();
+
+        public DateTime LastUpdated { get; private set; }
 
         private string FilePath { get; }
 
@@ -51,7 +55,7 @@ namespace BiomeMap.Drawing
             Bitmap bitmap;
             if (File.Exists(FilePath))
             {
-                using (var fs = new FileStream(FilePath, FileMode.Open, FileAccess.Read))
+                using (var fs = new FileStream(FilePath, FileMode.Open, FileAccess.ReadWrite))
                 {
                     using (var img = Image.FromStream(fs))
                     {
@@ -65,6 +69,23 @@ namespace BiomeMap.Drawing
                 IsNew = true;
             }
 
+            var metaPath = Path.Combine(Path.GetDirectoryName(FilePath),
+                Path.GetFileNameWithoutExtension(FilePath) + ".json");
+            if (File.Exists(metaPath))
+            {
+                using (var fs = new FileStream(metaPath, FileMode.Open, FileAccess.ReadWrite))
+                {
+                    using (var gs = new GZipStream(fs, CompressionLevel.Optimal))
+                    {
+                        using (var sr = new StreamReader(gs))
+                        {
+                            var json = sr.ReadToEnd();
+                            Blocks = JsonConvert.DeserializeObject<Dictionary<BlockPosition,BlockColumnMeta>>(json);
+                        }
+                    }
+                }
+            }
+
             Bitmap = bitmap;
             BitmapBounds = new RectangleF(0, 0, Bitmap.Width, Bitmap.Height);
             Graphics = bitmap.GetGraphics();
@@ -74,25 +95,32 @@ namespace BiomeMap.Drawing
                 Graphics.Clear(Layer.Renderer.Background);
             }
         }
-
-        private void PostProcess()
+        
+        public void Save()
         {
-            foreach (var processor in Layer.PostProcessors)
-            {
-                processor.PostProcess(this, Graphics);
-            }
-        }
+            //PostProcess();
 
-        private void Save()
-        {
-            PostProcess();
-
-            Parallel.For(Layer.Map.Meta.MinZoom, Layer.Map.Meta.MaxZoom + 1, SplitRegionForZoom);
+            //Parallel.For(Layer.Map.Meta.MinZoom, Layer.Map.Meta.MaxZoom + 1, SplitRegionForZoom);
 
             lock (_bitmapSync)
             {
                 Bitmap.SaveToFile(FilePath);
             }
+
+            var metaPath = Path.Combine(Path.GetDirectoryName(FilePath),
+                Path.GetFileNameWithoutExtension(FilePath) + ".json");
+            using (var fs = new FileStream(metaPath, FileMode.OpenOrCreate, FileAccess.Write))
+            {
+                using (var gs = new GZipStream(fs, CompressionLevel.Optimal))
+                {
+                    using (var sr = new StreamWriter(gs))
+                    {
+                        var json = JsonConvert.SerializeObject(Blocks);
+                        sr.Write(json);
+                    }
+                }
+            }
+            
         }
 
         private void SplitRegionForZoom(int zoomLevel)
@@ -147,6 +175,15 @@ namespace BiomeMap.Drawing
             return img;
         }
 
+        public Bitmap GetBitmap()
+        {
+            return Bitmap;
+            lock (_bitmapSync)
+            {
+                return (Bitmap) Bitmap.Clone();
+            }
+        }
+
         public void Update(BlockColumnMeta update)
         {
             var rect = GetBlockRectangle(update.Position);
@@ -158,11 +195,18 @@ namespace BiomeMap.Drawing
             }
 
             Blocks[update.Position] = update;
+            LastUpdated = DateTime.UtcNow;
 
             //using (var clip = new Region(rect))
             //{
             //Graphics.Clip = clip;
             Layer.Renderer.DrawBlock(Graphics, rect, update);
+
+            foreach (var postProcessor in Layer.PostProcessors)
+            {
+                postProcessor.PostProcess(this, Graphics, update);
+            }
+
             //Graphics.ResetClip();
             //}
         }

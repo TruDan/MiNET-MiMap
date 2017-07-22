@@ -14,19 +14,11 @@ namespace BiomeMap.Drawing.Renderers.PostProcessors
         private const float MaxLightLevel = 15f;
         private const float MaxOverlayAlpha = 255f;
 
-        public void PostProcess(MapRegionLayer layer, Graphics graphics)
+        public void PostProcess(MapRegionLayer layer, Graphics graphics, BlockColumnMeta block)
         {
-            foreach (var block in layer.Blocks.Values.ToArray())
-            {
-                DrawLighting(layer, graphics, block);
-            }
-        }
+            var rect = layer.GetBlockRectangle(block.Position);
 
-        private void DrawLighting(MapRegionLayer layer, Graphics graphics, BlockColumnMeta column)
-        {
-            var rect = layer.GetBlockRectangle(column.Position);
-
-            var alpha = (int)MathUtils.Clamp(MaxOverlayAlpha * ((MaxLightLevel - column.LightLevel) / MaxLightLevel), 0f, MaxOverlayAlpha);
+            var alpha = (int)MathUtils.Clamp(MaxOverlayAlpha * ((MaxLightLevel - block.LightLevel) / MaxLightLevel), 0f, MaxOverlayAlpha);
 
             using (var brush = new SolidBrush(Color.FromArgb(alpha, Color.Black)))
             {

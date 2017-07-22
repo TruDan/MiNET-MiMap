@@ -31,21 +31,20 @@ namespace BiomeMap.Drawing.Renderers.Base
         {
             var blockId = (byte)blockColumn.BlockId;
 
-            Bitmap texture = TextureMap.GetTexture(blockId);
+            using (var texture = TextureMap.GetTexture(blockId))
+            {
+                graphics.FillRectangle(texture, bounds);
 
-            if (FoilageBlocks.Contains(blockId))
-            {
-                var biome = BiomeUtils.GetBiome(blockColumn.BiomeId);
-                var c = Color.FromArgb(biome.Foliage);
-                var tint = Color.FromArgb(255, c.R, c.G, c.B);
-                using (var img = texture.Tint(tint))
+                if (FoilageBlocks.Contains(blockId))
                 {
-                    graphics.DrawImage(img, bounds);
+                    var biome = BiomeUtils.GetBiome(blockColumn.BiomeId);
+                    var c = Color.FromArgb(biome.Foliage);
+                    var tint = Color.FromArgb(128, c.R, c.G, c.B);
+                    using (var img = new SolidBrush(tint))
+                    {
+                        graphics.FillRectangle(img, bounds);
+                    }
                 }
-            }
-            else
-            {
-                graphics.DrawImage(texture, bounds);
             }
 
         }

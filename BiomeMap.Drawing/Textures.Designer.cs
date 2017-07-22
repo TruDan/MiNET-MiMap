@@ -63,6 +63,16 @@ namespace BiomeMap.Drawing {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
+        internal static byte[] _default {
+            get {
+                object obj = ResourceManager.GetObject("_default", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
         internal static byte[] PureBDCraft_x16 {
             get {
                 object obj = ResourceManager.GetObject("PureBDCraft_x16", resourceCulture);

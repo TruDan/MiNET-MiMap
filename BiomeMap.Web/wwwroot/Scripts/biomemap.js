@@ -33,10 +33,10 @@
             var bounds = $this.levelMeta[levelId].bounds;
             var scale = 1 << zoom;
 
-            var minTileX = Math.floor((bounds.min.x >> 9) * scale);
-            var minTileZ = Math.floor((bounds.min.z >> 9) * scale);
-            var maxTileX = Math.floor((bounds.max.x >> 9) * scale);
-            var maxTileZ = Math.floor((bounds.max.z >> 9) * scale);
+            var minTileX = Math.floor((bounds.min.x << zoom) >> 9);
+            var minTileZ = Math.floor((bounds.min.z << zoom) >> 9);
+            var maxTileX = Math.floor((bounds.max.x << zoom) >> 9);
+            var maxTileZ = Math.floor((bounds.max.z << zoom) >> 9);
 
             //console.log(coord, zoom, bounds.min, bounds.max, minTileX, minTileZ, maxTileX, maxTileZ);
 
@@ -141,7 +141,7 @@
 
                 mapTypeId: mapTypeIds[0],
 
-                //backgroundColor: '#212121',
+                backgroundColor: '#212121',
                 noClear: false
             });
 
@@ -200,6 +200,7 @@ BiomeMapLayer.prototype.getTile = function (coord, zoom, ownerDocument) {
 
 function initMap() {
     window.biomeMap = new BiomeMap();
+    //window.biomeMap.map.backgroundColor = "#212121";
 };
 /*
 $(document).ready(function () {

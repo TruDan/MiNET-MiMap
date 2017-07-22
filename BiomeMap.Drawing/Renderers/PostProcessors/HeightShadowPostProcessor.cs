@@ -12,6 +12,29 @@ namespace BiomeMap.Drawing.Renderers.PostProcessors
     public class HeightShadowPostProcessor : IPostProcessor
     {
 
+        public void PostProcess(MapRegionLayer layer, Graphics graphics, BlockColumnMeta block)
+        {
+            DrawShadow(layer, graphics, block, 
+                Math.Max(GetHeightDiff(layer, block, 0, -1), 0),
+                Math.Max(GetHeightDiff(layer, block, -1, 0), 0),
+                Math.Max(GetHeightDiff(layer, block, 1, 0), 0),
+                Math.Max(GetHeightDiff(layer, block, 0, 1), 0));
+        }
+
+        private int GetHeightDiff(MapRegionLayer layer, BlockColumnMeta block, int xOffset, int zOffset)
+        {
+            var pos = new BlockPosition(block.Position.X + xOffset, block.Position.Z + zOffset);
+
+            BlockColumnMeta targetBlock;
+            if (layer.Blocks.TryGetValue(pos, out targetBlock))
+            {
+                return targetBlock.Height - block.Height;
+            }
+
+            return 0;
+        }
+
+        /*
         public void PostProcess(MapRegionLayer layer, Graphics graphics)
         {
             //ShadowSize = (int)Math.Max(1, (layer.Layer.Renderer.RenderScale.Width * 0.25f));
@@ -55,7 +78,7 @@ namespace BiomeMap.Drawing.Renderers.PostProcessors
                 //graphics.ResetClip();
             }
         }
-
+        */
         private const float AlphaMultiplier = 255f / 8f;
 
         private const float ShadowSizeMultiplier = 8f / MaxShadowSize;
