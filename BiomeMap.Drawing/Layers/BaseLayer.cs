@@ -61,8 +61,9 @@ namespace BiomeMap.Drawing.Layers
             Map = map;
             Directory = directory;
             Renderer = renderer;
+            LayerId = layerId;
 
-            Scaler = new TileScaler(directory, renderer.RenderScale, map.Meta.TileSize, map.Meta.MinZoom, map.Meta.MaxZoom, LayerId);
+            Scaler = new TileScaler(directory, renderer.RenderScale, map.Meta.TileSize, map.Meta.MinZoom, map.Meta.MaxZoom, layerId);
             Scaler.OnTileUpdated += (s, e) => OnTileUpdated?.Invoke(s, e);
             //_cleanupTimer = new Timer(CleanupCallback, null, 5000, 5000);
         }

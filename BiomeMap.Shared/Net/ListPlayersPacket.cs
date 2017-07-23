@@ -7,7 +7,7 @@ namespace BiomeMap.Shared.Net
 {
     public class ListPlayersPacket : IPacket
     {
-        public byte Id { get; } = 4;
+        public byte Id { get; } = Protocol.ListPlayers;
         public Player[] Players { get; set; }
     }
 }

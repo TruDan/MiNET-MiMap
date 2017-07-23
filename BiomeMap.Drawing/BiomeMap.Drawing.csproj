@@ -36,6 +36,9 @@
     <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <HintPath>..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
     </Reference>
+    <Reference Include="MIConvexHull.NET Standard, Version=1.0.17.411, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MIConvexHull.1.1.17.0411\lib\netstandard1.0\MIConvexHull.NET Standard.dll</HintPath>
+    </Reference>
     <Reference Include="MiNET">
       <HintPath>..\Libs\MiNET.dll</HintPath>
     </Reference>
@@ -94,7 +97,9 @@
     <None Include="Resources\PureBDcraft  16x MC112.zip" />
     <None Include="texturemap.json" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="MIConvexHull.xml" />
+  </ItemGroup>
   <Import Project="..\BiomeMap.Shared\BiomeMap.Shared.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -25,11 +25,11 @@
     //},
     {
       "LevelId": "Overworld",
-      "Label": "Winterfell",
+      "Label": "KennyGen",
       "Enabled": true,
       "DefaultZoom": 0,
       "MinZoom": 0,
-      "MaxZoom": 4,
+      "MaxZoom": 5,
       "TileSize": 256,
       "BaseLayer": "Texture",
       "Layers": []

@@ -1,6 +1,6 @@
 ﻿namespace BiomeMap.Drawing.Data
 {
-    public abstract class Position
+    public class Position
     {
         public int X { get; set; }
         public int Z { get; set; }

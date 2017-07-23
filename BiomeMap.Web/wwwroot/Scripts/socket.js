@@ -5,14 +5,14 @@ function BiomeMapWebSocket() {
     this._map = map;
 
     var _defaultOptions = {
-        position: google.maps.ControlPosition.TOP_RIGHT
+
     };
 
 
     this.init = function (map, options) {
         this._map = map;
         this.options = $.extend({}, _defaultOptions, options);
-        this._map.controls[this.options.position].push(this.getControl());
+        //this._map.controls[this.options.position].push(this.getControl());
     }
 
     var socket = new ReconnectingWebSocket("ws://" + window.location.hostname + ":5001",
@@ -40,7 +40,7 @@ function BiomeMapWebSocket() {
                 break;
 
             case 2: // TileUpdatePacket
-                window.biomeMap.refreshTile(packet.layerId, packet.tile.y, packet.tile.zoom);
+                window.biomeMap.refreshTile(packet.layerId, packet.tile.x, packet.tile.y, packet.tile.zoom);
                 break;
 
             case 3: // LevelMetaPacket
@@ -57,6 +57,18 @@ function BiomeMapWebSocket() {
                 console.log("Unknown Packet.", msg);
                 return;
         }
+    }
+
+    this.subscribeTiles = function (enabled, zoomLevel) {
+        this.send({
+            id: 5,
+            subscribe: enabled,
+            currentZoomLevel: zoomLevel
+        });
+    }
+
+    this.send = function (packet) {
+        socket.send(JSON.stringify(packet));
     }
 
     this.open = function () {

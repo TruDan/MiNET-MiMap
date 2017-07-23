@@ -84,6 +84,7 @@
   <ItemGroup>
     <Compile Include="BiomeMapPluginConfig.cs" />
     <Compile Include="BiomeMapPlugin.cs" />
+    <Compile Include="Net\WsConnection.cs" />
     <Compile Include="Net\WsServer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Runners\LevelRunner.cs" />

@@ -21,7 +21,7 @@ namespace BiomeMap.Drawing.Renderers.Base
 
         private ZipArchive ResourcePack { get; }
 
-        public TextureMap() : this(new MemoryStream(Textures._default))
+        public TextureMap() : this(new MemoryStream(Textures.PureBDCraft_x16))
         {
 
         }
@@ -68,12 +68,12 @@ namespace BiomeMap.Drawing.Renderers.Base
                     }
                     else
                     {
-                        Log.InfoFormat("TexturePack Loaded Block ID {0}\t({1}) - {2}", id, name, name);
+                        //Log.InfoFormat("TexturePack Loaded Block ID {0}\t({1}) - {2}", id, name, name);
                     }
                 }
                 else
                 {
-                    Log.InfoFormat("TexturePack Loaded Block ID {0}\t({1}) - {2}", id, name, name + "_top");
+                    //Log.InfoFormat("TexturePack Loaded Block ID {0}\t({1}) - {2}", id, name, name + "_top");
                 }
 
                 _textures[id] = img;

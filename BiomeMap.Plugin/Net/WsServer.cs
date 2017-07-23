@@ -17,25 +17,25 @@ namespace BiomeMap.Plugin.Net
 
 
         private static readonly object _sync = new object();
-        public static List<IWebSocketConnection> Connections = new List<IWebSocketConnection>();
+        public static List<WsConnection> Connections = new List<WsConnection>();
 
 
         private static readonly WebSocketServer _server = new WebSocketServer("ws://0.0.0.0:5001");
 
 
-        public static void OnOpen(IWebSocketConnection c)
+        public static void OnOpen(WsConnection c)
         {
             lock (_sync)
             {
                 Connections.Add(c);
-                SendPacket(c, new MapConfigPacket()
+                c.SendPacket(new MapConfigPacket()
                 {
                     Config = BiomeMapPlugin.Config
                 });
 
                 foreach (var levelRunner in BiomeMapPlugin.Instance.LevelRunners)
                 {
-                    SendPacket(c, new LevelMetaPacket()
+                    c.SendPacket(new LevelMetaPacket()
                     {
                         LevelId = levelRunner.Map.Meta.Id,
                         Meta = levelRunner.Map.Meta
@@ -44,7 +44,7 @@ namespace BiomeMap.Plugin.Net
             }
         }
 
-        public static void OnClose(IWebSocketConnection c)
+        public static void OnClose(WsConnection c)
         {
             lock (_sync)
             {
@@ -61,22 +61,20 @@ namespace BiomeMap.Plugin.Net
             }
         }
 
+        public static void BroadcastTileUpdate(TileUpdatePacket update)
+        {
+            Parallel.ForEach(Connections.ToArray(), c => c.SendTileUpdate(update));
+        }
+
         public static void BroadcastPacket(IPacket packet)
         {
             lock (_sync)
             {
-                var msg = packet.Encode();
-
                 Parallel.ForEach(Connections, c =>
                 {
-                    c.Send(msg);
+                    c.SendPacket(packet);
                 });
             }
-        }
-
-        public static void OnMessage(IWebSocketConnection c, string message)
-        {
-
         }
 
         public static void Start()
@@ -84,9 +82,10 @@ namespace BiomeMap.Plugin.Net
 
             _server.Start(c =>
             {
-                c.OnOpen = () => OnOpen(c);
-                c.OnClose = () => OnClose(c);
-                c.OnMessage = (m) => OnMessage(c, m);
+                var wsConn = new WsConnection(c);
+
+                c.OnOpen += () => OnOpen(wsConn);
+                c.OnClose += () => OnClose(wsConn);
             });
             Log.InfoFormat("Web server started.");
         }

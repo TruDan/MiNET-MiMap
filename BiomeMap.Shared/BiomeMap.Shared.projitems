@@ -21,6 +21,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Data\Bounds.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Data\ChunkBounds.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Data\ChunkPosition.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Data\Polygon.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Data\Position.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Data\RegionPosition.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Data\Size.cs" />
@@ -35,7 +36,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Net\LevelMetaPacket.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\ListPlayersPacket.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\MapConfigPacket.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Net\Protocol.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\Serialization\PacketSerializer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Net\TileSubscribePacket.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\TileUpdatePacket.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\NullPacket.cs" />
   </ItemGroup>

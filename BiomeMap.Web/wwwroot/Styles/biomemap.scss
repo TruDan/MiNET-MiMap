@@ -52,89 +52,345 @@ body {
     color: rgba(255, 255, 255, 0.3);
 }
 
+.google-control-base {
+    direction: ltr;
+    overflow: hidden;
+    position: absolute;
+    user-select: none;
+    min-width: 12px;
+    min-height: 12px;
+    font-size: 11px;
+    font-family: Roboto, Arial, sans-serif;
+    border-radius: 2px;
+    background-clip: padding-box;
+    box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px -1px;
+    -webkit-background-clip: padding-box;
+    margin: 10px;
+    padding: 0;
+    background-color: #424242;
+    border: 1px solid #212121;
+    color: #f1f1f1;
+}
+
+.google-control-text {
+    padding: 8px;
+    text-align: center;
+    font-weight: 400;
+    color: #f1f1f1;
+}
+
+.material-icons {
+    font-family: 'Material Icons';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px; /* Preferred icon size */
+    display: inline-block;
+    line-height: 1;
+    text-transform: none;
+    letter-spacing: normal;
+    word-wrap: normal;
+    white-space: nowrap;
+    direction: ltr;
+    /* Support for all WebKit browsers. */
+    -webkit-font-smoothing: antialiased;
+    /* Support for Safari and Chrome. */
+    text-rendering: optimizeLegibility;
+    /* Support for Firefox. */
+    -moz-osx-font-smoothing: grayscale;
+    /* Support for IE. */
+    font-feature-settings: 'liga';
+}
+
 #map {
     width: 100%;
     height: 100%;
+    background-color: #212121;
 
-    .gControlWrapper {
-        margin: 10px;
+    .leaflet-control {
+        @extend .google-control-base;
 
-        .gControl {
-            direction: ltr;
-            overflow: hidden;
-            position: relative;
-            user-select: none;
-            min-width: 22px;
-            font-size: 11px;
-            font-family: Roboto, Arial, sans-serif;
-            border-radius: 2px;
-            background-color: rgb(255, 255, 255);
-            background-clip: padding-box;
-            box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px -1px;
-            -webkit-background-clip: padding-box;
+        &.leaflet-control-minimap {
+            padding: 8px;
 
-            .gControlItem {
-                padding: 8px;
-                text-align: center;
-                font-weight: 400;
-                color: rgb(86, 86, 86);
+            .leaflet-tile-pane {
+                opacity: 0.5;
+            }
+        }
+
+        &.leaflet-control-chunkinfo {
+            min-width: 150px;
+
+            div {
+                @extend .google-control-text;
+            }
+
+            div.leaflet-control-chunkinfo-hover {
+                border-bottom: 1px solid #000;
+            }
+
+            dl {
+                margin: 0;
+                clear: both;
+                display: block;
+
+                & + dl {
+                    margin-top: 4px;
+                }
+
+                dt {
+                    float: left;
+                    width: 50px;
+                    text-align: right;
+                    padding-right: 8px;
+                    border-right: 1px solid rgba(235,235,235,0.1);
+                    color: #9E9E9E;
+                }
+
+                dd {
+                    display: block;
+                    text-align: left;
+                    margin-left: 58px;
+                    padding-left: 8px;
+                    min-height: 16px;
+                    font-weight: normal;
+                }
+            }
+        }
+
+        &.leaflet-bar {
+
+
+            &.leaflet-control-zoom:after {
+                background: #212121;
+                height: 1px;
+                width: 22px;
+                content: ' ';
+                display: block;
+                position: absolute;
+                left: 4px;
+                top: 50%;
+            }
+
+            a {
+                border-radius: 0;
+                background: none;
+                color: #f7f7f7;
+                border: none;
+                text-indent: 100%;
+                white-space: nowrap;
+                overflow: hidden;
+                position: relative;
+                width: 28px;
+                height: 27px;
+                display: block;
                 cursor: pointer;
+                text-align: center;
+                line-height: 27px;
+                font-size: 11px;
 
-                &.active {
-                    font-weight: 500;
-                    color: rgb(0, 0, 0);
+                &:hover {
+                    color: #999999;
+                }
 
-                    .checkbox {
-                        &:before {
-                            content: "";
-                            display: block;
-                            background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAAAXCAMAAACMPLmjAAAB6VBMVEVMaXHMzMxycnLMzMxycnJycnLMzMylHXZycnLMzMxeJYyQQjugSyleJYxNkCuQQjtMjyulHXagSymEhISMjIyhTCpfJo1MjyuRkZGnIXmRQzuTRD2iTSuMjIyJiYmEhISIiIiEhISLi4vMzMxycnKQkJCJQiiTk5OQQjtMjytPki2UTSN9NyuQkJClHXZhKJCKioqIiIiEhISIiIiGhoaKioqJiYmKioqLi4uMjIzMzMxycnLMzMzMzMxycnJycnJycnLMzMzMzMxycnJOkCtfJo6nH3mIiIiFSB3////1sgCxsbHMzMyZmZnDnY3+eGyoqKi4V06d10qj5Eb+m1r+beHd3d2qVPzullxycnLCQZ9MjyudnZ3OfU/5dWqhoaGvr6/ba2LFaWCXl5eAukqh4URuqzW/aj3fgwbfXsHfyr3eh1J6ObX7at77mVjPUq2oUvmbVNyLTMLFxcWjo6OOjo7tc2nNZlyxVEyFukDweG7td21spDWQQjtyrTeSSdfMRqjjhQzwb9bKckK4aD2lWe6CPcB8uz+e20aVzk92tTiKxUDhdWvIYlm6QJnDXFP0a9iQyUn0l1l2Oa7BbT/MXwOlU/LSTK7PeEjQWbXtatKMScuhU+t8O7flZsfkj1ztbtOIQ8WjWOvvg7AgAAAAR3RSTlMA7xAQ7zAw/s/P/v6Pj/2Pj4/+FVX9/f369/34+N/rO/Mput/fERFMjo75TFP3jvl9agxees7RrajvICC/UGBQv2Cfn/X1+VnqVCcAAAI6SURBVHhehZJVe9tAEAA3KDNTYgfaMDRlZryTZGYOM6fMzMyMv7S6U1zXku/LPGifZmTtGlQE/g0/mXRYcrmcBYBHCPFQplZzEsBhV/iBwPrw+2lBGn2npp4+6bcAEkUR/e9nNADjrbtUBfqgqvxwX4vGHj00KQLErwXgw55Wh7JAfSrTiPtyLDb52AQOJCKHwgee58959rQpC0CRfXDfiE5GJ0xJREgCpaFe9oEnDG/ZvIkdAItp6vVEfx8Sw/mwiCp94Cln8+177cxPoFegOxwRRdR5lPr1DVAKUEbOtzOXCHMY4zkpQECazLEjsl/xC/bvszPPCFgQBFwKSNvLyH45kCc7YP+RKgNwUH5/OTDs2d0Gauq0J8B8Xa83AwxiAQ9CkhTIFRo6yz5IR2zZCVV9v7bXGxl96TUHMSHYRQNdUMl4y/YdLL9Of+lKqPi8GQsz72fWvwGBgm12YPqgvxgKFZ9JAeG2wAgwaKwhPugjF4pXx6QAgRlg+2BujoyOeXtLgR6EUM9Gbsdh6tc0AsGsJ1coBQw2m80AYOU4zgpg1Ol0RlCh9R86Lvtlgpj4QYNvev6uzzDUlJ29dcZqPL1w88FWY7Xt+RU+dNNAt+1eOv7mk5N7cSfx6iOne3s/9eG3C1QcULyfQANgK8TjSz+d3OdEYvEHp/uaSq2suqptsEP21YF36aV0wcllvyz+WuZ037+t/FlzARN1wOCcni/4DFYuO7vcNGR0LayuKXbAZABjPABVr/AXt1CuRmU9dMEAAAAASUVORK5CYII=') -50px 0px no-repeat;
-                            position: absolute;
-                            top: -2px;
-                            left: 1px;
-                            width: 13px;
-                            height: 13px;
-                        }
-                    }
+                &:before {
+                    content: ' ';
+                    display: block;
+                    position: absolute;
+                    width: 15px;
+                    height: 15px;
+                    left: 7px;
+                    top: 6px;
+                    text-align: center;
+                    background-image: url('//maps.gstatic.com/mapfiles/api-3/images/tmapctrl.png');
+                    background-repeat: no-repeat;
+                }
+
+                &.leaflet-control-zoom-in:before {
+                    background-position: -60px 0;
+                }
+
+                &.leaflet-control-zoom-out:before {
+                    background-position: -60px -15px;
                 }
 
                 &:hover {
-                    background-color: rgb(235, 235, 235) !important;
+                    &.leaflet-control-zoom-in:before {
+                        background-position: 0 0;
+                    }
+
+                    &.leaflet-control-zoom-out:before {
+                        background-position: 0 -15px;
+                    }
                 }
 
-                label {
-                    cursor: pointer;
+                &.leaflet-disabled {
+                    &.leaflet-control-zoom-in:before {
+                        background-position: -75px 0;
+                    }
+
+                    &.leaflet-control-zoom-out:before {
+                        background-position: -75px -15px;
+                    }
+                }
+            }
+        }
+    }
+
+    .ol-overlaycontainer, .ol-overlaycontainer-stopevent {
+
+        .ol-mouse-position {
+            top: 0;
+            right: 0;
+            @extend .google-control-base, .google-control-text;
+        }
+
+        .ol-control {
+            @extend .google-control-base;
+        }
+
+        .ol-overviewmap {
+            width: 150px;
+            left: unset;
+            right: 0;
+            bottom: 0;
+            height: 150px;
+            background-color: #424242;
+            border-color: #000;
+
+            .ol-overviewmap-map {
+                border: none;
+                margin: 0;
+            }
+
+            .ol-overviewmap-box {
+                border: 1px solid rgba(0,188,212,0.75);
+                background: rgba(0,188,212, 0.1);
+            }
+        }
+
+        .ol-zoom {
+            top: 0;
+            left: 0;
+
+            &:after {
+                background: #212121;
+                height: 1px;
+                width: 22px;
+                content: ' ';
+                display: block;
+                position: absolute;
+                left: 4px;
+                top: 50%;
+            }
+
+            > button {
+                background: none;
+                text-indent: 100%;
+                white-space: nowrap;
+                overflow: hidden;
+                position: relative;
+                width: 28px;
+                height: 27px;
+                color: #666666;
+                cursor: pointer;
+                text-align: center;
+                line-height: 27px;
+
+                &:active, &:focus {
+                    outline: none;
+                }
+
+                &:hover {
+                    color: #999999;
+                }
+
+                &:before {
+                    display: block;
+                    position: absolute;
+                    width: 20px;
+                    height: 27px;
+                    left: 2px;
+                    top: 0;
+                    font-size: 20px;
+                    line-height: 27px !important;
+                    text-indent: 0;
+                    text-align: center;
+                }
+
+                &.ol-zoom-in:before {
+                    @extend .material-icons;
+                    content: '\E145';
+                }
+
+                &.ol-zoom-out:before {
+                    @extend .material-icons;
+                    content: '\E15B';
+                }
+            }
+        }
+
+
+        .gControlItem {
+            padding: 8px;
+            text-align: center;
+            font-weight: 400;
+            color: rgb(86, 86, 86);
+            cursor: pointer;
+
+            &.active {
+                font-weight: 500;
+                color: rgb(0, 0, 0);
+
+                .checkbox {
+                    &:before {
+                        content: "";
+                        display: block;
+                        background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAAAXCAMAAACMPLmjAAAB6VBMVEVMaXHMzMxycnLMzMxycnJycnLMzMylHXZycnLMzMxeJYyQQjugSyleJYxNkCuQQjtMjyulHXagSymEhISMjIyhTCpfJo1MjyuRkZGnIXmRQzuTRD2iTSuMjIyJiYmEhISIiIiEhISLi4vMzMxycnKQkJCJQiiTk5OQQjtMjytPki2UTSN9NyuQkJClHXZhKJCKioqIiIiEhISIiIiGhoaKioqJiYmKioqLi4uMjIzMzMxycnLMzMzMzMxycnJycnJycnLMzMzMzMxycnJOkCtfJo6nH3mIiIiFSB3////1sgCxsbHMzMyZmZnDnY3+eGyoqKi4V06d10qj5Eb+m1r+beHd3d2qVPzullxycnLCQZ9MjyudnZ3OfU/5dWqhoaGvr6/ba2LFaWCXl5eAukqh4URuqzW/aj3fgwbfXsHfyr3eh1J6ObX7at77mVjPUq2oUvmbVNyLTMLFxcWjo6OOjo7tc2nNZlyxVEyFukDweG7td21spDWQQjtyrTeSSdfMRqjjhQzwb9bKckK4aD2lWe6CPcB8uz+e20aVzk92tTiKxUDhdWvIYlm6QJnDXFP0a9iQyUn0l1l2Oa7BbT/MXwOlU/LSTK7PeEjQWbXtatKMScuhU+t8O7flZsfkj1ztbtOIQ8WjWOvvg7AgAAAAR3RSTlMA7xAQ7zAw/s/P/v6Pj/2Pj4/+FVX9/f369/34+N/rO/Mput/fERFMjo75TFP3jvl9agxees7RrajvICC/UGBQv2Cfn/X1+VnqVCcAAAI6SURBVHhehZJVe9tAEAA3KDNTYgfaMDRlZryTZGYOM6fMzMyMv7S6U1zXku/LPGifZmTtGlQE/g0/mXRYcrmcBYBHCPFQplZzEsBhV/iBwPrw+2lBGn2npp4+6bcAEkUR/e9nNADjrbtUBfqgqvxwX4vGHj00KQLErwXgw55Wh7JAfSrTiPtyLDb52AQOJCKHwgee58959rQpC0CRfXDfiE5GJ0xJREgCpaFe9oEnDG/ZvIkdAItp6vVEfx8Sw/mwiCp94Cln8+177cxPoFegOxwRRdR5lPr1DVAKUEbOtzOXCHMY4zkpQECazLEjsl/xC/bvszPPCFgQBFwKSNvLyH45kCc7YP+RKgNwUH5/OTDs2d0Gauq0J8B8Xa83AwxiAQ9CkhTIFRo6yz5IR2zZCVV9v7bXGxl96TUHMSHYRQNdUMl4y/YdLL9Of+lKqPi8GQsz72fWvwGBgm12YPqgvxgKFZ9JAeG2wAgwaKwhPugjF4pXx6QAgRlg+2BujoyOeXtLgR6EUM9Gbsdh6tc0AsGsJ1coBQw2m80AYOU4zgpg1Ol0RlCh9R86Lvtlgpj4QYNvev6uzzDUlJ29dcZqPL1w88FWY7Xt+RU+dNNAt+1eOv7mk5N7cSfx6iOne3s/9eG3C1QcULyfQANgK8TjSz+d3OdEYvEHp/uaSq2suqptsEP21YF36aV0wcllvyz+WuZ037+t/FlzARN1wOCcni/4DFYuO7vcNGR0LayuKXbAZABjPABVr/AXt1CuRmU9dMEAAAAASUVORK5CYII=') -50px 0px no-repeat;
+                        position: absolute;
+                        top: -2px;
+                        left: 1px;
+                        width: 13px;
+                        height: 13px;
+                    }
                 }
             }
 
-            .gControlItemList {
+            &:hover {
+                background-color: rgb(235, 235, 235) !important;
+            }
 
-                .gControlItem {
-                    font-size: 10px;
-                    color: rgb(0, 0, 0);
-                    font-family: Roboto, Arial, sans-serif;
-                    user-select: none;
-                    font-size: 11px;
+            label {
+                cursor: pointer;
+            }
+        }
+
+        .gControlItemList {
+
+            .gControlItem {
+                font-size: 10px;
+                color: rgb(0, 0, 0);
+                font-family: Roboto, Arial, sans-serif;
+                user-select: none;
+                font-size: 11px;
+                background-color: rgb(255, 255, 255);
+                padding: 7px 9px 7px 7px;
+                direction: ltr;
+                text-align: left;
+                white-space: nowrap;
+
+                .checkbox {
+                    box-sizing: border-box;
+                    position: relative;
+                    line-height: 0;
+                    font-size: 0px;
+                    margin: 0px 5px 0px 0px;
+                    display: inline-block;
                     background-color: rgb(255, 255, 255);
-                    padding: 7px 9px 7px 7px;
-                    direction: ltr;
-                    text-align: left;
-                    white-space: nowrap;
-
-                    .checkbox {
-                        box-sizing: border-box;
-                        position: relative;
-                        line-height: 0;
-                        font-size: 0px;
-                        margin: 0px 5px 0px 0px;
-                        display: inline-block;
-                        background-color: rgb(255, 255, 255);
-                        border: 1px solid rgb(198, 198, 198);
-                        border-radius: 1px;
-                        width: 13px;
-                        height: 13px;
-                        vertical-align: middle;
-                    }
+                    border: 1px solid rgb(198, 198, 198);
+                    border-radius: 1px;
+                    width: 13px;
+                    height: 13px;
+                    vertical-align: middle;
                 }
             }
         }

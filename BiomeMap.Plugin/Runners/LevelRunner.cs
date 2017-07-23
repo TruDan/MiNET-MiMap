@@ -50,8 +50,9 @@ namespace BiomeMap.Plugin.Runners
 
         private void MapOnOnTileUpdated(object sender, TileUpdateEventArgs e)
         {
-            WsServer.BroadcastPacket(new TileUpdatePacket()
+            WsServer.BroadcastTileUpdate(new TileUpdatePacket()
             {
+                LayerId = e.LayerId,
                 Tile = new Tile()
                 {
                     X = e.TileX,

@@ -6,7 +6,7 @@ namespace BiomeMap.Shared.Net
 {
     public sealed class NullPacket : IPacket
     {
-        public byte Id { get; } = 0;
+        public byte Id { get; } = Protocol.Null;
 
     }
 }

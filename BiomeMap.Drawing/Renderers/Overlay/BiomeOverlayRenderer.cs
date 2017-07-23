@@ -15,9 +15,10 @@ namespace BiomeMap.Drawing.Renderers.Overlay
         public const int Alpha = 128;
 
         public Color Background { get; } = Color.Transparent;
-        public Size RenderScale { get; } = new Size(1,1);
+        public Size RenderScale { get; } = new Size(1, 1);
 
         private static readonly Dictionary<byte, Color> _biomeColors = new Dictionary<byte, Color>();
+
 
 
         static BiomeOverlayRenderer()

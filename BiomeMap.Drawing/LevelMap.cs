@@ -132,6 +132,11 @@ namespace BiomeMap.Drawing
             File.WriteAllText(_metaPath, json);
         }
 
+        private void UpdateBiomePolygons()
+        {
+
+        }
+
         private void SaveLayers(object state)
         {
             if (!Monitor.TryEnter(_runSync))

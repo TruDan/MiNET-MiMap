@@ -7,7 +7,7 @@ namespace BiomeMap.Shared.Net
 {
     public class MapConfigPacket : IPacket
     {
-        public byte Id { get; } = 1;
+        public byte Id { get; } = Protocol.MapConfig;
 
         public BiomeMapConfig Config { get; set; }
     }

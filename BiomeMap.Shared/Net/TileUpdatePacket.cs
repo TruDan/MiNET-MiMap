@@ -7,7 +7,7 @@ namespace BiomeMap.Shared.Net
 {
     public class TileUpdatePacket : IPacket
     {
-        public byte Id { get; } = 2;
+        public byte Id { get; } = Protocol.TileUpdate;
 
         public string LayerId { get; set; }
 

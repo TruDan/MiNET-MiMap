@@ -8,7 +8,7 @@ namespace BiomeMap.Shared.Net
     public class LevelMetaPacket : IPacket
     {
 
-        public byte Id { get; } = 3;
+        public byte Id { get; } = Protocol.LevelMeta;
 
 
         public string LevelId { get; set; }
