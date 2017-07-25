@@ -14,6 +14,7 @@ using BiomeMap.Drawing;
 using BiomeMap.Http;
 using BiomeMap.Output;
 using BiomeMap.Renderer;
+using BiomeMap.Shared;
 using log4net;
 using MiNET.Utils;
 using MiNET.Worlds;
@@ -65,8 +66,8 @@ namespace BiomeMap
                     Math.Min(Bounds.X, c.X * 16),
                     Math.Min(Bounds.Y, c.Z * 16),
 
-                    Math.Max(Bounds.Width, (Bounds.X - c.X+1) * 16),
-                    Math.Max(Bounds.Height, (Bounds.Y - c.Z+1) * 16)
+                    Math.Max(Bounds.Width, (Bounds.X - c.X + 1) * 16),
+                    Math.Max(Bounds.Height, (Bounds.Y - c.Z + 1) * 16)
                 );
             Bounds = bounds;
         }
@@ -136,7 +137,7 @@ namespace BiomeMap
                 output.OnUpdateStart();
             }
         }
-        
+
         private void OnChunkUpdateEnd()
         {
             foreach (var output in Outputs)
@@ -155,7 +156,7 @@ namespace BiomeMap
 
             Directory.CreateDirectory(Path.GetDirectoryName(p));
 
-            File.WriteAllText(p, JsonConvert.SerializeObject(new
+            File.WriteAllText(p, MiMapJsonConvert.SerializeObject(new
             {
                 Id = Level.LevelId,
                 Name = Level.LevelName,

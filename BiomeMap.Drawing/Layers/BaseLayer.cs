@@ -65,7 +65,7 @@ namespace BiomeMap.Drawing.Layers
 
             Scaler = new TileScaler(directory, renderer.RenderScale, map.Meta.TileSize, map.Meta.MinZoom, map.Meta.MaxZoom, layerId);
             Scaler.OnTileUpdated += (s, e) => OnTileUpdated?.Invoke(s, e);
-            //_cleanupTimer = new Timer(CleanupCallback, null, 5000, 5000);
+            _cleanupTimer = new Timer(CleanupCallback, null, 5000, 5000);
         }
 
         private MapRegionLayer GetRegionLayer(RegionPosition regionPos)

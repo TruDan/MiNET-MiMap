@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using BiomeMap.Drawing.Data;
 using BiomeMap.Drawing.Layers;
 using BiomeMap.Drawing.Utils;
+using BiomeMap.Shared;
 using log4net;
 using Newtonsoft.Json;
 
@@ -33,6 +34,7 @@ namespace BiomeMap.Drawing
 
         private Bitmap Bitmap { get; set; }
         private readonly object _bitmapSync = new object();
+        private readonly object _ioSync = new object();
 
         private RectangleF BitmapBounds { get; set; }
 
@@ -51,76 +53,95 @@ namespace BiomeMap.Drawing
 
         private void Load()
         {
-            //Log.InfoFormat("Loading Tile {0},{1}@{2}", Position.X, Position.Z, Position.Zoom);
-            Bitmap bitmap;
-            if (File.Exists(FilePath))
+            lock (_ioSync)
             {
-                using (var fs = new FileStream(FilePath, FileMode.Open, FileAccess.ReadWrite))
+                //Log.InfoFormat("Loading Tile {0},{1}@{2}", Position.X, Position.Z, Position.Zoom);
+                Bitmap bitmap;
+                if (File.Exists(FilePath))
                 {
-                    using (var img = Image.FromStream(fs))
+                    using (var fs = new FileStream(FilePath, FileMode.Open, FileAccess.ReadWrite))
                     {
-                        bitmap = new Bitmap(img);
-                    }
-                }
-            }
-            else
-            {
-                bitmap = new Bitmap(Layer.Renderer.RenderScale.Width * (1 << 9), Layer.Renderer.RenderScale.Height * (1 << 9));
-                IsNew = true;
-            }
-
-            var metaPath = Path.Combine(Path.GetDirectoryName(FilePath),
-                Path.GetFileNameWithoutExtension(FilePath) + ".json");
-            if (File.Exists(metaPath))
-            {
-                using (var fs = new FileStream(metaPath, FileMode.Open, FileAccess.ReadWrite))
-                {
-                    using (var gs = new GZipStream(fs, CompressionLevel.Optimal))
-                    {
-                        using (var sr = new StreamReader(gs))
+                        using (var img = Image.FromStream(fs))
                         {
-                            var json = sr.ReadToEnd();
-                            Blocks = JsonConvert.DeserializeObject<Dictionary<BlockPosition, BlockColumnMeta>>(json);
+                            bitmap = new Bitmap(img);
                         }
                     }
                 }
-            }
+                else
+                {
+                    bitmap = new Bitmap(Layer.Renderer.RenderScale.Width * (1 << 9),
+                        Layer.Renderer.RenderScale.Height * (1 << 9));
+                    IsNew = true;
+                }
 
-            Bitmap = bitmap;
-            BitmapBounds = new RectangleF(0, 0, Bitmap.Width, Bitmap.Height);
-            Graphics = bitmap.GetGraphics();
+                var metaPath = Path.Combine(Path.GetDirectoryName(FilePath),
+                    Path.GetFileNameWithoutExtension(FilePath) + ".json");
+                if (File.Exists(metaPath))
+                {
+                    using (var fs = new FileStream(metaPath, FileMode.Open, FileAccess.ReadWrite))
+                    {
+                        //using (var gs = new GZipStream(fs, CompressionMode.Decompress))
+                        {
+                            using (var sr = new StreamReader(fs))
+                            {
+                                var json = sr.ReadToEnd();
+                                var blocksArray = MiMapJsonConvert
+                                    .DeserializeObject<Dictionary<int, Dictionary<int, BlockColumnMeta>>>(json);
 
-            if (IsNew)
-            {
-                Graphics.Clear(Layer.Renderer.Background);
+                                Blocks = blocksArray.SelectMany(z => z.Value.Values).ToDictionary(b => b.Position);
+                            }
+                        }
+                    }
+                }
+
+                lock (_bitmapSync)
+                {
+                    Bitmap = bitmap;
+                    BitmapBounds = new RectangleF(0, 0, Bitmap.Width, Bitmap.Height);
+                    Graphics = bitmap.GetGraphics();
+
+                    if (IsNew)
+                    {
+                        Graphics.Clear(Layer.Renderer.Background);
+                    }
+                }
             }
         }
 
         public void Save()
         {
-            //PostProcess();
-
-            //Parallel.For(Layer.Map.Meta.MinZoom, Layer.Map.Meta.MaxZoom + 1, SplitRegionForZoom);
-
-            lock (_bitmapSync)
+            lock (_ioSync)
             {
-                Bitmap.SaveToFile(FilePath);
-            }
+                //PostProcess();
 
-            var metaPath = Path.Combine(Path.GetDirectoryName(FilePath),
-                Path.GetFileNameWithoutExtension(FilePath) + ".json");
-            using (var fs = new FileStream(metaPath, FileMode.OpenOrCreate, FileAccess.Write))
-            {
-                using (var gs = new GZipStream(fs, CompressionLevel.Optimal))
+                //Parallel.For(Layer.Map.Meta.MinZoom, Layer.Map.Meta.MaxZoom + 1, SplitRegionForZoom);
+
+                lock (_bitmapSync)
                 {
-                    using (var sr = new StreamWriter(gs))
+                    using (var img = GetBitmap())
                     {
-                        var json = JsonConvert.SerializeObject(Blocks);
-                        sr.Write(json);
+                        img.SaveToFile(FilePath);
+                    }
+                }
+
+                var metaPath = Path.Combine(Path.GetDirectoryName(FilePath),
+                    Path.GetFileNameWithoutExtension(FilePath) + ".json");
+                using (var fs = new FileStream(metaPath, FileMode.OpenOrCreate, FileAccess.Write))
+                {
+                    //using (var gs = new GZipStream(fs, CompressionMode.Compress))
+                    {
+                        using (var sr = new StreamWriter(fs))
+                        {
+                            var blocks = Blocks.Values.ToArray();
+                            Dictionary<int, Dictionary<int, BlockColumnMeta>> blockArray = blocks
+                                .GroupBy(c => c.Position.X).ToDictionary(g => g.Key, g => g.ToDictionary(g1 => g1.Position.Z));
+
+                            var json = MiMapJsonConvert.SerializeObject(blockArray);
+                            sr.Write(json);
+                        }
                     }
                 }
             }
-
         }
 
         private void SplitRegionForZoom(int zoomLevel)
@@ -194,17 +215,22 @@ namespace BiomeMap.Drawing
                 return;
             }
 
-            Blocks[update.Position] = update;
-            LastUpdated = DateTime.UtcNow;
-
+            lock (_ioSync)
+            {
+                Blocks[update.Position] = update;
+                LastUpdated = DateTime.UtcNow;
+            }
             //using (var clip = new Region(rect))
             //{
             //Graphics.Clip = clip;
-            Layer.Renderer.DrawBlock(Graphics, rect, update);
-
-            foreach (var postProcessor in Layer.PostProcessors)
+            lock (_bitmapSync)
             {
-                postProcessor.PostProcess(this, Graphics, update);
+                Layer.Renderer.DrawBlock(Graphics, rect, update);
+
+                foreach (var postProcessor in Layer.PostProcessors)
+                {
+                    postProcessor.PostProcess(this, Graphics, update);
+                }
             }
 
             //Graphics.ResetClip();
@@ -221,11 +247,11 @@ namespace BiomeMap.Drawing
 
             if (x < 0)
             {
-                x = Bitmap.Width + x;
+                x = (int)BitmapBounds.Width + x;
             }
             if (z < 0)
             {
-                z = Bitmap.Height + z;
+                z = (int)BitmapBounds.Height + z;
             }
 
             return new Rectangle(x, z, w, h);

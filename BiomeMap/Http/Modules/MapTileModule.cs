@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BiomeMap.Http.Response;
 using BiomeMap.Output;
+using BiomeMap.Shared;
 using Nancy;
 using Newtonsoft.Json;
 using ResponseExtensions = BiomeMap.Http.Response.ResponseExtensions;
@@ -29,10 +30,10 @@ namespace BiomeMap.Http.Modules
 
         private dynamic GetConfig(dynamic o)
         {
-            return JsonConvert.SerializeObject(new
+            return MiMapJsonConvert.SerializeObject(new
             {
                 Levels = BiomeMapPlugin.GetLevelNames(),
-                TileSize = BitmapOutput.RegionSize*16
+                TileSize = BitmapOutput.RegionSize * 16
             });
         }
 
@@ -43,7 +44,7 @@ namespace BiomeMap.Http.Modules
 
             var regions = handler.GetBiomeRegions();
 
-            return JsonConvert.SerializeObject(regions.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Points.Select(r => r.Select(p => new []{p.X, p.Y}))));
+            return MiMapJsonConvert.SerializeObject(regions.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Points.Select(r => r.Select(p => new[] { p.X, p.Y }))));
         }
 
         private dynamic GetPlayerHead(dynamic o)

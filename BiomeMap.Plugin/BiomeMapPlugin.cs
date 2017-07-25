@@ -6,6 +6,7 @@ using System.Reflection;
 using BiomeMap.Drawing;
 using BiomeMap.Plugin.Net;
 using BiomeMap.Plugin.Runners;
+using BiomeMap.Shared;
 using BiomeMap.Shared.Configuration;
 using log4net;
 using MiNET;
@@ -50,14 +51,14 @@ namespace BiomeMap.Plugin
                 {
                     // Create config file
                     var newConfig = new BiomeMapPluginConfig();
-                    var newConfigJson = JsonConvert.SerializeObject(newConfig, Formatting.Indented);
+                    var newConfigJson = MiMapJsonConvert.SerializeObject(newConfig, true);
                     File.WriteAllText(configPath, newConfigJson);
                     Log.InfoFormat("Generating Config...");
                     return newConfig;
                 }
 
                 var json = File.ReadAllText(configPath);
-                var config = JsonConvert.DeserializeObject<BiomeMapPluginConfig>(json);
+                var config = MiMapJsonConvert.DeserializeObject<BiomeMapPluginConfig>(json);
 
                 Log.InfoFormat("Config Loaded from {0}", configPath);
 
@@ -72,6 +73,8 @@ namespace BiomeMap.Plugin
 
         private void InitLevelRunners()
         {
+            File.WriteAllText(Path.Combine(Config.TilesDirectory, "levels.json"), MiMapJsonConvert.SerializeObject(Config.Levels));
+
             foreach (var levelConfig in BiomeMapManager.Config.Levels)
             {
                 var levelMap = BiomeMapManager.GetLevelMap(levelConfig.LevelId);
@@ -79,7 +82,6 @@ namespace BiomeMap.Plugin
                 {
                     var runner = new LevelRunner(Context.Server, levelMap);
                     _levelRunners.Add(levelConfig.LevelId, runner);
-
                 }
             }
         }

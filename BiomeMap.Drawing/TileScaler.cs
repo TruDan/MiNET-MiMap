@@ -151,7 +151,7 @@ namespace BiomeMap.Drawing
                         if (_processing.Contains(entry))
                         {
                             _updates.Enqueue(_updates.Dequeue());
-                            if (_updates.Peek() == entry)
+                            if (Equals(_updates.Peek()?.Position, entry.Position))
                                 return;
                         }
 
@@ -161,11 +161,20 @@ namespace BiomeMap.Drawing
 
                     ThreadPool.QueueUserWorkItem((o) =>
                     {
-                        ScaleRegion(entry);
-
-                        lock (_queueSync)
+                        try
                         {
-                            _processing.Remove(entry);
+                            ScaleRegion(entry);
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Error("Exception during region scale " + entry.Position, ex);
+                        }
+                        finally
+                        {
+                            lock (_queueSync)
+                            {
+                                _processing.Remove(entry);
+                            }
                         }
                     });
                 }

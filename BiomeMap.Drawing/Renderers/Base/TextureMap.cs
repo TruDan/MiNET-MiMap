@@ -4,6 +4,7 @@ using System.Drawing;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using BiomeMap.Drawing.Utils;
 using log4net;
 using MiNET.Blocks;
 
@@ -17,13 +18,14 @@ namespace BiomeMap.Drawing.Renderers.Base
 
         private Bitmap _noTexture { get; }
 
+        private int _resolution { get; } = 16;
+
         private Dictionary<byte, Bitmap> _textures = new Dictionary<byte, Bitmap>();
 
         private ZipArchive ResourcePack { get; }
 
-        public TextureMap() : this(new MemoryStream(Textures.PureBDCraft_x16))
+        public TextureMap() : this(new MemoryStream(Textures._default))
         {
-
         }
 
         public TextureMap(string zipPath) : this(File.OpenRead(zipPath))
@@ -42,14 +44,24 @@ namespace BiomeMap.Drawing.Renderers.Base
 
         private Bitmap CreateNoTexture()
         {
-            var bitmap = new Bitmap(2, 2);
+            Bitmap noTexture = new Bitmap(_resolution, _resolution);
 
-            bitmap.SetPixel(0, 0, Color.Magenta);
-            bitmap.SetPixel(1, 1, Color.Magenta);
-            bitmap.SetPixel(0, 1, Color.Black);
-            bitmap.SetPixel(1, 0, Color.Black);
+            using (var bitmap = new Bitmap(2, 2))
+            {
 
-            return bitmap;
+                bitmap.SetPixel(0, 0, Color.Magenta);
+                bitmap.SetPixel(1, 1, Color.Magenta);
+                bitmap.SetPixel(0, 1, Color.Black);
+                bitmap.SetPixel(1, 0, Color.Black);
+
+                using (var g = noTexture.GetGraphics())
+                {
+                    g.DrawImage(bitmap, new Rectangle(0, 0, noTexture.Width, noTexture.Height));
+                }
+
+            }
+
+            return noTexture;
         }
 
         private void LoadResourcePack()
@@ -64,7 +76,27 @@ namespace BiomeMap.Drawing.Renderers.Base
                 {
                     if (!TryLoadBlockTexture(name, out img))
                     {
-                        img = _noTexture;
+                        // fixes
+                        if (id == 8)
+                        {
+                            TryLoadBlockTexture("water_flow", out img);
+                        }
+                        else if (id == 9)
+                        {
+                            TryLoadBlockTexture("water_still", out img);
+                        }
+                        else if (id == 10)
+                        {
+                            TryLoadBlockTexture("lava_still", out img);
+                        }
+                        else if (id == 11)
+                        {
+                            TryLoadBlockTexture("lava_still", out img);
+                        }
+                        else
+                        {
+                            img = _noTexture;
+                        }
                     }
                     else
                     {
@@ -91,7 +123,34 @@ namespace BiomeMap.Drawing.Renderers.Base
                 {
                     using (var img = Image.FromStream(zipStream))
                     {
-                        bitmap = new Bitmap(img);
+                        var s = Math.Min(img.Width, img.Height);
+
+                        bitmap = new Bitmap(_resolution, _resolution);
+
+                        using (var g = bitmap.GetGraphics())
+                        {
+                            if (img.Width != img.Height)
+                            {
+                                var src = new Rectangle(0, 0, _resolution, _resolution);
+
+                                if (img.Width >= (_resolution * 2))
+                                {
+                                    src.X = _resolution / 2;
+                                }
+                                if (img.Height >= (_resolution * 2))
+                                {
+                                    src.Y = _resolution / 2;
+                                }
+
+                                g.DrawImage(img, new Rectangle(0, 0, bitmap.Width, bitmap.Height), src,
+                                    GraphicsUnit.Pixel);
+                            }
+                            else
+                            {
+                                g.DrawImage(img, new Rectangle(0, 0, bitmap.Width, bitmap.Height));
+                            }
+                        }
+
                         return true;
                     }
                 }

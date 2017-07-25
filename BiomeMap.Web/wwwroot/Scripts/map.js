@@ -2,7 +2,7 @@
     var $this = this;
 
     this.map = null;
-    this._config = {};
+    this._levelConfigs = {};
 
     this.minimap = null;
     this.chunkinfo = null;
@@ -15,25 +15,31 @@
 
     this.activeLayer = null;
 
-    this.init = function (config) {
+    this.init = function (levels) {
         // init levels
-        $this._config = config;
+        $this._levelConfigs = levels;
 
-        $this.initMap(config);
+        $this.initMap();
 
         var firstLevelId = null;
-        $.each(config.levels,
+        $.each(levels,
             function (key, value) {
                 if (firstLevelId === null) firstLevelId = value.levelId;
                 $this.initLevel(value);
             });
 
+        $this.socket.open();
         $this.socket.init($this.map);
 
         $this.setLevel(firstLevelId);
     };
 
+    this._getTimestamp = function () {
+        return Math.floor(new Date().getTime() / 1000);
+    }
+
     this.__getCrs = function () {
+        return L.CRS.Simple;
         return L.extend({},
             L.CRS.Simple,
             {
@@ -57,9 +63,9 @@
                     return (1 << zoom);
                 }
             });
-    }
+    };
 
-    this.initMap = function (config) {
+    this.initMap = function () {
         $this.map = L.map('map',
             {
                 crs: $this.__getCrs(),
@@ -80,18 +86,19 @@
     };
 
     this.createLayerForLevel = function (levelId, minZoom, maxZoom) {
-        return L.tileLayer(window.location.pathname + "tiles/{levelid}/{layerid}/{z}/{x}_{y}.png",
+        return L.tileLayer/*.fallback*/(window.location.pathname + "tiles/{levelid}/{layerid}/{z}/{x}_{y}.png?ts={ts}",
             {
                 id: levelId,
                 levelid: levelId,
                 layerid: 'base',
-                minZoom: 0,
+                minZoom: -10,
                 maxZoom: 18,
                 minNativeZoom: minZoom,
                 maxNativeZoom: maxZoom,
-                noWrap: true
+                noWrap: true,
+                ts: $this._getTimestamp.bind($this)
             });
-    }
+    };
 
     this.initLevel = function (levelConfig) {
         if (levelConfig.enabled !== true) return;
@@ -100,13 +107,13 @@
 
         $this.layers[levelConfig.levelId] = layer;
 
-    }
+    };
 
     this.updateLevelMeta = function (levelId, meta) {
         $this.levelMeta[levelId] = meta;
 
         $this.applyLevelMeta(levelId);
-    }
+    };
 
     this.applyLevelMeta = function (levelId) {
         if (!(levelId in $this.levelMeta)) return;
@@ -128,13 +135,13 @@
         //layer.getSource().setExtent(b);
         //layer.setExtent(b);
         //layer.getSource().getProjection().setExtent(b);
-    }
+    };
 
     this.setLevel = function (levelId) {
         if (!(levelId in $this.layers)) return;
         var layer = $this.layers[levelId];
 
-        var miniMapLayer = L.tileLayer(window.location.pathname + "tiles/{levelid}/{layerid}/{z}/{x}_{y}.png",
+        var miniMapLayer = L.tileLayer(window.location.pathname + "tiles/{levelid}/{layerid}/{z}/{x}_{y}.png?ts={ts}",
             {
                 id: levelId,
                 levelid: levelId,
@@ -143,7 +150,8 @@
                 maxZoom: 5,
                 minNativeZoom: 0,
                 maxNativeZoom: 0,
-                noWrap: true
+                noWrap: true,
+                ts: $this._getTimestamp.bind($this)
             });
 
         miniMapLayer.opacity = 0.75;
@@ -157,6 +165,8 @@
         if (this.minimap === null) {
             this.minimap = new L.Control.MiniMap(miniMapLayer,
                 {
+                    width: 200,
+                    height: 200,
                     aimingRectOptions: {
                         color: '#4DD0E1',
                         weight: 1,
@@ -181,7 +191,7 @@
         layer.addTo($this.map);
 
         console.log("Setting Level to ", levelId, layer, miniMapLayer);
-    }
+    };
 
     this.refreshTile = function (layerId, tileX, tileY, tileZoom) {
         //console.log(layerId, this.activeLayer.options.id, this.activeLayer);
@@ -189,20 +199,21 @@
 
         if (tileZoom !== $this.map.getZoom()) return;
 
-        var url = (window.location.pathname + "tiles/{levelid}/{layerid}/{z}/{x}_{y}.png");
+        var url = (window.location.pathname + "tiles/{levelid}/{layerid}/{z}/{x}_{y}.png?ts={ts}");
         url = url.replace('{levelid}', layerId);
         url = url.replace('{layerid}', 'base');
         url = url.replace('{z}', tileZoom);
         url = url.replace('{x}', tileX);
         url = url.replace('{y}', tileY);
+        url = url.replace('{ts}', $this._getTimestamp());
 
-        $('img[src^="' + url + '"]').attr('src', url + "?ts=" + (new Date().getTime()));
+        $('img[src^="' + url + '"]').attr('src', url);
         //console.debug("Refreshed ", layerId, tileX, tileY, tileZoom);
-    }
+    };
 
-    this.socket.open();
+    $.getJSON(window.location.pathname + "tiles/levels.json", this.init.bind(this));
 }
 
 function initMap() {
     window.biomeMap = new BiomeMap();
-};
+}

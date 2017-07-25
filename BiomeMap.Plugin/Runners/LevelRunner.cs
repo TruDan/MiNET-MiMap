@@ -215,7 +215,8 @@ namespace BiomeMap.Plugin.Runners
             for (int y = 255; y > 0; y--)
             {
                 var block = Level.GetBlock(x, y, z);
-                if (!block.IsTransparent)
+                //if (!block.IsTransparent)
+                if (!(block is Air))
                 {
                     return block;
                 }

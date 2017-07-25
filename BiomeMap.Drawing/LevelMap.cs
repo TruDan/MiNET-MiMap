@@ -10,6 +10,7 @@ using BiomeMap.Drawing.Data;
 using BiomeMap.Drawing.Events;
 using BiomeMap.Drawing.Layers;
 using BiomeMap.Drawing.Renderers;
+using BiomeMap.Shared;
 using BiomeMap.Shared.Configuration;
 using log4net;
 using Newtonsoft.Json;
@@ -128,7 +129,7 @@ namespace BiomeMap.Drawing
             Meta.Size = new Size(BlockBounds.Width, BlockBounds.Height);
             Meta.Bounds = BlockBounds;
 
-            var json = JsonConvert.SerializeObject(Meta);
+            var json = MiMapJsonConvert.SerializeObject(Meta);
             File.WriteAllText(_metaPath, json);
         }
 

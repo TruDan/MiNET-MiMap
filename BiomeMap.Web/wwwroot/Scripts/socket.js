@@ -36,7 +36,7 @@ function BiomeMapWebSocket() {
 
         switch (packet.id) {
             case 1: // MapConfigPacket
-                window.biomeMap.init(packet.config);
+                //window.biomeMap.init(packet.config);
                 break;
 
             case 2: // TileUpdatePacket

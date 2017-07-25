@@ -22,10 +22,7 @@
     <Content Include="wwwroot\index.html" />
     <Content Include="wwwroot\Lib\Leaflet.Toolbar\leaflet.toolbar.min.css" />
     <Content Include="wwwroot\Lib\Leaflet.Toolbar\leaflet.toolbar.min.js" />
-    <Content Include="wwwroot\Scripts\biomemap.js" />
     <Content Include="wwwroot\Scripts\chunkinfo.js" />
-    <Content Include="wwwroot\Scripts\layercontrol.js" />
-    <Content Include="wwwroot\Scripts\leaflet.toolbar.min.js" />
     <Content Include="wwwroot\Scripts\map.js" />
     <Content Include="wwwroot\Scripts\socket.js" />
     <Content Include="wwwroot\Styles\biomemap.min.css" />

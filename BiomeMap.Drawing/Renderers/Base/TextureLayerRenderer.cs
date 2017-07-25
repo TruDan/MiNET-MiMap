@@ -12,7 +12,7 @@ namespace BiomeMap.Drawing.Renderers.Base
     public class TextureLayerRenderer : ILayerRenderer
     {
 
-        public Color Background { get; } = Color.FromArgb(0x7F121212);
+        public Color Background { get; } = Color.Transparent;
         public Size RenderScale { get; } = new Size(16, 16);
 
         public static readonly byte[] FoilageBlocks = { 2, 18, 111, 161 };

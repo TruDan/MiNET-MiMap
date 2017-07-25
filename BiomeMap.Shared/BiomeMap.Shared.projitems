@@ -29,6 +29,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Data\TilePosition.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Data\TilePositionComparer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LevelMeta.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)MiMapJsonConvert.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\Data\Player.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\Data\Position.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\Data\Tile.cs" />
