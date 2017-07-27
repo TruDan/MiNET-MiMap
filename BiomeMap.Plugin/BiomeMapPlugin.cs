@@ -30,9 +30,15 @@ namespace BiomeMap.Plugin
 
         private readonly Dictionary<string, LevelRunner> _levelRunners = new Dictionary<string, LevelRunner>();
 
+        private MiMapWebServer _webServer;
+
         static BiomeMapPlugin()
         {
             Config = GetConfig();
+            if (!Directory.Exists(Config.TilesDirectory))
+            {
+                Directory.CreateDirectory(Config.TilesDirectory);
+            }
         }
 
         public BiomeMapPlugin()
@@ -40,6 +46,7 @@ namespace BiomeMap.Plugin
             Instance = this;
             BiomeMapManager = new BiomeMapManager(Config);
             //Log.InfoFormat("Config Loaded\n{0}", JsonConvert.SerializeObject(BiomeMapManager.Config, Formatting.Indented));
+            _webServer = new MiMapWebServer();
         }
 
         private static BiomeMapConfig GetConfig()
@@ -89,7 +96,7 @@ namespace BiomeMap.Plugin
         protected override void OnEnable()
         {
             base.OnEnable();
-            WsServer.Start();
+            _webServer.Start();
 
             BiomeMapManager.Initialise();
             InitLevelRunners();
@@ -110,7 +117,7 @@ namespace BiomeMap.Plugin
 
             BiomeMapManager.Stop();
             _levelRunners.Clear();
-            WsServer.Stop();
+            _webServer.Stop();
             base.OnDisable();
 
         }
