@@ -22,7 +22,7 @@ namespace BiomeMap.Plugin.Net
             app.UseFileServer(new FileServerOptions()
             {
                 RequestPath = new PathString("/tiles"),
-                FileSystem = new PhysicalFileSystem("./tiles"),
+                FileSystem = new PhysicalFileSystem(BiomeMapPlugin.Config.TilesDirectory),
                 EnableDirectoryBrowsing = true,
                 EnableDefaultFiles = true,
                 StaticFileOptions =

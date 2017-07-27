@@ -9,8 +9,6 @@ using log4net;
 using Microsoft.Owin.FileSystems;
 using Microsoft.Owin.Hosting;
 using Microsoft.Owin.StaticFiles;
-using Nancy;
-using Nancy.Hosting.Self;
 using WebSocketProxy;
 
 namespace BiomeMap.Plugin.Net
