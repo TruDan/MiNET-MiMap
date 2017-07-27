@@ -1,6 +1,6 @@
 ﻿{
   "TilesDirectory": "tiles",
-  //"TilesDirectory": "C:\\Users\\truda\\Documents\\GitHub\\BiomeMap\\MiNET.Server\\bin\\Debug\\RenderMaps",
+  //"TilesDirectory": "C:\\Users\\truda\\Documents\\GitHub\\MiMap\\MiNET.Server\\bin\\Debug\\RenderMaps",
   "SaveInterval": 1000,
   "Levels": [
     /*{
