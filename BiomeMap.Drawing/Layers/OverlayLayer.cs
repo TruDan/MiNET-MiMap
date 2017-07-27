@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using BiomeMap.Drawing.Renderers;
 using BiomeMap.Drawing.Renderers.Base;
 using BiomeMap.Drawing.Renderers.Overlay;
-using BiomeMap.Shared.Configuration;
+using BiomeMap.Common.Configuration;
 
 namespace BiomeMap.Drawing.Layers
 {

@@ -3,12 +3,12 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26430.16
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BiomeMap", "BiomeMap\BiomeMap.csproj", "{39C88997-CB92-44F4-B5FF-863139C9BD6F}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiNET.Server", "MiNET.Server\MiNET.Server.csproj", "{3F4B6C8C-F040-428E-AC31-23144E25D215}"
 	ProjectSection(ProjectDependencies) = postProject
 		{A020BE16-EE06-4547-865A-715530A30193} = {A020BE16-EE06-4547-865A-715530A30193}
 		{6E162F70-881B-4CC7-A1F2-8BA10F1D7C7D} = {6E162F70-881B-4CC7-A1F2-8BA10F1D7C7D}
+		{4F029E79-C56F-4CA0-BDAB-0F07915BC12D} = {4F029E79-C56F-4CA0-BDAB-0F07915BC12D}
+		{EAF5F683-470D-41A6-A69F-C6510F07E466} = {EAF5F683-470D-41A6-A69F-C6510F07E466}
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libs", "Libs", "{32910361-62DF-4C9B-B03B-F59CA601B234}"
@@ -20,26 +20,18 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BiomeMap.Drawing", "BiomeMa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BiomeMap.Plugin", "BiomeMap.Plugin\BiomeMap.Plugin.csproj", "{6E162F70-881B-4CC7-A1F2-8BA10F1D7C7D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BiomeMap.Web", "BiomeMap.Web\BiomeMap.Web.csproj", "{35C68E11-E308-4FB6-9618-EE60F5A87B54}"
-EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "BiomeMap.Shared", "BiomeMap.Shared\BiomeMap.Shared.shproj", "{3CF2F2F5-A0CA-4B56-AC5C-3C5B98212FA3}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BiomeMap.GeneratorPlugin", "BiomeMap.GeneratorPlugin\BiomeMap.GeneratorPlugin.csproj", "{9F6676F8-F6BE-41A2-880B-806263FD54E5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BiomeMap.Web", "BiomeMap.Web\BiomeMap.Web.csproj", "{4F029E79-C56F-4CA0-BDAB-0F07915BC12D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BiomeMap.Common", "BiomeMap.Common\BiomeMap.Common.csproj", "{EAF5F683-470D-41A6-A69F-C6510F07E466}"
+EndProject
 Global
-	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		BiomeMap.Shared\BiomeMap.Shared.projitems*{3cf2f2f5-a0ca-4b56-ac5c-3c5b98212fa3}*SharedItemsImports = 13
-		BiomeMap.Shared\BiomeMap.Shared.projitems*{a020be16-ee06-4547-865a-715530a30193}*SharedItemsImports = 4
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{39C88997-CB92-44F4-B5FF-863139C9BD6F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{39C88997-CB92-44F4-B5FF-863139C9BD6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{39C88997-CB92-44F4-B5FF-863139C9BD6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{39C88997-CB92-44F4-B5FF-863139C9BD6F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3F4B6C8C-F040-428E-AC31-23144E25D215}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3F4B6C8C-F040-428E-AC31-23144E25D215}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3F4B6C8C-F040-428E-AC31-23144E25D215}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -52,14 +44,18 @@ Global
 		{6E162F70-881B-4CC7-A1F2-8BA10F1D7C7D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6E162F70-881B-4CC7-A1F2-8BA10F1D7C7D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6E162F70-881B-4CC7-A1F2-8BA10F1D7C7D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{35C68E11-E308-4FB6-9618-EE60F5A87B54}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{35C68E11-E308-4FB6-9618-EE60F5A87B54}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{35C68E11-E308-4FB6-9618-EE60F5A87B54}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{35C68E11-E308-4FB6-9618-EE60F5A87B54}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9F6676F8-F6BE-41A2-880B-806263FD54E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9F6676F8-F6BE-41A2-880B-806263FD54E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9F6676F8-F6BE-41A2-880B-806263FD54E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9F6676F8-F6BE-41A2-880B-806263FD54E5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4F029E79-C56F-4CA0-BDAB-0F07915BC12D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4F029E79-C56F-4CA0-BDAB-0F07915BC12D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4F029E79-C56F-4CA0-BDAB-0F07915BC12D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4F029E79-C56F-4CA0-BDAB-0F07915BC12D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EAF5F683-470D-41A6-A69F-C6510F07E466}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EAF5F683-470D-41A6-A69F-C6510F07E466}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EAF5F683-470D-41A6-A69F-C6510F07E466}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EAF5F683-470D-41A6-A69F-C6510F07E466}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

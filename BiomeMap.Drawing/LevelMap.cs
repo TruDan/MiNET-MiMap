@@ -1,20 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using BiomeMap.Drawing.Data;
+using BiomeMap.Common.Configuration;
+using BiomeMap.Common.Data;
 using BiomeMap.Drawing.Events;
 using BiomeMap.Drawing.Layers;
-using BiomeMap.Drawing.Renderers;
-using BiomeMap.Shared;
-using BiomeMap.Shared.Configuration;
+using BiomeMap.Common;
 using log4net;
-using Newtonsoft.Json;
-using Size = BiomeMap.Drawing.Data.Size;
+using Size = BiomeMap.Common.Data.Size;
 
 namespace BiomeMap.Drawing
 {

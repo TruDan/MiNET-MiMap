@@ -133,6 +133,10 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\BiomeMap.Common\BiomeMap.Common.csproj">
+      <Project>{EAF5F683-470D-41A6-A69F-C6510F07E466}</Project>
+      <Name>BiomeMap.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\BiomeMap.Drawing\BiomeMap.Drawing.csproj">
       <Project>{a020be16-ee06-4547-865a-715530a30193}</Project>
       <Name>BiomeMap.Drawing</Name>

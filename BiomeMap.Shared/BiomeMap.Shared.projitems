@@ -8,39 +8,4 @@
   <PropertyGroup Label="Configuration">
     <Import_RootNamespace>BiomeMap.Shared</Import_RootNamespace>
   </PropertyGroup>
-  <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)Configuration\BiomeMapConfig.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)BlendMode.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Configuration\BiomeMapLayerRenderer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Configuration\BiomeMapLevelConfig.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Configuration\BiomeMapLevelLayerConfig.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Configuration\BiomeMapOverlayRenderer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Data\BlockBounds.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Data\BlockColumnMeta.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Data\BlockPosition.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Data\Bounds.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Data\ChunkBounds.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Data\ChunkPosition.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Data\Polygon.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Data\Position.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Data\RegionPosition.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Data\Size.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Data\TileBounds.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Data\TilePosition.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Data\TilePositionComparer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)LevelMeta.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)MiMapJsonConvert.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Net\Data\Player.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Net\Data\Position.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Net\Data\Tile.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Net\IPacket.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Net\LevelMetaPacket.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Net\ListPlayersPacket.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Net\MapConfigPacket.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Net\Protocol.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Net\Serialization\PacketSerializer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Net\TileSubscribePacket.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Net\TileUpdatePacket.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Net\NullPacket.cs" />
-  </ItemGroup>
 </Project>

@@ -8,15 +8,16 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using BiomeMap.Drawing.Data;
+using BiomeMap.Common;
+using BiomeMap.Common.Data;
 using BiomeMap.Drawing.Events;
 using BiomeMap.Drawing.Renderers;
 using BiomeMap.Drawing.Renderers.Base;
 using BiomeMap.Drawing.Renderers.Overlay;
 using BiomeMap.Drawing.Renderers.PostProcessors;
-using BiomeMap.Shared.Configuration;
 using log4net;
-using Size = BiomeMap.Drawing.Data.Size;
+using BiomeMapLayerRenderer = BiomeMap.Common.Configuration.BiomeMapLayerRenderer;
+using Size = BiomeMap.Common.Data.Size;
 
 namespace BiomeMap.Drawing.Layers
 {

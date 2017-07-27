@@ -8,10 +8,10 @@ using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BiomeMap.Drawing.Data;
+using BiomeMap.Common;
+using BiomeMap.Common.Data;
 using BiomeMap.Drawing.Layers;
 using BiomeMap.Drawing.Utils;
-using BiomeMap.Shared;
 using log4net;
 using Newtonsoft.Json;
 

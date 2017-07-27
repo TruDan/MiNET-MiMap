@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Drawing;
-using BiomeMap.Drawing.Data;
+using BiomeMap.Common.Data;
 using BiomeMap.Drawing.Layers;
-using Size = BiomeMap.Drawing.Data.Size;
+using Size = BiomeMap.Common.Data.Size;
 
 namespace BiomeMap.Drawing.Renderers
 {

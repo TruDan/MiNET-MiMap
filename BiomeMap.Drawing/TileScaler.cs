@@ -8,11 +8,11 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using BiomeMap.Drawing.Data;
+using BiomeMap.Common.Data;
 using BiomeMap.Drawing.Events;
 using BiomeMap.Drawing.Utils;
 using log4net;
-using Size = BiomeMap.Drawing.Data.Size;
+using Size = BiomeMap.Common.Data.Size;
 
 namespace BiomeMap.Drawing
 {

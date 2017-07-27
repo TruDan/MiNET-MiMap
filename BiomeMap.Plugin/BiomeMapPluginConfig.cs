@@ -1,4 +1,4 @@
-﻿using BiomeMap.Shared.Configuration;
+﻿using BiomeMap.Common.Configuration;
 
 namespace BiomeMap.Plugin
 {

@@ -4,9 +4,9 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BiomeMap.Drawing.Data;
+using BiomeMap.Common.Data;
 using BiomeMap.Drawing.Renderers;
-using Size = BiomeMap.Drawing.Data.Size;
+using Size = BiomeMap.Common.Data.Size;
 
 namespace BiomeMap.Drawing.Layers
 {

@@ -4,7 +4,7 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Numerics;
-using BiomeMap.Drawing.Data;
+using BiomeMap.Common.Data;
 using BiomeMap.Drawing.Layers;
 using log4net;
 

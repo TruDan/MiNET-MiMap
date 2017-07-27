@@ -4,8 +4,8 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BiomeMap.Drawing.Data;
-using Size = BiomeMap.Drawing.Data.Size;
+using BiomeMap.Common.Data;
+using Size = BiomeMap.Common.Data.Size;
 
 namespace BiomeMap.Drawing.Renderers.Overlay
 {

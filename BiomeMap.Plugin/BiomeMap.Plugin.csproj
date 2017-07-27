@@ -34,9 +34,6 @@
     <Reference Include="AStarNavigator, Version=1.0.63.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\AStarNavigator.1.0.63\lib\net35\AStarNavigator.dll</HintPath>
     </Reference>
-    <Reference Include="Fleck, Version=0.14.0.59, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Fleck.0.14.0.59\lib\net40\Fleck.dll</HintPath>
-    </Reference>
     <Reference Include="fNbt, Version=0.6.9.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\MiNET.fnbt.0.6.9\lib\net35-client\fNbt.dll</HintPath>
     </Reference>
@@ -55,29 +52,14 @@
     <Reference Include="Microsoft.IO.RecyclableMemoryStream, Version=1.2.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.IO.RecyclableMemoryStream.1.2.2\lib\net45\Microsoft.IO.RecyclableMemoryStream.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Owin, Version=3.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Owin.3.1.0\lib\net45\Microsoft.Owin.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Owin.FileSystems, Version=3.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Owin.FileSystems.3.1.0\lib\net45\Microsoft.Owin.FileSystems.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.Owin.Host.HttpListener, Version=3.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Owin.Host.HttpListener.3.1.0\lib\net45\Microsoft.Owin.Host.HttpListener.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Owin.Hosting, Version=3.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Owin.Hosting.3.1.0\lib\net45\Microsoft.Owin.Hosting.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Owin.StaticFiles, Version=3.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Owin.StaticFiles.3.1.0\lib\net45\Microsoft.Owin.StaticFiles.dll</HintPath>
     </Reference>
     <Reference Include="MiNET">
       <HintPath>..\Libs\MiNET.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
-      <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
     </Reference>
     <Reference Include="SharpAvi, Version=2.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\SharpAvi.2.1.0\lib\net45\SharpAvi.dll</HintPath>
@@ -95,47 +77,34 @@
     <Reference Include="Topshelf, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b800c4cfcdeea87b, processorArchitecture=MSIL">
       <HintPath>..\packages\Topshelf.4.0.3\lib\net452\Topshelf.dll</HintPath>
     </Reference>
-    <Reference Include="WebSocketProxy, Version=1.0.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\WebSocketProxy.1.0.2\lib\net45\WebSocketProxy.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BiomeMapPluginConfig.cs" />
     <Compile Include="BiomeMapPlugin.cs" />
-    <Compile Include="Net\MiMapWebServer.cs" />
-    <Compile Include="Net\WebStartup.cs" />
-    <Compile Include="Net\WsConnection.cs" />
-    <Compile Include="Net\WsServer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Runners\LevelRunner.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <EmbeddedResource Include="Content\index.html" />
-    <EmbeddedResource Include="Content\Styles\biomemap.css">
-      <DependentUpon>biomemap.scss</DependentUpon>
-    </EmbeddedResource>
-    <Content Include="Content\Styles\biomemap.min.css">
-      <DependentUpon>biomemap.css</DependentUpon>
-    </Content>
-    <EmbeddedResource Include="Content\Styles\biomemap.scss" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\BiomeMap.Common\BiomeMap.Common.csproj">
+      <Project>{eaf5f683-470d-41a6-a69f-c6510f07e466}</Project>
+      <Name>BiomeMap.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\BiomeMap.Drawing\BiomeMap.Drawing.csproj">
       <Project>{a020be16-ee06-4547-865a-715530a30193}</Project>
       <Name>BiomeMap.Drawing</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Content\Lib\Leaflet.Toolbar\leaflet.toolbar.min.css" />
-    <EmbeddedResource Include="Content\Lib\Leaflet.Toolbar\leaflet.toolbar.min.js" />
-    <EmbeddedResource Include="Content\Scripts\chunkinfo.js" />
-    <EmbeddedResource Include="Content\Scripts\map.js" />
-    <EmbeddedResource Include="Content\Scripts\socket.js" />
+    <ProjectReference Include="..\BiomeMap.Web\BiomeMap.Web.csproj">
+      <Project>{4F029E79-C56F-4CA0-BDAB-0F07915BC12D}</Project>
+      <Name>BiomeMap.Web</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\packages\AsyncUsageAnalyzers.1.0.0-alpha003\analyzers\dotnet\AsyncUsageAnalyzers.dll" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>

@@ -4,10 +4,10 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BiomeMap.Drawing.Data;
+using BiomeMap.Common.Data;
 using BiomeMap.Drawing.Layers;
 using MiNET.Worlds;
-using Size = BiomeMap.Drawing.Data.Size;
+using Size = BiomeMap.Common.Data.Size;
 
 namespace BiomeMap.Drawing.Renderers.Base
 {

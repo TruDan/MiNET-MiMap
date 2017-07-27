@@ -4,10 +4,10 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using BiomeMap.Drawing;
-using BiomeMap.Plugin.Net;
 using BiomeMap.Plugin.Runners;
-using BiomeMap.Shared;
-using BiomeMap.Shared.Configuration;
+using BiomeMap.Common;
+using BiomeMap.Common.Configuration;
+using BiomeMap.Web;
 using log4net;
 using MiNET;
 using MiNET.Plugins.Attributes;
@@ -15,12 +15,12 @@ using Newtonsoft.Json;
 
 namespace BiomeMap.Plugin
 {
-    [Plugin(PluginName = "BiomeMapPlugin")]
+    [Plugin(PluginName = "BiomeMap.Plugin")]
     public class BiomeMapPlugin : MiNET.Plugins.Plugin
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(BiomeMapPlugin));
 
-        public static BiomeMapConfig Config { get; }
+        public static BiomeMapConfig Config;
 
         public static BiomeMapPlugin Instance { get; private set; }
 
@@ -34,7 +34,7 @@ namespace BiomeMap.Plugin
 
         static BiomeMapPlugin()
         {
-            Config = GetConfig();
+            Config = BiomeMapConfig.Config;
             if (!Directory.Exists(Config.TilesDirectory))
             {
                 Directory.CreateDirectory(Config.TilesDirectory);
@@ -48,36 +48,7 @@ namespace BiomeMap.Plugin
             //Log.InfoFormat("Config Loaded\n{0}", JsonConvert.SerializeObject(BiomeMapManager.Config, Formatting.Indented));
             _webServer = new MiMapWebServer();
         }
-
-        private static BiomeMapConfig GetConfig()
-        {
-            try
-            {
-                var configPath = Path.Combine(Path.GetDirectoryName(Assembly.GetAssembly(typeof(MiNetServer)).Location), "biomemap.json");
-                if (!File.Exists(configPath))
-                {
-                    // Create config file
-                    var newConfig = new BiomeMapPluginConfig();
-                    var newConfigJson = MiMapJsonConvert.SerializeObject(newConfig, true);
-                    File.WriteAllText(configPath, newConfigJson);
-                    Log.InfoFormat("Generating Config...");
-                    return newConfig;
-                }
-
-                var json = File.ReadAllText(configPath);
-                var config = MiMapJsonConvert.DeserializeObject<BiomeMapPluginConfig>(json);
-
-                Log.InfoFormat("Config Loaded from {0}", configPath);
-
-                return config;
-            }
-            catch (Exception ex)
-            {
-                Log.InfoFormat("Exception while loading BiomeMap Config:\n{0}", ex);
-                throw;
-            }
-        }
-
+        
         private void InitLevelRunners()
         {
             File.WriteAllText(Path.Combine(Config.TilesDirectory, "levels.json"), MiMapJsonConvert.SerializeObject(Config.Levels));

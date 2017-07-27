@@ -100,6 +100,11 @@
   <ItemGroup>
     <Content Include="MIConvexHull.xml" />
   </ItemGroup>
-  <Import Project="..\BiomeMap.Shared\BiomeMap.Shared.projitems" Label="Shared" />
+  <ItemGroup>
+    <ProjectReference Include="..\BiomeMap.Common\BiomeMap.Common.csproj">
+      <Project>{eaf5f683-470d-41a6-a69f-c6510f07e466}</Project>
+      <Name>BiomeMap.Common</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
