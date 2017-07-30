@@ -85,18 +85,17 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="biomemap.json">
+    <None Include="MiMap\config.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
+    <None Include="MiMap\Sphax_16.zip">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="server.truda.conf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <ProjectExtensions>
-    <VisualStudio>
-      <UserProperties biomemap_1json__JSONSchema="http://json.schemastore.org/bowerrc" />
-    </VisualStudio>
-  </ProjectExtensions>
+  <ProjectExtensions />
 </Project>

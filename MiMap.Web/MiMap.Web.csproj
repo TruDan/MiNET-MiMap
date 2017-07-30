@@ -111,14 +111,14 @@
     <EmbeddedResource Include="Content\Styles\mimap.scss" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Content\Styles\biomemap.css">
+    <EmbeddedResource Include="Content\Styles\mimap.css">
       <DependentUpon>mimap.scss</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Content\Styles\biomemap.min.css">
-      <DependentUpon>biomemap.css</DependentUpon>
-    </Content>
+    <EmbeddedResource Include="Content\Styles\mimap.min.css">
+      <DependentUpon>mimap.css</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5.2">
@@ -133,6 +133,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <None Include="compilerconfig.json" />
+    <None Include="compilerconfig.json.defaults">
+      <DependentUpon>compilerconfig.json</DependentUpon>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

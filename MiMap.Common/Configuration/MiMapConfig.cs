@@ -13,10 +13,13 @@ namespace MiMap.Common.Configuration
         public static MiMapConfig Config { get; }
 
         [JsonIgnore]
+        public static string BasePath { get; } =
+            Path.Combine(Path.GetDirectoryName(Assembly.GetAssembly(typeof(MiNetServer)).Location), "MiMap");
+
+        [JsonIgnore]
         private static readonly ILog Log = LogManager.GetLogger(typeof(MiMapConfig));
 
-        public string TilesDirectory { get; set; } =
-            Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "MiMapManager");
+        public string TilesDirectory { get; set; } = "tiles";
 
         public int SaveInterval { get; set; } = 2500;
 
@@ -31,7 +34,9 @@ namespace MiMap.Common.Configuration
         {
             try
             {
-                var configPath = Path.Combine(Path.GetDirectoryName(Assembly.GetAssembly(typeof(MiNetServer)).Location), "MiMap.json");
+                Directory.CreateDirectory(BasePath);
+
+                var configPath = Path.Combine(BasePath, "config.json");
                 if (!File.Exists(configPath))
                 {
                     // Create config file
@@ -61,7 +66,7 @@ namespace MiMap.Common.Configuration
             if (!Path.IsPathRooted(config.TilesDirectory))
             {
                 config.TilesDirectory =
-                    Path.Combine(Path.GetDirectoryName(Assembly.GetAssembly(typeof(MiNetServer)).Location),
+                    Path.Combine(BasePath,
                         config.TilesDirectory);
             }
 

@@ -1,6 +1,5 @@
 ﻿{
-  "TilesDirectory": "tiles",
-  //"TilesDirectory": "C:\\Users\\truda\\Documents\\GitHub\\MiMap\\MiNET.Server\\bin\\Debug\\RenderMaps",
+  //"TilesDirectory": "tiles",
   "SaveInterval": 1000,
   "Levels": [
     /*{
@@ -31,8 +30,20 @@
       "MinZoom": 0,
       "MaxZoom": 5,
       "TileSize": 256,
-      "BaseLayer": "Texture",
-      "Layers": []
+      "Renderer": {
+        "Type": "texture",
+        //"ResourcePack": "MiMap/Sphax_16.zip" 
+      },
+      "Layers": [
+        {
+          "LayerId": "biome",
+          "Label": "Biomes",
+          "Default": true, 
+          "Renderer": {
+            "Type": "biome"
+          }
+        }
+      ]
     }
   ]
 }

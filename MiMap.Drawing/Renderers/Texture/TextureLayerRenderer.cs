@@ -1,6 +1,7 @@
 ﻿using System.Drawing;
 using System.Linq;
 using MiMap.Common.Data;
+using MiMap.Drawing.Renderers.Texture;
 using MiNET.Worlds;
 using Size = MiMap.Common.Data.Size;
 
@@ -14,12 +15,20 @@ namespace MiMap.Drawing.Renderers.Base
 
         public static readonly byte[] FoilageBlocks = { 2, 18, 111, 161 };
 
-        private TextureMap TextureMap { get; }
+        private ResourcePack ResourcePack { get; }
         private BiomeUtils BiomeUtils { get; }
 
-        public TextureLayerRenderer()
+        public TextureLayerRenderer(TextureRendererConfig config)
         {
-            TextureMap = new TextureMap();
+            if(config.ResourcePack.Equals("default", System.StringComparison.InvariantCultureIgnoreCase))
+            {
+                ResourcePack = new ResourcePack();
+            }
+            else
+            {
+                ResourcePack = new ResourcePack(config.ResourcePack);
+            }
+
             BiomeUtils = new BiomeUtils();
             BiomeUtils.PrecomputeBiomeColors();
         }
@@ -28,7 +37,7 @@ namespace MiMap.Drawing.Renderers.Base
         {
             var blockId = (byte)blockColumn.BlockId;
 
-            using (var texture = TextureMap.GetTexture(blockId))
+            using (var texture = ResourcePack.GetTexture(blockId))
             {
                 graphics.FillRectangle(texture, bounds);
 
@@ -48,7 +57,7 @@ namespace MiMap.Drawing.Renderers.Base
 
         public void Dispose()
         {
-            TextureMap?.Dispose();
+            ResourcePack?.Dispose();
         }
     }
 }

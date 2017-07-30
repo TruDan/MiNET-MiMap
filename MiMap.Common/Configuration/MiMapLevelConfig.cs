@@ -18,9 +18,8 @@ namespace MiMap.Common.Configuration
         public int MaxZoom { get; set; } = 2;
 
         public int TileSize { get; set; } = 128;
-
-        [JsonConverter(typeof(StringEnumConverter))]
-        public MiMapLayerRenderer BaseLayer { get; set; } = MiMapLayerRenderer.Default;
+        
+        public MiMapRendererConfig Renderer { get; set; } = new MiMapRendererConfig();
 
         public MiMapLevelLayerConfig[] Layers { get; set; } = new MiMapLevelLayerConfig[0];
     }

@@ -7,18 +7,18 @@ using System.Linq;
 using System.Threading;
 using log4net;
 using MiMap.Common;
+using MiMap.Common.Configuration;
 using MiMap.Common.Data;
 using MiMap.Drawing.Events;
 using MiMap.Drawing.Renderers;
 using MiMap.Drawing.Renderers.Base;
 using MiMap.Drawing.Renderers.PostProcessors;
-using MiMapLayerRenderer = MiMap.Common.Configuration.MiMapLayerRenderer;
 
 namespace MiMap.Drawing.Layers
 {
-    public class BaseLayer : IMapLayer
+    public class MapLayer : IMapLayer
     {
-        private static readonly ILog Log = LogManager.GetLogger(typeof(BaseLayer));
+        private static readonly ILog Log = LogManager.GetLogger(typeof(MapLayer));
 
         private const int MaxUpdatesPerInterval = int.MaxValue;
         private static readonly TimeSpan CleanupTimespan = TimeSpan.FromSeconds(30);
@@ -26,6 +26,8 @@ namespace MiMap.Drawing.Layers
         public event EventHandler<TileUpdateEventArgs> OnTileUpdated;
 
         public string LayerId { get; }
+
+        public MiMapLevelLayerConfig Config { get; }
 
         public LevelMap Map { get; }
 
@@ -35,7 +37,7 @@ namespace MiMap.Drawing.Layers
 
         public ILayerRenderer Renderer { get; set; }
 
-        public IPostProcessor[] PostProcessors { get; protected set; } = { new LightingPostProcessor(), new HeightShadowPostProcessor() };
+        public IPostProcessor[] PostProcessors { get; protected set; }
 
         private readonly Dictionary<RegionPosition, MapRegionLayer> _regions = new Dictionary<RegionPosition, MapRegionLayer>();
         private readonly object _cleanupSync = new object();
@@ -46,20 +48,25 @@ namespace MiMap.Drawing.Layers
 
         private Timer _cleanupTimer { get; }
 
-        public BaseLayer(LevelMap map, string layerId) : this(map, Path.Combine(map.TilesDirectory, "base"),
-            GetLayerRenderer(map.Config.BaseLayer), layerId)
-        {
-
-        }
-
-        protected BaseLayer(LevelMap map, string directory, ILayerRenderer renderer, string layerId)
+        public MapLayer(LevelMap map, MiMapLevelLayerConfig config)
         {
             Map = map;
-            Directory = directory;
-            Renderer = renderer;
-            LayerId = layerId;
+            LayerId = config.LayerId ?? "base";
+            Directory = Path.Combine(map.TilesDirectory, LayerId);
+            Renderer = RendererFactory.CreateLayerRenderer(config.Renderer);
 
-            Scaler = new TileScaler(directory, renderer.RenderScale, map.Meta.TileSize, map.Meta.MinZoom, map.Meta.MaxZoom, layerId);
+            var postProcessors = new List<IPostProcessor>();
+            foreach (var pp in config.Renderer.PostProcessors)
+            {
+                var p = PostProcessorFactory.CreateLayerRenderer(pp);
+                if (p != null)
+                {
+                    postProcessors.Add(p);
+                }
+            }
+            PostProcessors = postProcessors.ToArray();
+
+            Scaler = new TileScaler(Directory, Renderer.RenderScale, map.Meta.TileSize, map.Meta.MinZoom, map.Meta.MaxZoom, LayerId);
             Scaler.OnTileUpdated += (s, e) => OnTileUpdated?.Invoke(s, e);
             _cleanupTimer = new Timer(CleanupCallback, null, 5000, 5000);
         }
@@ -139,26 +146,6 @@ namespace MiMap.Drawing.Layers
         public void UpdateBlockColumn(BlockColumnMeta column)
         {
             _updates.Enqueue(column);
-        }
-
-        private static ILayerRenderer GetLayerRenderer(MiMapLayerRenderer layerRenderer)
-        {
-            ILayerRenderer renderer = null;
-            switch (layerRenderer)
-            {
-                default:
-                case MiMapLayerRenderer.Default:
-                    renderer = new DefaultLayerRenderer();
-                    break;
-                //case MiMapLayerRenderer.SolidColor:
-
-                //    break;
-                case MiMapLayerRenderer.Texture:
-                    renderer = new TextureLayerRenderer();
-                    break;
-            }
-
-            return renderer;
         }
     }
 }

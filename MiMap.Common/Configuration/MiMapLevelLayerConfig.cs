@@ -15,8 +15,7 @@ namespace MiMap.Common.Configuration
 
         [JsonConverter(typeof(StringEnumConverter))]
         public BlendMode BlendMode { get; set; } = BlendMode.Normal;
-
-        [JsonConverter(typeof(StringEnumConverter))]
-        public MiMapOverlayRenderer Renderer { get; set; }
+        
+        public MiMapRendererConfig Renderer { get; set; } = new MiMapRendererConfig();
     }
 }

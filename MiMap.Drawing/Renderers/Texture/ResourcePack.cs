@@ -8,11 +8,11 @@ using log4net;
 using MiMap.Drawing.Utils;
 using MiNET.Blocks;
 
-namespace MiMap.Drawing.Renderers.Base
+namespace MiMap.Drawing.Renderers.Texture
 {
-    public class TextureMap : IDisposable
+    public class ResourcePack : IDisposable
     {
-        private static readonly ILog Log = LogManager.GetLogger(typeof(TextureMap));
+        private static readonly ILog Log = LogManager.GetLogger(typeof(ResourcePack));
 
         private static readonly string BlockBasePath = Path.Combine("assets", "minecraft", "textures", "blocks");
 
@@ -22,23 +22,23 @@ namespace MiMap.Drawing.Renderers.Base
 
         private Dictionary<byte, Bitmap> _textures = new Dictionary<byte, Bitmap>();
 
-        private ZipArchive ResourcePack { get; }
+        private ZipArchive ResourcePackArchive { get; }
 
-        public TextureMap() : this(new MemoryStream(Textures._default))
+        public ResourcePack() : this(typeof(ResourcePack).Assembly.GetManifestResourceStream(typeof(ResourcePack).Namespace + ".default.zip"))
         {
         }
 
-        public TextureMap(string zipPath) : this(File.OpenRead(zipPath))
+        public ResourcePack(string zipPath) : this(File.OpenRead(zipPath))
         {
         }
-        public TextureMap(Stream zipStream) : this(new ZipArchive(zipStream))
+        public ResourcePack(Stream zipStream) : this(new ZipArchive(zipStream))
         {
         }
 
-        public TextureMap(ZipArchive archive)
+        public ResourcePack(ZipArchive archive)
         {
             _noTexture = CreateNoTexture();
-            ResourcePack = archive;
+            ResourcePackArchive = archive;
             LoadResourcePack();
         }
 
@@ -116,7 +116,7 @@ namespace MiMap.Drawing.Renderers.Base
         {
             var path = Path.Combine(BlockBasePath, name);
 
-            var entry = ResourcePack.Entries.FirstOrDefault(e => e.Name.EndsWith(".png") && e.FullName.Replace('/', '\\').StartsWith(path, StringComparison.InvariantCultureIgnoreCase));
+            var entry = ResourcePackArchive.Entries.FirstOrDefault(e => e.Name.EndsWith(".png") && e.FullName.Replace('/', '\\').StartsWith(path, StringComparison.InvariantCultureIgnoreCase));
             if (entry != null)
             {
                 using (var zipStream = entry.Open())
@@ -174,7 +174,7 @@ namespace MiMap.Drawing.Renderers.Base
         public void Dispose()
         {
             _noTexture?.Dispose();
-            ResourcePack?.Dispose();
+            ResourcePackArchive?.Dispose();
             foreach (var texture in _textures.ToArray())
             {
                 texture.Value.Dispose();

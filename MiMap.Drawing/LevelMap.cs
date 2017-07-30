@@ -35,9 +35,9 @@ namespace MiMap.Drawing
         private Timer _timer;
         private readonly object _runSync = new object();
 
-        public LevelMap(MiMapManager MiMapManager, MiMapLevelConfig config)
+        public LevelMap(MiMapManager miMapManager, MiMapLevelConfig config)
         {
-            MiMapManager = MiMapManager;
+            MiMapManager = miMapManager;
             Config = config;
             Meta = new LevelMeta()
             {
@@ -73,14 +73,22 @@ namespace MiMap.Drawing
             Directory.CreateDirectory(TilesDirectory);
 
             var layers = new IMapLayer[config.Layers.Length + 1];
-            var baseLayer = new BaseLayer(this, config.LevelId);
+            var baseLayer = new MapLayer(this, new MiMapLevelLayerConfig()
+            {
+                LayerId = "base",
+                BlendMode = BlendMode.Normal,
+                Default = config.Enabled,
+                Enabled = config.Enabled,
+                Label = config.Label,
+                Renderer = config.Renderer
+            });
             baseLayer.OnTileUpdated += (s, e) => OnTileUpdated?.Invoke(s, e);
             layers[0] = baseLayer;
 
             var i = 1;
             foreach (var layer in config.Layers)
             {
-                var overlayerLayer = new OverlayLayer(this, layer);
+                var overlayerLayer = new MapLayer(this, layer);
                 overlayerLayer.OnTileUpdated += (s, e) => OnTileUpdated?.Invoke(s, e);
                 layers[i] = overlayerLayer;
                 i++;

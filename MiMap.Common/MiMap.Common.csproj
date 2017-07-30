@@ -68,10 +68,9 @@
   <ItemGroup>
     <Compile Include="BlendMode.cs" />
     <Compile Include="Configuration\MiMapLevelLayerConfig.cs" />
-    <Compile Include="Configuration\MiMapOverlayRenderer.cs" />
     <Compile Include="Configuration\MiMapConfig.cs" />
-    <Compile Include="Configuration\MiMapLayerRenderer.cs" />
     <Compile Include="Configuration\MiMapLevelConfig.cs" />
+    <Compile Include="Configuration\MiMapRendererConfig.cs" />
     <Compile Include="Data\BlockBounds.cs" />
     <Compile Include="Data\BlockColumnMeta.cs" />
     <Compile Include="Data\BlockPosition.cs" />

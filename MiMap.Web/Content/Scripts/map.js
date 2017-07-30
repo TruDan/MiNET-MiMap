@@ -12,6 +12,9 @@
 
     this.levelMeta = {};
     this.layers = {};
+    this.overlays = {};
+
+    this.layersControl = null;
 
     this.activeLayer = null;
 
@@ -76,23 +79,23 @@
         $this.map.on('zoomend', this.onMapZoomEnd.bind(this));
 
         $this.chunkinfo = L.control.chunkInfo({ position: 'topright' });
-        $this.chunkinfo.addTo($this.map);
+        //$this.chunkinfo.addTo($this.map);
 
-        $this.hash = new L.Hash($this.map);
+        //$this.hash = new L.Hash($this.map);
     };
 
     this.onMapZoomEnd = function (e) {
         $this.socket.subscribeTiles(true, $this.map.getZoom());
     };
 
-    this.createLayerForLevel = function (levelId, minZoom, maxZoom) {
+    this.createLayerForLevel = function (levelId, minZoom, maxZoom, layerId) {
         return L.tileLayer/*.fallback*/(window.location.pathname + "tiles/{levelid}/{layerid}/{z}/{x}_{y}.png?ts={ts}",
             {
-                id: levelId,
+                id: levelId + "_" + (typeof layerId === 'undefined' ? 'base' : layerId),
                 levelid: levelId,
-                layerid: 'base',
-                minZoom: -10,
-                maxZoom: 18,
+                layerid: typeof layerId === 'undefined' ? 'base' : layerId,
+                minZoom: 0,
+                maxZoom: 10,
                 minNativeZoom: minZoom,
                 maxNativeZoom: maxZoom,
                 noWrap: true,
@@ -106,6 +109,16 @@
         var layer = this.createLayerForLevel(levelConfig.levelId, levelConfig.minZoom, levelConfig.maxZoom);
 
         $this.layers[levelConfig.levelId] = layer;
+
+        $this.overlays[levelConfig.levelId] = [];
+
+        $.each(levelConfig.layers,
+            function(key, value) {
+                $this.overlays[levelConfig.levelId].push($this.createLayerForLevel(levelConfig.levelId,
+                    levelConfig.minZoom,
+                    levelConfig.maxZoom,
+                    value.layerId));
+            });
 
     };
 
@@ -141,7 +154,7 @@
         if (!(levelId in $this.layers)) return;
         var layer = $this.layers[levelId];
 
-        var miniMapLayer = L.tileLayer(window.location.pathname + "tiles/{levelid}/{layerid}/{z}/{x}_{y}.png?ts={ts}",
+        /*var miniMapLayer = L.tileLayer(window.location.pathname + "tiles/{levelid}/{layerid}/{z}/{x}_{y}.png?ts={ts}",
             {
                 id: levelId,
                 levelid: levelId,
@@ -154,14 +167,19 @@
                 ts: $this._getTimestamp.bind($this)
             });
 
-        miniMapLayer.opacity = 0.75;
+        miniMapLayer.opacity = 0.75;*/
 
         if (this.activeLayer !== null) {
             this.activeLayer.remove();
         }
 
-        this.activeLayer = layer;
+        if (this.layersControl !== null) {
+            this.layersControl.remove();
+        }
 
+        this.activeLayer = layer;
+        this.layersControl = L.control.layers($this.layers, $this.overlays[levelId]).addTo($this.map);
+        /*
         if (this.minimap === null) {
             this.minimap = new L.Control.MiniMap(miniMapLayer,
                 {
@@ -179,18 +197,23 @@
                         fillOpacity: 0.1
                     },
                     mapOptions: {
-                        crs: $this.__getCrs(),
+                        //crs: $this.__getCrs(),
                         attributionControl: false
                     }
                 });
             this.minimap.addTo($this.map);
         } else {
             this.minimap.changeLayer(miniMapLayer);
-        }
+        }*/
 
         layer.addTo($this.map);
 
-        console.log("Setting Level to ", levelId, layer, miniMapLayer);
+        $.each($this.overlays[levelId],
+            function(k, v) {
+                //v.addTo($this.map);
+            });
+
+        console.log("Setting Level to ", levelId, layer);
     };
 
     this.refreshTile = function (layerId, tileX, tileY, tileZoom) {

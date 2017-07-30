@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
 namespace MiMap.Common
@@ -24,6 +25,10 @@ namespace MiMap.Common
         public static T DeserializeObject<T>(string json)
         {
             return JsonConvert.DeserializeObject<T>(json, DefaultSettings);
+        }
+        public static object DeserializeObject(string json, Type type)
+        {
+            return JsonConvert.DeserializeObject(json, type, DefaultSettings);
         }
 
     }
