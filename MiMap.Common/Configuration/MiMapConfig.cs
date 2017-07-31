@@ -9,6 +9,8 @@ namespace MiMap.Common.Configuration
 {
     public class MiMapConfig
     {
+
+        #region Static
         [JsonIgnore]
         public static MiMapConfig Config { get; }
 
@@ -18,17 +20,6 @@ namespace MiMap.Common.Configuration
 
         [JsonIgnore]
         private static readonly ILog Log = LogManager.GetLogger(typeof(MiMapConfig));
-
-        public string TilesDirectory { get; set; } = "tiles";
-
-        public int SaveInterval { get; set; } = 2500;
-
-        public MiMapLevelConfig[] Levels { get; set; } = new MiMapLevelConfig[0];
-
-        static MiMapConfig()
-        {
-            Config = GetConfig();
-        }
 
         private static MiMapConfig GetConfig()
         {
@@ -74,5 +65,21 @@ namespace MiMap.Common.Configuration
 
             return config;
         }
+
+        #endregion
+
+        public string TilesDirectory { get; set; } = "tiles";
+
+        public int SaveInterval { get; set; } = 2500;
+
+        public MiMapWebServerConfig WebServer { get; set; } = new MiMapWebServerConfig();
+
+        public MiMapLevelConfig[] Levels { get; set; } = new MiMapLevelConfig[0];
+
+        static MiMapConfig()
+        {
+            Config = GetConfig();
+        }
+
     }
 }

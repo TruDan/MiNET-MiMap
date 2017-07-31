@@ -4,7 +4,7 @@ namespace MiMap.Common.Net
 {
     public class TileUpdatePacket : IPacket
     {
-        public byte Id { get; } = Protocol.TileUpdate;
+        public int Id { get; } = Protocol.TileUpdate;
 
         public string LayerId { get; set; }
 

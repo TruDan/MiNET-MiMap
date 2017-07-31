@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using BiomeMap.Drawing;
 using log4net;
 using MiMap.Common;
 using MiMap.Common.Configuration;
@@ -27,10 +30,24 @@ namespace MiMap.Drawing
         public MiMapLevelConfig Config { get; }
 
         public string TilesDirectory { get; }
+        private readonly object _layersSync = new object();
+        private MapLayer[] Layers
+        {
+            get
+            {
+                lock (_layersSync)
+                {
+                    return _layers.ToArray();
+                }
+            }
+        }
 
-        private IMapLayer[] Layers { get; }
+        private MapLayer[] _layers { get; } = { };
 
         private BlockBounds BlockBounds { get; set; }
+
+        private readonly Dictionary<RegionPosition, LevelMapRegion> _regions = new Dictionary<RegionPosition, LevelMapRegion>();
+        private readonly object _regionSync = new object();
 
         private Timer _timer;
         private readonly object _runSync = new object();
@@ -72,7 +89,7 @@ namespace MiMap.Drawing
 
             Directory.CreateDirectory(TilesDirectory);
 
-            var layers = new IMapLayer[config.Layers.Length + 1];
+            _layers = new MapLayer[config.Layers.Length + 1];
             var baseLayer = new MapLayer(this, new MiMapLevelLayerConfig()
             {
                 LayerId = "base",
@@ -82,20 +99,37 @@ namespace MiMap.Drawing
                 Label = config.Label,
                 Renderer = config.Renderer
             });
-            baseLayer.OnTileUpdated += (s, e) => OnTileUpdated?.Invoke(s, e);
-            layers[0] = baseLayer;
 
-            var i = 1;
+            baseLayer.OnTileUpdated += (s, e) => OnTileUpdated?.Invoke(s, e);
+            var i = 0;
+            _layers[i] = baseLayer;
+            i++;
+
             foreach (var layer in config.Layers)
             {
+                //Log.InfoFormat("Loading Overlay layer {0} {1}/{2}", layer, i, _layers.Length);
                 var overlayerLayer = new MapLayer(this, layer);
                 overlayerLayer.OnTileUpdated += (s, e) => OnTileUpdated?.Invoke(s, e);
-                layers[i] = overlayerLayer;
+                _layers[i] = overlayerLayer;
                 i++;
             }
 
-            Layers = layers;
             _timer = new Timer(SaveLayers);
+        }
+
+        public LevelMapRegion GetRegionLayer(RegionPosition regionPos)
+        {
+            lock (_regionSync)
+            {
+                LevelMapRegion region;
+                if (!_regions.TryGetValue(regionPos, out region))
+                {
+                    region = new LevelMapRegion(this, regionPos);
+                    _regions.Add(regionPos, region);
+                }
+
+                return region;
+            }
         }
 
         public void Start()
@@ -119,9 +153,16 @@ namespace MiMap.Drawing
             BlockBounds.Max.X = Math.Max(update.Position.X, BlockBounds.Max.X);
             BlockBounds.Max.Z = Math.Max(update.Position.Z, BlockBounds.Max.Z);
 
-            foreach (var layer in Layers)
+            var region = GetRegionLayer(update.Position.GetRegionPosition());
+            region.Update(update);
+
+            var layers = Layers;
+            if (layers.Length > 0)
             {
-                layer.UpdateBlockColumn(update);
+                foreach (var layer in layers)
+                {
+                    layer.UpdateBlockColumn(update);
+                }
             }
         }
 
@@ -152,8 +193,36 @@ namespace MiMap.Drawing
                 Directory.CreateDirectory(TilesDirectory);
 
                 UpdateMeta();
+                /*
+                lock (_regionSync)
+                {
+                    foreach (var r in _regions.Values)
+                    {
+                        r.Save();
+                    }
+                }
 
-                Parallel.ForEach(Layers, (layer) => layer.ProcessUpdate());
+                foreach (var l in Layers.ToArray())
+                {
+                    l.ProcessUpdate();
+                }*/
+
+                lock (_regionSync)
+                {
+
+                    //Parallel.ForEach(_regions.Values.ToArray(), region => region.Save());
+                }
+                var layers = Layers;
+                if (layers.Length > 0)
+                {
+                    foreach (var l in layers)
+                    {
+                        //Log.InfoFormat("Updating layer {0}", l.LayerId);
+                        l.ProcessUpdate();
+                    }
+                }
+                //Parallel.ForEach(Layers, (layer) => layer.ProcessUpdate());
+
             }
             finally
             {

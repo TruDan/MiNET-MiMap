@@ -52,7 +52,7 @@ namespace MiMap.Plugin.Runners
         {
             WsServer.BroadcastTileUpdate(new TileUpdatePacket()
             {
-                LayerId = e.LayerId,
+                LayerId = e.LevelId + "_" + e.LayerId,
                 Tile = new Tile()
                 {
                     X = e.TileX,
@@ -216,7 +216,7 @@ namespace MiMap.Plugin.Runners
             {
                 var block = Level.GetBlock(x, y, z);
                 //if (!block.IsTransparent)
-                if (!(block is Air))
+                if (block.IsSolid || block is Flowing)
                 {
                     return block;
                 }

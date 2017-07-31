@@ -60,7 +60,7 @@ function MiMapWebSocket() {
     }
 
     this.subscribeTiles = function (enabled, zoomLevel) {
-        this.send({
+        $this.send({
             id: 5,
             subscribe: enabled,
             currentZoomLevel: zoomLevel

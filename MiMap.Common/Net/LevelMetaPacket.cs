@@ -3,7 +3,7 @@
     public class LevelMetaPacket : IPacket
     {
 
-        public byte Id { get; } = Protocol.LevelMeta;
+        public int Id { get; } = Protocol.LevelMeta;
 
 
         public string LevelId { get; set; }

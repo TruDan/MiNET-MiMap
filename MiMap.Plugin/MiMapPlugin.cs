@@ -42,9 +42,9 @@ namespace MiMap.Plugin
             Instance = this;
             MiMapManager = new MiMapManager(Config);
             //Log.InfoFormat("Config Loaded\n{0}", JsonConvert.SerializeObject(MiMapManager.Config, Formatting.Indented));
-            _webServer = new MiMapWebServer();
+            _webServer = new MiMapWebServer(Config.WebServer);
         }
-        
+
         private void InitLevelRunners()
         {
             File.WriteAllText(Path.Combine(Config.TilesDirectory, "levels.json"), MiMapJsonConvert.SerializeObject(Config.Levels));
@@ -63,7 +63,11 @@ namespace MiMap.Plugin
         protected override void OnEnable()
         {
             base.OnEnable();
-            _webServer.Start();
+
+            if (Config.WebServer.Enabled)
+            {
+                _webServer.Start();
+            }
 
             MiMapManager.Initialise();
             InitLevelRunners();
@@ -84,7 +88,12 @@ namespace MiMap.Plugin
 
             MiMapManager.Stop();
             _levelRunners.Clear();
-            _webServer.Stop();
+
+            if (Config.WebServer.Enabled)
+            {
+                _webServer.Stop();
+            }
+
             base.OnDisable();
 
         }

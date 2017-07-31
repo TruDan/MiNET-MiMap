@@ -7,7 +7,7 @@
             return MiMapJsonConvert.SerializeObject(packet);
         }
 
-        public static byte GetPacketId(this string rawPacketJson)
+        public static int GetPacketId(this string rawPacketJson)
         {
             return MiMapJsonConvert.DeserializeObject<NullPacket>(rawPacketJson).Id;
         }

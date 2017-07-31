@@ -2,7 +2,7 @@
 {
     public class TileSubscribePacket : IPacket
     {
-        public byte Id { get; } = Protocol.TileSubscribe;
+        public int Id { get; } = Protocol.TileSubscribe;
 
         public bool Subscribe { get; set; } = true;
 

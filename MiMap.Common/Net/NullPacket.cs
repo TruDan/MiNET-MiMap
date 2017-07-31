@@ -1,8 +1,10 @@
-﻿namespace MiMap.Common.Net
+﻿using System.Collections.Generic;
+
+namespace MiMap.Common.Net
 {
     public sealed class NullPacket : IPacket
     {
-        public byte Id { get; } = Protocol.Null;
+        public int Id { get; set; } = Protocol.Null;
 
     }
 }

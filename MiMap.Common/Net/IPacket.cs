@@ -2,7 +2,7 @@
 {
     public interface IPacket
     {
-        byte Id { get; }
+        int Id { get; }
 
     }
 }

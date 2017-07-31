@@ -71,6 +71,7 @@
     <Compile Include="Configuration\MiMapConfig.cs" />
     <Compile Include="Configuration\MiMapLevelConfig.cs" />
     <Compile Include="Configuration\MiMapRendererConfig.cs" />
+    <Compile Include="Configuration\MiMapWebServerConfig.cs" />
     <Compile Include="Data\BlockBounds.cs" />
     <Compile Include="Data\BlockColumnMeta.cs" />
     <Compile Include="Data\BlockPosition.cs" />

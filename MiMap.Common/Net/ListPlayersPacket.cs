@@ -4,7 +4,7 @@ namespace MiMap.Common.Net
 {
     public class ListPlayersPacket : IPacket
     {
-        public byte Id { get; } = Protocol.ListPlayers;
+        public int Id { get; } = Protocol.ListPlayers;
         public Player[] Players { get; set; }
     }
 }

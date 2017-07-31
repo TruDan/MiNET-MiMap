@@ -66,7 +66,7 @@ namespace MiMap.Drawing.Layers
             }
             PostProcessors = postProcessors.ToArray();
 
-            Scaler = new TileScaler(Directory, Renderer.RenderScale, map.Meta.TileSize, map.Meta.MinZoom, map.Meta.MaxZoom, LayerId);
+            Scaler = new TileScaler(Directory, Renderer.RenderScale, map.Meta.TileSize, map.Meta.MinZoom, map.Meta.MaxZoom, map.Config.LevelId, LayerId);
             Scaler.OnTileUpdated += (s, e) => OnTileUpdated?.Invoke(s, e);
             _cleanupTimer = new Timer(CleanupCallback, null, 5000, 5000);
         }

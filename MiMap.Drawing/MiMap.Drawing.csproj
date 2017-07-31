@@ -58,6 +58,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="LevelMapRegion.cs" />
     <Compile Include="MiMapManager.cs" />
     <Compile Include="Events\TileUpdateEventArgs.cs" />
     <Compile Include="Layers\MapLayer.cs" />
@@ -73,7 +74,6 @@
     <Compile Include="Renderers\IPostProcessor.cs" />
     <Compile Include="Renderers\Overlay\BiomeOverlayRenderer.cs" />
     <Compile Include="Renderers\Overlay\HeightMapOverlayRenderer.cs" />
-    <Compile Include="MapTile.cs" />
     <Compile Include="Renderers\PostProcessors\HeightShadowPostProcessor.cs" />
     <Compile Include="Renderers\PostProcessors\LightingPostProcessor.cs" />
     <Compile Include="Renderers\RendererFactory.cs" />

@@ -32,13 +32,13 @@
       "TileSize": 256,
       "Renderer": {
         "Type": "texture",
-        //"ResourcePack": "MiMap/Sphax_16.zip" 
+        "ResourcePack": "MiMap/Sphax_16.zip"
       },
       "Layers": [
         {
           "LayerId": "biome",
           "Label": "Biomes",
-          "Default": true, 
+          "Default": true,
           "Renderer": {
             "Type": "biome"
           }

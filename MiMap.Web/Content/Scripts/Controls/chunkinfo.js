@@ -17,7 +17,7 @@
     onAdd: function (map) {
         this._map = map;
 
-        this._element = L.DomUtil.create('div', 'leaflet-control-chunkinfo');
+        this._element = L.DomUtil.create('div', 'leaflet-control-chunkinfo leaflet-control-group');
         this._element.style.position = 'relative';
 
         this._addSectionGroup("hover", "Highlighted Block");
@@ -44,7 +44,7 @@
     },
 
     _addSectionGroup: function (groupId, groupLabel) {
-        var dom = L.DomUtil.create('table', 'leaflet-control-chunkinfo-group');
+        var dom = L.DomUtil.create('table', 'leaflet-control leaflet-control-chunkinfo-group');
         this._sectionGroups[groupId] = dom;
         this._element.appendChild(dom);
 

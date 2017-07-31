@@ -83,10 +83,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Middleware\NoCacheMiddleware.cs" />
     <Compile Include="MiMapWebServer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sockets\WsConnection.cs" />
     <Compile Include="Sockets\WsServer.cs" />
+    <Compile Include="Utils\NetSh.cs" />
+    <Compile Include="Utils\UacHelper.cs" />
     <Compile Include="WebStartup.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -99,10 +102,10 @@
     <EmbeddedResource Include="Content\Lib\Leaflet.Toolbar\leaflet.toolbar.min.js" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Content\Scripts\chunkinfo.js" />
+    <EmbeddedResource Include="Content\Scripts\Controls\chunkinfo.js" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Content\Scripts\map.js" />
+    <EmbeddedResource Include="Content\Scripts\MiMap.js" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Content\Scripts\socket.js" />
@@ -137,13 +140,17 @@
     <None Include="compilerconfig.json.defaults">
       <DependentUpon>compilerconfig.json</DependentUpon>
     </None>
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MiMap.Common\MiMap.Common.csproj">
       <Project>{eaf5f683-470d-41a6-a69f-c6510f07e466}</Project>
       <Name>MiMap.Common</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Content\Scripts\Controls\MiMapControl.js" />
+    <Content Include="Content\Scripts\Controls\MiMapLayerControl.js" />
+    <Content Include="Content\Scripts\MiMapTileLayer.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -14,14 +14,18 @@ namespace MiMap.Drawing
 {
     public class TileScaler
     {
+        private static readonly ILog Log = LogManager.GetLogger(typeof(TileScaler));
+
         public event EventHandler<TileUpdateEventArgs> OnTileUpdated;
 
         private TileScalerRunner[] _runners;
 
+        public string LevelId { get; }
         public string LayerId { get; }
 
-        public TileScaler(string basePath, Size renderScale, Size tileSize, int minZoom, int maxZoom, string layerId)
+        public TileScaler(string basePath, Size renderScale, Size tileSize, int minZoom, int maxZoom, string levelId, string layerId)
         {
+            LevelId = levelId;
             LayerId = layerId;
             var size = maxZoom - minZoom + 1;
             _runners = new TileScalerRunner[size];
@@ -32,6 +36,8 @@ namespace MiMap.Drawing
                 _runners[i] = new TileScalerRunner(this, basePath, z, renderScale, tileSize);
                 i++;
             }
+
+            Log.InfoFormat("TileScaler created with id {0} {1}->{2} ({3} - {4}) {5}", layerId, minZoom, maxZoom, tileSize, renderScale, basePath);
         }
 
         public void Enqueue(RegionPosition regionPos, MapRegionLayer region)
@@ -43,7 +49,7 @@ namespace MiMap.Drawing
             }
         }
 
-        class TileScaleEntry
+        class TileScaleEntry : IDisposable
         {
             public RegionPosition Position { get; }
 
@@ -60,11 +66,17 @@ namespace MiMap.Drawing
 
             public Bitmap GetBitmap()
             {
+                return _region.GetBitmap();
                 if (_bitmap == null) _bitmap = _region.GetBitmap();
                 lock (_bitmapSync)
                 {
                     return (Bitmap)_bitmap.Clone();
                 }
+            }
+
+            public void Dispose()
+            {
+                //_bitmap?.Dispose();
             }
         }
 
@@ -157,19 +169,22 @@ namespace MiMap.Drawing
 
                     ThreadPool.QueueUserWorkItem((o) =>
                     {
-                        try
+                        //using (entry)
                         {
-                            ScaleRegion(entry);
-                        }
-                        catch (Exception ex)
-                        {
-                            Log.Error("Exception during region scale " + entry.Position, ex);
-                        }
-                        finally
-                        {
-                            lock (_queueSync)
+                            try
                             {
-                                _processing.Remove(entry);
+                                ScaleRegion(entry);
+                            }
+                            catch (Exception ex)
+                            {
+                                Log.Error("Exception during region scale " + entry.Position, ex);
+                            }
+                            finally
+                            {
+                                lock (_queueSync)
+                                {
+                                    _processing.Remove(entry);
+                                }
                             }
                         }
                     });
@@ -181,35 +196,39 @@ namespace MiMap.Drawing
                 var sw = Stopwatch.StartNew();
                 var regionPos = entry.Position;
 
-                var baseImg = entry.GetBitmap();
-                var format = baseImg.PixelFormat;
-                var sync = new object();
-
-                //Parallel.For(0, Scale, tX =>
-                for (int tX = 0; tX < Scale; tX++)
+                using (var baseImg = entry.GetBitmap())
                 {
-                    //Parallel.For(0, Scale, tZ =>
-                    for (int tZ = 0; tZ < Scale; tZ++)
+                    var format = baseImg.PixelFormat;
+                    var sync = new object();
+
+                    //Parallel.For(0, Scale, tX =>
+                    for (int tX = 0; tX < Scale; tX++)
                     {
-                        Bitmap img;
-                        lock (sync)
+                        //Parallel.For(0, Scale, tZ =>
+                        for (int tZ = 0; tZ < Scale; tZ++)
                         {
-                            img = baseImg.Clone(new Rectangle(tX * RegionTileSize.Width, tZ * RegionTileSize.Height, RegionTileSize.Width, RegionTileSize.Height), format);
-                        }
+                            Bitmap img;
+                            lock (sync)
+                            {
+                                img = baseImg.Clone(
+                                    new Rectangle(tX * RegionTileSize.Width, tZ * RegionTileSize.Height,
+                                        RegionTileSize.Width, RegionTileSize.Height), format);
+                            }
 
-                        var tilePos = new TilePosition((regionPos.X << Zoom) + tX, (regionPos.Z << Zoom) + tZ, Zoom);
+                            var tilePos = new TilePosition((regionPos.X << Zoom) + tX, (regionPos.Z << Zoom) + tZ,
+                                Zoom);
 
-                        Scaler.OnTileUpdated?.Invoke(this, new TileUpdateEventArgs(Scaler.LayerId, tilePos));
-                        DrawTile(regionPos, img, tilePos);
-                    }//);
-                }//);
-
-                baseImg.Dispose();
+                            DrawTile(img, tilePos);
+                            Scaler.OnTileUpdated?.Invoke(this,
+                                new TileUpdateEventArgs(Scaler.LevelId, Scaler.LayerId, tilePos));
+                        } //);
+                    } //);
+                }
 
                 Log.InfoFormat("Scaled Region {0} to Zoom Level {1} in {2}ms", regionPos, Zoom, sw.ElapsedMilliseconds);
             }
 
-            private void DrawTile(RegionPosition regionPos, Bitmap baseBitmap, TilePosition tilePos)
+            private void DrawTile(Bitmap baseBitmap, TilePosition tilePos)
             {
                 using (baseBitmap)
                 {
@@ -223,6 +242,7 @@ namespace MiMap.Drawing
                         var tilePath = Path.Combine(BasePath, tilePos.Zoom.ToString(),
                             tilePos.X + "_" + tilePos.Z + ".png");
                         tileImg.SaveToFile(tilePath);
+                        //Log.InfoFormat("Saved Tile {0} to {1}", tilePos, tilePath);
                     }
                 }
             }
