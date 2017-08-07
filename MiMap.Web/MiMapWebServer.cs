@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net;
+using System.Reflection;
 using System.Security.Principal;
 using log4net;
 using Microsoft.Owin.Hosting;
@@ -21,7 +22,8 @@ namespace MiMap.Web
         private short PrivateWebPort { get; }
         private short PrivateWebSocketPort { get; }
 
-        public string Url { get; }
+        public string[] Urls { get; }
+
         public MiMapWebServer() : this(new MiMapWebServerConfig()) { }
 
         public MiMapWebServer(MiMapWebServerConfig config) : this(config.Port, config.InternalWebPort, config.InternalWebSocketPort) { }
@@ -34,7 +36,7 @@ namespace MiMap.Web
             PrivateWebPort = privateWebPort;
             PrivateWebSocketPort = privateWebSocketPort;
 
-            Url = $"http://localhost:{PrivateWebPort}";
+            Urls = new[] { $"http://*:{PrivateWebPort}" };
 
             _proxy = new TcpProxyServer(new TcpProxyConfiguration()
             {
@@ -72,11 +74,13 @@ namespace MiMap.Web
             {
                 if (!TryAddUrlReservations())
                 {
+                    Log.ErrorFormat("Unable to add url reservations for web server.");
                     return;
                 }
 
                 if (!TryStartListener())
                 {
+                    Log.ErrorFormat("Unable to start listener");
                     return;
                 }
             }
@@ -99,15 +103,16 @@ namespace MiMap.Web
         {
             try
             {
-                _host = WebApp.Start<WebStartup>(new StartOptions(Url)
+                _host = WebApp.Start<WebStartup>(new StartOptions(Urls[0])
                 {
                     ServerFactory = "Microsoft.Owin.Host.HttpListener"
                 });
                 return true;
             }
-            catch (HttpListenerException e)
+            catch (TargetInvocationException e)
             {
-                if (e.ErrorCode == 5) // 5 == AccessDenied
+                var innerException = e.InnerException as HttpListenerException;
+                if (innerException?.ErrorCode == 5) // 5 == AccessDenied
                 {
                     return false;
                 }
@@ -118,7 +123,15 @@ namespace MiMap.Web
 
         private bool TryAddUrlReservations()
         {
-            return NetSh.AddUrlAcl(Url, WindowsIdentity.GetCurrent().Name);
+            foreach (var url in Urls)
+            {
+                if (!NetSh.AddUrlAcl(url, WindowsIdentity.GetCurrent().Name))
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         public void Dispose()

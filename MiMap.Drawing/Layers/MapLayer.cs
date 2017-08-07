@@ -16,24 +16,20 @@ using MiMap.Drawing.Renderers.PostProcessors;
 
 namespace MiMap.Drawing.Layers
 {
-    public class MapLayer : IMapLayer
+    public class MapLayer
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(MapLayer));
 
-        private const int MaxUpdatesPerInterval = int.MaxValue;
+        private const int MaxUpdatesPerInterval = (1 << 9) * (1 << 9);
         private static readonly TimeSpan CleanupTimespan = TimeSpan.FromSeconds(30);
 
         public event EventHandler<TileUpdateEventArgs> OnTileUpdated;
 
         public string LayerId { get; }
 
-        public MiMapLevelLayerConfig Config { get; }
-
-        public LevelMap Map { get; }
-
         public string Directory { get; }
 
-        public BlendMode BlendMode { get; protected set; }
+        public LevelMap Map { get; }
 
         public ILayerRenderer Renderer { get; set; }
 
@@ -46,7 +42,7 @@ namespace MiMap.Drawing.Layers
 
         private TileScaler Scaler { get; }
 
-        private Timer _cleanupTimer { get; }
+        private Timer CleanupTimer { get; }
 
         public MapLayer(LevelMap map, MiMapLevelLayerConfig config)
         {
@@ -68,7 +64,7 @@ namespace MiMap.Drawing.Layers
 
             Scaler = new TileScaler(Directory, Renderer.RenderScale, map.Meta.TileSize, map.Meta.MinZoom, map.Meta.MaxZoom, map.Config.LevelId, LayerId);
             Scaler.OnTileUpdated += (s, e) => OnTileUpdated?.Invoke(s, e);
-            _cleanupTimer = new Timer(CleanupCallback, null, 5000, 5000);
+            //CleanupTimer = new Timer(CleanupCallback, null, 5000, 5000);
         }
 
         private MapRegionLayer GetRegionLayer(RegionPosition regionPos)
@@ -121,6 +117,7 @@ namespace MiMap.Drawing.Layers
             var regions = updates.GroupBy(c => c.Position.GetRegionPosition());
             //Parallel.ForEach(regions, (r) =>
 
+            var k = 0;
             foreach (var r in regions)
             {
                 var region = GetRegionLayer(r.Key);
@@ -132,20 +129,23 @@ namespace MiMap.Drawing.Layers
                 {
                     region.Update(u);
                     j++;
+                    k++;
                 }
 
                 Scaler.Enqueue(r.Key, region);
+                region.ClearUpdatedBlocks();
                 Log.InfoFormat("Saving Region {0} with {1} updates in {2}ms", r.Key, j, sw.ElapsedMilliseconds);
             }
 
-            if (updateSw.ElapsedMilliseconds > 500)
-                Log.InfoFormat("Layer {0} updated in {1}ms", GetType().Name, updateSw.ElapsedMilliseconds);
+            if (k > 0)
+                //if (updateSw.ElapsedMilliseconds > 500)
+                Log.InfoFormat("Layer {0} updated in {1}ms ({2} updates)", GetType().Name, updateSw.ElapsedMilliseconds, k);
         }
 
 
         public void UpdateBlockColumn(BlockColumnMeta column)
         {
-            _updates.Enqueue(column);
+            _updates.Enqueue(MiMapJsonConvert.DeserializeObject<BlockColumnMeta>(MiMapJsonConvert.SerializeObject(column)));
         }
     }
 }

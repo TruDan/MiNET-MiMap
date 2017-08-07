@@ -1,6 +1,9 @@
 ﻿{
   //"TilesDirectory": "tiles",
   "SaveInterval": 1000,
+  "WebServer": {
+    "Enabled": true
+  },
   "Levels": [
     /*{
       "LevelId": "Overworld",

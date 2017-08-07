@@ -62,9 +62,8 @@
     <Compile Include="MiMapManager.cs" />
     <Compile Include="Events\TileUpdateEventArgs.cs" />
     <Compile Include="Layers\MapLayer.cs" />
-    <Compile Include="Layers\IMapLayer.cs" />
     <Compile Include="LevelMap.cs" />
-    <Compile Include="MapRegionLayer.cs" />
+    <Compile Include="Layers\MapRegionLayer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Renderers\Base\DefaultLayerRenderer.cs" />
     <Compile Include="Renderers\PostProcessors\PostProcessorFactory.cs" />

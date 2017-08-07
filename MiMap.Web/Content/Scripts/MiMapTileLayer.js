@@ -23,7 +23,7 @@
             y: y,
             z: z
         });
-        console.log("Tile Redraw", x, y, z);
+        //console.log("Tile Redraw", x, y, z);
     }
 });
 

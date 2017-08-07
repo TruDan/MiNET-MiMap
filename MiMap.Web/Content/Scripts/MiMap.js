@@ -19,7 +19,7 @@
 
     this.activeLayer = null;
 
-    this.init = function(levels) {
+    this.init = function (levels) {
         // init levels
         $this._levelConfigs = levels;
 
@@ -27,7 +27,7 @@
 
         var firstLevelId = null;
         $.each(levels,
-            function(key, value) {
+            function (key, value) {
                 if (firstLevelId === null) firstLevelId = value.levelId;
                 $this.initLevel(value);
             });
@@ -38,22 +38,22 @@
         $this.setLevel(firstLevelId);
     };
 
-    this._getTimestamp = function() {
+    this._getTimestamp = function () {
         return Math.floor(new Date().getTime() / 1000);
     }
 
-    this.__getCrs = function() {
-        return L.CRS.Simple;
+    this.__getCrs = function () {
+        //return L.CRS.Simple;
         return L.extend({},
             L.CRS.Simple,
             {
                 //infinite: true,
                 projection: {
-                    project: function(latlng) {
+                    project: function (latlng) {
                         // Direct translation of lat -> x, lng -> y.
                         return new L.Point(latlng.lat, latlng.lng);
                     },
-                    unproject: function(point) {
+                    unproject: function (point) {
                         // Direct translation of x -> lat, y -> lng.
                         return new L.LatLng(point.x, point.y);
                     }
@@ -62,14 +62,14 @@
                 // x = a * x + b; y = c * y + d
                 // End result is 1:1 values during transformation.
                 transformation: new L.Transformation(1, 0, 1, 0),
-                scale: function(zoom) {
+                scale: function (zoom) {
                     // Equivalent to 2 raised to the power of zoom, but faster.
                     return (1 << zoom);
                 }
             });
     };
 
-    this.initMap = function() {
+    this.initMap = function () {
         $this.map = L.map('map',
             {
                 crs: $this.__getCrs(),
@@ -87,11 +87,11 @@
         //$this.hash = new L.Hash($this.map);
     };
 
-    this.initLayerControl = function() {
+    this.initLayerControl = function () {
         var layers = {};
 
         $.each($this.layers,
-            function(baseLayerId, baseLayer) {
+            function (baseLayerId, baseLayer) {
                 layers[baseLayer.options.name] = {
                     layer: baseLayer,
                     overlays: $this.overlayLayers[baseLayerId]
@@ -110,11 +110,11 @@
         $this.layerControl.addTo($this.map);
     };
 
-    this.onMapLoad = function(e) {
+    this.onMapLoad = function (e) {
         this.initDocking();
     };
 
-    this.initDocking = function() {
+    this.initDocking = function () {
         $('.leaflet-top.leaflet-left').attr('id', "sortable-top-left");
         $('.leaflet-top.leaflet-right').attr('id', "sortable-top-right");
         $('.leaflet-bottom.leaflet-left').attr('id', "sortable-bottom-left");
@@ -127,7 +127,7 @@
 
         var all = [sortableTopLeft, sortableTopRight, sortableBottomLeft, sortableBottomRight];
 
-        all.forEach(function(value, key) {
+        all.forEach(function (value, key) {
             Sortable.create(value,
                 {
                     group: "widgets",
@@ -136,21 +136,21 @@
                     animation: 150,
                     //delay: 50,
                     handle: '.mimap-control-header',
-                    onStart: function(e2) {
+                    onStart: function (e2) {
                         $('#map').addClass('sortable-docking');
                     },
-                    onEnd: function(e2) {
+                    onEnd: function (e2) {
                         $('#map').removeClass('sortable-docking');
                     }
                 });
         });
     };
 
-    this.onMapZoomEnd = function(e) {
+    this.onMapZoomEnd = function (e) {
         $this.socket.subscribeTiles(true, $this.map.getZoom());
     };
 
-    this.createLayerForLevel = function(levelId, minZoom, maxZoom, layerId, label) {
+    this.createLayerForLevel = function (levelId, minZoom, maxZoom, layerId, label) {
         if (typeof layerId === 'undefined') {
             layerId = 'base';
         }
@@ -174,7 +174,7 @@
             });
     };
 
-    this.initLevel = function(levelConfig) {
+    this.initLevel = function (levelConfig) {
         if (levelConfig.enabled !== true) return;
 
         var layer = $this.createLayerForLevel(levelConfig.levelId, levelConfig.minZoom, levelConfig.maxZoom, 'base', levelConfig.label);
@@ -183,7 +183,7 @@
         $this.overlayLayers[levelConfig.levelId] = {};
 
         $.each(levelConfig.layers,
-            function(key1, value1) {
+            function (key1, value1) {
                 var overlayLayer =
                     $this.createLayerForLevel(levelConfig.levelId, levelConfig.minZoom, levelConfig.maxZoom, value1.layerId, value1.label);
                 $this.overlayLayers[levelConfig.levelId][value1.layerId] = overlayLayer;
@@ -191,13 +191,13 @@
 
     };
 
-    this.updateLevelMeta = function(levelId, meta) {
+    this.updateLevelMeta = function (levelId, meta) {
         $this.levelMeta[levelId] = meta;
 
         $this.applyLevelMeta(levelId);
     };
 
-    this.applyLevelMeta = function(levelId) {
+    this.applyLevelMeta = function (levelId) {
         if (!(levelId in $this.levelMeta)) return;
 
         var meta = $this.levelMeta[levelId];
@@ -219,24 +219,24 @@
         //layer.getSource().getProjection().setExtent(b);
     };
 
-    this.setLevel = function(levelId) {
+    this.setLevel = function (levelId) {
         if (!(levelId in $this.layers)) return;
         var layer = $this.layers[levelId];
 
-        var miniMapLayer = L.tileLayer(window.location.pathname + "tiles/{levelId}/{layerId}/{z}/{x}_{y}.png?ts={ts}",
-            {
-                id: levelId,
-                levelId: levelId,
-                layerId: 'base',
-                minZoom: -5,
-                maxZoom: 5,
-                minNativeZoom: 0,
-                maxNativeZoom: 0,
-                noWrap: true,
-                ts: $this._getTimestamp.bind($this)
-            });
+        /* var miniMapLayer = L.tileLayer(window.location.pathname + "tiles/{levelId}/{layerId}/{z}/{x}_{y}.png?ts={ts}",
+             {
+                 id: levelId,
+                 levelId: levelId,
+                 layerId: 'base',
+                 minZoom: -5,
+                 maxZoom: 5,
+                 minNativeZoom: 0,
+                 maxNativeZoom: 0,
+                 noWrap: true,
+                 ts: $this._getTimestamp.bind($this)
+             });*/
 
-        miniMapLayer.opacity = 0.75;
+        //miniMapLayer.opacity = 0.75;
 
         if (this.activeLayer !== null) {
             this.activeLayer.remove();
@@ -279,7 +279,7 @@
         console.log("Setting Level to ", levelId, layer);
     };
 
-    this.refreshTile = function(layerId, tileX, tileY, tileZoom) {
+    this.refreshTile = function (layerId, tileX, tileY, tileZoom) {
         //console.log(layerId, this.activeLayer.options.id, this.activeLayer);
         if (layerId !== this.activeLayer.options.id) return;
 

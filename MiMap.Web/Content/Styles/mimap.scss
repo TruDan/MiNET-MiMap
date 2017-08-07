@@ -380,7 +380,7 @@ body {
 
         .mimap-control-group-body {
             padding: 0 0.5rem;
-
+            /*
             > label {
                 position: relative;
                 //font-family: Arial, sans-serif;
@@ -400,8 +400,7 @@ body {
                     }
                 }
             }
-
-            input[type="checkbox"] {
+             input[type="checkbox"] {
                 //top: rem(-6);
                 cursor: pointer;
                 visibility: hidden;
@@ -473,7 +472,7 @@ body {
                     border-radius: 50%;
                     visibility: visible;
                 }
-            }
+            }*/
         }
     }
 }

@@ -148,9 +148,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Content\Scripts\Controls\MiMapControl.js" />
-    <Content Include="Content\Scripts\Controls\MiMapLayerControl.js" />
-    <Content Include="Content\Scripts\MiMapTileLayer.js" />
+    <EmbeddedResource Include="Content\Scripts\Controls\MiMapControl.js" />
+    <EmbeddedResource Include="Content\Scripts\Controls\MiMapLayerControl.js" />
+    <EmbeddedResource Include="Content\Scripts\MiMapTileLayer.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

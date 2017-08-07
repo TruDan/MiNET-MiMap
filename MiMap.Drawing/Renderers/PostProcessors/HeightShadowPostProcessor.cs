@@ -10,19 +10,19 @@ namespace MiMap.Drawing.Renderers.PostProcessors
 
         public void PostProcess(MapRegionLayer layer, Graphics graphics, BlockColumnMeta block)
         {
-            DrawShadow(layer, graphics, block, 
+            DrawShadow(layer, graphics, block,
                 Math.Max(GetHeightDiff(layer, block, 0, -1), 0),
                 Math.Max(GetHeightDiff(layer, block, -1, 0), 0),
                 Math.Max(GetHeightDiff(layer, block, 1, 0), 0),
                 Math.Max(GetHeightDiff(layer, block, 0, 1), 0));
         }
 
-        private int GetHeightDiff(MapRegionLayer layer, BlockColumnMeta block, int xOffset, int zOffset)
+        private int GetHeightDiff(MapRegionLayer regionLayer, BlockColumnMeta block, int xOffset, int zOffset)
         {
             var pos = new BlockPosition(block.Position.X + xOffset, block.Position.Z + zOffset);
 
-            BlockColumnMeta targetBlock;
-            if (layer.Blocks.TryGetValue(pos, out targetBlock))
+            BlockColumnMeta targetBlock = regionLayer.Layer.Map.GetRegionLayer(pos.GetRegionPosition()).GetBlockData(pos);
+            if (targetBlock != null)
             {
                 return targetBlock.Height - block.Height;
             }

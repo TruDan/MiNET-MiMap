@@ -34,7 +34,7 @@ namespace MiMap.Web
                 }
             });
 
-#if DEBUG
+#if FALSE
             var contentFileSystem = new PhysicalFileSystem("S:\\Development\\Projects\\MiNET-MiMap\\MiMap.Web\\Content");
 #else
             var contentFileSystem =

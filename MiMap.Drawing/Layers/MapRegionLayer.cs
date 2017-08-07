@@ -16,11 +16,9 @@ namespace MiMap.Drawing
         private static readonly ILog Log = LogManager.GetLogger(typeof(MapRegionLayer));
 
 
-        public IMapLayer Layer { get; }
+        public MapLayer Layer { get; }
 
         public RegionPosition Position { get; }
-
-        public Dictionary<BlockPosition, BlockColumnMeta> Blocks { get; private set; } = new Dictionary<BlockPosition, BlockColumnMeta>();
 
         public DateTime LastUpdated { get; private set; }
 
@@ -36,7 +34,10 @@ namespace MiMap.Drawing
 
         private bool IsNew { get; set; }
 
-        public MapRegionLayer(IMapLayer layer, RegionPosition pos)
+        public BlockPosition[] UpdatedBlocks => _updatedBlocks.ToArray();
+        private readonly List<BlockPosition> _updatedBlocks = new List<BlockPosition>();
+
+        public MapRegionLayer(MapLayer layer, RegionPosition pos)
         {
             Layer = layer;
             Position = pos;
@@ -68,26 +69,6 @@ namespace MiMap.Drawing
                     IsNew = true;
                 }
 
-                var metaPath = Path.Combine(Path.GetDirectoryName(FilePath),
-                    Path.GetFileNameWithoutExtension(FilePath) + ".json");
-                if (File.Exists(metaPath))
-                {
-                    using (var fs = new FileStream(metaPath, FileMode.Open, FileAccess.ReadWrite))
-                    {
-                        //using (var gs = new GZipStream(fs, CompressionMode.Decompress))
-                        {
-                            using (var sr = new StreamReader(fs))
-                            {
-                                var json = sr.ReadToEnd();
-                                var blocksArray = MiMapJsonConvert
-                                    .DeserializeObject<Dictionary<int, Dictionary<int, BlockColumnMeta>>>(json);
-
-                                Blocks = blocksArray.SelectMany(z => z.Value.Values).ToDictionary(b => b.Position);
-                            }
-                        }
-                    }
-                }
-
                 lock (_bitmapSync)
                 {
                     Bitmap = bitmap;
@@ -106,10 +87,6 @@ namespace MiMap.Drawing
         {
             lock (_ioSync)
             {
-                //PostProcess();
-
-                //Parallel.For(Layer.Map.Meta.MinZoom, Layer.Map.Meta.MaxZoom + 1, SplitRegionForZoom);
-
                 lock (_bitmapSync)
                 {
                     using (var img = GetBitmap())
@@ -117,77 +94,7 @@ namespace MiMap.Drawing
                         img.SaveToFile(FilePath);
                     }
                 }
-
-                var metaPath = Path.Combine(Path.GetDirectoryName(FilePath),
-                    Path.GetFileNameWithoutExtension(FilePath) + ".json");
-                using (var fs = new FileStream(metaPath, FileMode.OpenOrCreate, FileAccess.Write))
-                {
-                    //using (var gs = new GZipStream(fs, CompressionMode.Compress))
-                    {
-                        using (var sr = new StreamWriter(fs))
-                        {
-                            var blocks = Blocks.Values.ToArray();
-                            Dictionary<int, Dictionary<int, BlockColumnMeta>> blockArray = blocks
-                                .GroupBy(c => c.Position.X).ToDictionary(g => g.Key, g => g.ToDictionary(g1 => g1.Position.Z));
-
-                            var json = MiMapJsonConvert.SerializeObject(blockArray);
-                            sr.Write(json);
-                        }
-                    }
-                }
             }
-        }
-
-        private void SplitRegionForZoom(int zoomLevel)
-        {
-            var w = 1 << zoomLevel;
-
-            Bitmap rImg;
-            lock (_bitmapSync)
-            {
-                rImg = Bitmap.Clone(new Rectangle(0, 0, Bitmap.Width, Bitmap.Height), Bitmap.PixelFormat);
-            }
-
-            using (rImg)
-            {
-                for (int x = 0; x < w; x++)
-                {
-                    for (int y = 0; y < w; y++)
-                    {
-                        var tileX = (Position.X << zoomLevel) + x;
-                        var tileY = (Position.Z << zoomLevel) + y;
-                        var tilePath = Path.Combine(Layer.Directory, zoomLevel.ToString(),
-                            tileX + "_" + tileY + ".png");
-
-                        using (var img = CutTile(rImg, x, y, w))
-                        {
-                            img.SaveToFile(tilePath);
-                        }
-                    }
-                }
-            }
-        }
-
-        private Bitmap CutTile(Bitmap rImg, int rX, int rZ, int scale)
-        {
-            var width = rImg.Width / scale;
-            var height = rImg.Height / scale;
-
-            var srcRect = new Rectangle(
-                width * rX,
-                height * rZ,
-                width,
-                height
-            );
-
-            var img = new Bitmap(Layer.Map.Meta.TileSize.Width, Layer.Map.Meta.TileSize.Height);
-            using (var g = img.GetGraphics())
-            {
-                g.DrawImage(rImg, new Rectangle(0, 0, img.Width, img.Height), srcRect, GraphicsUnit.Pixel);
-
-            }
-
-            return img;
         }
 
         public Bitmap GetBitmap()
@@ -209,11 +116,6 @@ namespace MiMap.Drawing
                 return;
             }
 
-            lock (_ioSync)
-            {
-                Blocks[update.Position] = update;
-                LastUpdated = DateTime.UtcNow;
-            }
             //using (var clip = new Region(rect))
             //{
             //Graphics.Clip = clip;
@@ -227,8 +129,15 @@ namespace MiMap.Drawing
                 }
             }
 
+            _updatedBlocks.Add(update.Position);
+
             //Graphics.ResetClip();
             //}
+        }
+
+        public void ClearUpdatedBlocks()
+        {
+            _updatedBlocks.Clear();
         }
 
         public Rectangle GetBlockRectangle(BlockPosition pos)
@@ -255,7 +164,7 @@ namespace MiMap.Drawing
         {
             //Log.InfoFormat("Saving Tile {0},{1}@{2}", Position.X, Position.Z, Position.Zoom);
 
-            Save();
+            //Save();
             Graphics?.Dispose();
 
             Bitmap?.Dispose();

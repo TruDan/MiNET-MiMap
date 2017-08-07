@@ -37,7 +37,7 @@ namespace MiMap.Drawing
                 i++;
             }
 
-            Log.InfoFormat("TileScaler created with id {0} {1}->{2} ({3} - {4}) {5}", layerId, minZoom, maxZoom, tileSize, renderScale, basePath);
+            //Log.InfoFormat("TileScaler created with id {0} {1}->{2} ({3} - {4}) {5}", layerId, minZoom, maxZoom, tileSize, renderScale, basePath);
         }
 
         public void Enqueue(RegionPosition regionPos, MapRegionLayer region)
@@ -53,7 +53,8 @@ namespace MiMap.Drawing
         {
             public RegionPosition Position { get; }
 
-            private MapRegionLayer _region;
+            private readonly MapRegionLayer _region;
+            private readonly BlockPosition[] _updatedBlocks;
 
             private Bitmap _bitmap;
             private readonly object _bitmapSync = new object();
@@ -62,6 +63,7 @@ namespace MiMap.Drawing
             {
                 Position = regionPos;
                 _region = region;
+                _updatedBlocks = region.UpdatedBlocks;
             }
 
             public Bitmap GetBitmap()
@@ -72,6 +74,18 @@ namespace MiMap.Drawing
                 {
                     return (Bitmap)_bitmap.Clone();
                 }
+            }
+
+            public bool IsRegionDirty(BlockBounds bounds)
+            {
+                foreach (var block in _updatedBlocks)
+                {
+                    if (bounds.Contains(block))
+                    {
+                        return true;
+                    }
+                }
+                return false;
             }
 
             public void Dispose()
@@ -196,6 +210,9 @@ namespace MiMap.Drawing
                 var sw = Stopwatch.StartNew();
                 var regionPos = entry.Position;
 
+                if (!entry.IsRegionDirty(regionPos.GetBlockBounds()))
+                    return;
+
                 using (var baseImg = entry.GetBitmap())
                 {
                     var format = baseImg.PixelFormat;
@@ -207,6 +224,13 @@ namespace MiMap.Drawing
                         //Parallel.For(0, Scale, tZ =>
                         for (int tZ = 0; tZ < Scale; tZ++)
                         {
+                            // Check if update is actually required.
+                            var tilePos = new TilePosition((regionPos.X << Zoom) + tX, (regionPos.Z << Zoom) + tZ,
+                                Zoom);
+
+                            if (!entry.IsRegionDirty(tilePos.GetBlockBounds()))
+                                continue;
+
                             Bitmap img;
                             lock (sync)
                             {
@@ -215,8 +239,6 @@ namespace MiMap.Drawing
                                         RegionTileSize.Width, RegionTileSize.Height), format);
                             }
 
-                            var tilePos = new TilePosition((regionPos.X << Zoom) + tX, (regionPos.Z << Zoom) + tZ,
-                                Zoom);
 
                             DrawTile(img, tilePos);
                             Scaler.OnTileUpdated?.Invoke(this,
@@ -225,7 +247,7 @@ namespace MiMap.Drawing
                     } //);
                 }
 
-                Log.InfoFormat("Scaled Region {0} to Zoom Level {1} in {2}ms", regionPos, Zoom, sw.ElapsedMilliseconds);
+                //Log.InfoFormat("Scaled Region {0} to Zoom Level {1} in {2}ms", regionPos, Zoom, sw.ElapsedMilliseconds);
             }
 
             private void DrawTile(Bitmap baseBitmap, TilePosition tilePos)

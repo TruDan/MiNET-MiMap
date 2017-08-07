@@ -13,7 +13,7 @@
         _label: null,
     },
 
-    onAdd: function(map) {
+    onAdd: function (map) {
 
         var body = this._createControl(this.options.widgetLabel);
 
@@ -24,15 +24,18 @@
         }
 
         this._map = map;
-        return this.getControl();
+
+        var control = this.getControl();
+        componentHandler.upgradeElement(control);
+        return control;
     },
 
-    _initControl: function() {
+    _initControl: function () {
         return null;
     },
 
 
-    _createControl: function(label) {
+    _createControl: function (label) {
         if (typeof label === 'undefined') {
             label = "";
         }
@@ -43,12 +46,12 @@
         var __map = this._map;
 
         // Disable dragging when user's cursor enters the element
-        this._controlParts._root.addEventListener('mouseover', function() {
+        this._controlParts._root.addEventListener('mouseover', function () {
             __map.dragging.disable();
         });
 
         // Re-enable dragging when user's cursor leaves the element
-        this._controlParts._root.addEventListener('mouseout', function() {
+        this._controlParts._root.addEventListener('mouseout', function () {
             __map.dragging.enable();
         });
 
@@ -65,12 +68,12 @@
         return this._controlParts.body;
     },
 
-    getControl: function() {
+    getControl: function () {
         return this._controlParts._root;
     },
 
 
-    _createGroup: function(label, bodyElement) {
+    _createGroup: function (label, bodyElement) {
         if (typeof label === 'undefined') {
             label = "";
         }

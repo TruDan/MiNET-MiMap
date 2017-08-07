@@ -9,7 +9,7 @@
         _overlayLayersList: null
     },
 
-    initialize: function(layers, options) {
+    initialize: function (layers, options) {
         L.Util.setOptions(this, options);
 
         this._layerControlInputs = [];
@@ -24,7 +24,7 @@
         //this._updateOverlays();
     },
 
-    _update: function() {
+    _update: function () {
         if (!this._layerControlParts._baseLayersList) { return this; }
 
         L.DomUtil.empty(this._layerControlParts._baseLayersList);
@@ -50,7 +50,7 @@
         return this;
     },
 
-    _initControl: function(body) {
+    _initControl: function (body) {
 
         this._layerControlParts._baseLayersList = this._createGroup("Layers", body);
 
@@ -65,7 +65,7 @@
         this._layerControlParts._overlayLayersList = this._createGroup("Overlays", body);
     },
 
-    _addLayer: function(layer, name, overlayLayers) {
+    _addLayer: function (layer, name, overlayLayers) {
         if (this._map) {
             layer.on('add remove', this._onLayerChange, this);
         }
@@ -91,7 +91,7 @@
         this._layers.push(l);
     },
 
-    _addBaseLayerItem: function(obj) {
+    _addBaseLayerItem: function (obj) {
 
         var item = this._createItem(obj);
 
@@ -101,7 +101,7 @@
         return item;
     },
 
-    _addOverlayLayerItem: function(obj) {
+    _addOverlayLayerItem: function (obj) {
         var item = this._createItem(obj);
 
         this._layerControlParts._overlayLayersList.appendChild(item);
@@ -110,7 +110,7 @@
         return item;
     },
 
-    _getLayer: function(id) {
+    _getLayer: function (id) {
         for (var i = 0; i < this._layers.length; i++) {
 
             if (this._layers[i] && L.Util.stamp(this._layers[i].layer) === id) {
@@ -128,18 +128,23 @@
         }
     },
 
-    _createItem: function(obj) {
+    _createItem: function (obj) {
 
-        var label = L.DomUtil.create('label'),
+        var label,
             checked = this._map.hasLayer(obj.layer),
-            input;
+            input, text;
 
         if (typeof obj.overlays === 'undefined') {
-            input = L.DomUtil.create('input', 'leaflet-control-layers-selector');
+            label = L.DomUtil.create('label', 'mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect');
+            input = L.DomUtil.create('input', 'leaflet-control-layers-selector mdl-checkbox__input');
+            text = L.DomUtil.create('span', 'mdl-checkbox__label');
+
             input.type = 'checkbox';
             input.defaultChecked = checked;
         } else {
+            label = L.DomUtil.create('label', 'mdl-radio mdl-js-radio mdl-js-ripple-effect');
             input = this._createRadioElement('leaflet-base-layers', checked);
+            text = L.DomUtil.create('span', 'mdl-radio__label');
         }
 
         this._layerControlInputs.push(input);
@@ -155,20 +160,25 @@
         var holder = L.DomUtil.create('div', 'control-group');
         holder.appendChild(label);
 
-        label.innerHTML = obj.label;
-        label.insertBefore(input, label.firstChild);
+
+
+        text.innerHTML = obj.label;
+
+        label.appendChild(input);
+        label.appendChild(text);
 
         //var container = isOverlay ? this._overlaysList : this._baseLayersList;
         //container.appendChild(holder);
 
         this._checkDisabledLayers();
+        componentHandler.upgradeElement(label);
         return label;
     },
 
     // IE7 bugs out if you create a radio dynamically, so you have to do it this hacky way (see http://bit.ly/PqYLBe)
-    _createRadioElement: function(name, checked) {
+    _createRadioElement: function (name, checked) {
 
-        var radioHtml = '<input type="radio" class="leaflet-control-layers-selector" name="' +
+        var radioHtml = '<input type="radio" class="leaflet-control-layers-selector mdl-radio__button" name="' +
             name + '"' + (checked ? ' checked="checked"' : '') + '/>';
 
         var radioFragment = document.createElement('div');
@@ -177,7 +187,7 @@
         return radioFragment.firstChild;
     },
 
-    _onLayerChange: function(e) {
+    _onLayerChange: function (e) {
         if (!this._handlingClick) {
             this._update();
         }
@@ -202,7 +212,7 @@
         }
     },
 
-    _onInputClick: function() {
+    _onInputClick: function () {
         var inputs = this._layerControlInputs,
             input, layer, hasLayer;
         var addedLayers = [],
@@ -236,7 +246,7 @@
         this._refocusOnMap();
     },
 
-    _checkDisabledLayers: function() {
+    _checkDisabledLayers: function () {
         var inputs = this._layerControlInputs,
             input,
             layer,
@@ -253,6 +263,6 @@
 });
 
 
-L.control.miMapLayerControl = function(baseLayers, opts) {
+L.control.miMapLayerControl = function (baseLayers, opts) {
     return new MiMapLayerControl(baseLayers, opts);
 };

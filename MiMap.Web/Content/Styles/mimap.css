@@ -234,72 +234,100 @@ body {
       font-weight: 500;
       text-align: left; }
     .mimap-control .mimap-control-group .mimap-control-group-body {
-      padding: 0 0.5rem; }
-      .mimap-control .mimap-control-group .mimap-control-group-body > label {
-        position: relative;
-        margin: .5rem;
-        cursor: pointer; }
-        .mimap-control .mimap-control-group .mimap-control-group-body > label > input {
-          position: relative;
-          margin: 0 .15rem 0 0;
-          width: 1.25rem;
-          height: 1.25rem;
-          float: left; }
-          .mimap-control .mimap-control-group .mimap-control-group-body > label > input:before {
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-      .mimap-control .mimap-control-group .mimap-control-group-body input[type="checkbox"] {
-        cursor: pointer;
-        visibility: hidden; }
-        .mimap-control .mimap-control-group .mimap-control-group-body input[type="checkbox"]:before {
-          transform: translate(0.2325rem, 0.3125rem) rotate(-45deg) scale(0, 0);
-          content: "";
-          position: absolute;
-          width: 7125rem;
-          height: .25rem;
-          z-index: 1;
-          border: 0.125rem solid #2FA0FF;
-          border-top-style: none;
-          border-right-style: none;
-          visibility: visible; }
-        .mimap-control .mimap-control-group .mimap-control-group-body input[type="checkbox"]:checked:before {
-          transform: translate(0.2325rem, 0.3125rem) rotate(-45deg) scale(1, 1); }
-        .mimap-control .mimap-control-group .mimap-control-group-body input[type="checkbox"]:after {
-          content: "";
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 1rem;
-          height: 1rem;
-          background: #2d3035;
-          border: 0.125rem solid #787B80;
-          cursor: pointer;
-          visibility: visible; }
-      .mimap-control .mimap-control-group .mimap-control-group-body input[type="radio"] {
-        cursor: pointer;
-        visibility: hidden; }
-        .mimap-control .mimap-control-group .mimap-control-group-body input[type="radio"]:before {
-          transform: translate(0.29rem, 0.29rem) scale(0, 0);
-          content: "";
-          position: absolute;
-          width: .65rem;
-          height: .65rem;
-          z-index: 1;
-          background: #2FA0FF;
-          border-radius: 50%;
-          visibility: visible; }
-        .mimap-control .mimap-control-group .mimap-control-group-body input[type="radio"]:checked:before {
-          transform: translate(0.29rem, 0.29rem) scale(1, 1); }
-        .mimap-control .mimap-control-group .mimap-control-group-body input[type="radio"]:after {
-          content: "";
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 1rem;
-          height: 1rem;
-          background: #2d3035;
-          border: 0.125rem solid #787B80;
-          border-radius: 50%;
-          visibility: visible; }
+      padding: 0 0.5rem;
+      /*
+            > label {
+                position: relative;
+                //font-family: Arial, sans-serif;
+                margin: .5rem;
+                // line-height: 1.25rem;
+                cursor: pointer;
+
+                > input {
+                    position: relative;
+                    margin: 0 .15rem 0 0;
+                    width: 1.25rem;
+                    height: 1.25rem;
+                    float: left;
+
+                    &:before {
+                        transition: transform .4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                    }
+                }
+            }
+             input[type="checkbox"] {
+                //top: rem(-6);
+                cursor: pointer;
+                visibility: hidden;
+
+                &:before {
+                    transform: translate(.2325rem,.3125rem) rotate(-45deg) scale(0, 0);
+                    content: "";
+                    position: absolute;
+                    width: 7125rem;
+                    height: .25rem;
+                    z-index: 1;
+                    border: .125rem solid $highlight-color;
+                    border-top-style: none;
+                    border-right-style: none;
+                    visibility: visible;
+                }
+
+                &:checked {
+                    &:before {
+                        transform: translate(.2325rem,.3125rem) rotate(-45deg) scale(1, 1);
+                    }
+                }
+
+                &:after {
+                    content: "";
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 1rem;
+                    height: 1rem;
+                    background: $card-background;
+                    border: .125rem solid $default-color;
+                    cursor: pointer;
+                    visibility: visible;
+                }
+            }
+
+            input[type="radio"] {
+                cursor: pointer;
+                visibility: hidden;
+
+                &:before {
+                    transform: translate(.29rem, .29rem) scale(0,0);
+                    content: "";
+                    position: absolute;
+                    width: .65rem;
+                    height: .65rem;
+                    z-index: 1;
+                    background: $highlight-color;
+                    border-radius: 50%;
+                    visibility: visible;
+                }
+
+                &:checked {
+                    &:before {
+                        transform: translate(.29rem, .29rem) scale(1,1);
+                    }
+                }
+
+                &:after {
+                    content: "";
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 1rem;
+                    height: 1rem;
+                    background: $card-background;
+                    border: .125rem solid $default-color;
+                    border-radius: 50%;
+                    visibility: visible;
+                }
+            }*/ }
 
 .sortable-docking .leaflet-top, .sortable-docking .leaflet-bottom, .sortable-docking .leaflet-left, .sortable-docking .leaflet-right {
   min-width: 100px;
