@@ -56,6 +56,9 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
+    <None Include="MiMap\config.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -63,9 +66,9 @@
       <Project>{eaf5f683-470d-41a6-a69f-c6510f07e466}</Project>
       <Name>MiMap.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\MiMap.Web\MiMap.Web.Old.csproj">
-      <Project>{4f029e79-c56f-4ca0-bdab-0f07915bc12d}</Project>
-      <Name>MiMap.Web.Old</Name>
+    <ProjectReference Include="..\Web\MiMap.Web\MiMap.Web.csproj">
+      <Project>{34b676eb-b425-4686-9be0-940d46efb639}</Project>
+      <Name>MiMap.Web</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

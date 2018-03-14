@@ -2,5 +2,9 @@
   {
     "outputFile": "wwwroot/css/Site.css",
     "inputFile": "Styles/Site.scss"
+  },
+  {
+    "outputFile": "wwwroot/css/Map.css",
+    "inputFile": "Styles/Map.scss"
   }
 ]

@@ -1,19 +1,14 @@
 ﻿[
   {
-    "outputFileName": "wwwroot/css/site.min.css",
+    "outputFileName": "wwwroot/js/map.min.js",
     "inputFiles": [
-      "Styles/Site.css"
-    ]
-  },
-  {
-    "outputFileName": "wwwroot/js/site.min.js",
-    "inputFiles": [
-      "wwwroot/js/site.js"
+      "Scripts/Map/Base/**/*.js",
+      "Scripts/Map/Controls/**/*.js",
+      "Scripts/Map/*/*.js"
     ],
     "minify": {
       "enabled": true,
       "renameLocals": true
-    },
-    "sourceMap": false
+    }
   }
 ]

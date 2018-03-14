@@ -1,6 +1,19 @@
 ﻿
 @{
     ViewData["Title"] = "Index";
+    ViewData["BodyClass"] = "map-body";
 }
 
-<div id="MiMap-MapRoot"></div>
+<div id="MiMap-MapRoot" class="mimap-map"></div>
+
+@section Styles {
+    <link rel="stylesheet" type="text/css" href="~/css/Map.min.css" />
+}
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.1/leaflet.js" integrity="sha256-CNm+7c26DTTCGRQkM9vp7aP85kHFMqs9MhPEuytF+fQ=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-minimap/3.6.0/Control.MiniMap.min.js" integrity="sha256-Hb/f1FMaLV+Qn6KSYbc92GxB2bcKp7/efxNeiduEo3g=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-hash/0.2.1/leaflet-hash.js" integrity="sha256-0gxt71nsjV0toCvIrBkXr1M5IecQXS39rv9In81hLpE=" crossorigin="anonymous"></script>
+    
+    <script src="~/js/map.min.js" asp-append-version="true"></script>
+}

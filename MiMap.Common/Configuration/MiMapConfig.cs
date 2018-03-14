@@ -16,7 +16,7 @@ namespace MiMap.Common.Configuration
 
         [JsonIgnore]
         public static string BasePath { get; } =
-            Path.Combine(Path.GetDirectoryName(Assembly.GetAssembly(typeof(MiNetServer)).Location), "MiMap");
+            Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "MiMap");
 
         [JsonIgnore]
         private static readonly ILog Log = LogManager.GetLogger(typeof(MiMapConfig));

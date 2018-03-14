@@ -11,7 +11,7 @@
     "*.json",
     "*.md",
     "*.txt",
-    "gulpfile.js"
+    "gulpfile2.js"
   ],
   "keywords": [
     "jquery",

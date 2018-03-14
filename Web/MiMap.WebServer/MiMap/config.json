@@ -1,0 +1,95 @@
+﻿{
+  //"TilesDirectory": "tiles",
+  "SaveInterval": 1000,
+  "WebServer": {
+    "Enabled": true,
+    "Widgets": [
+      {
+        "Type": "Performance",
+        "Position": "TopRight",
+        "AllowedPositions": null,
+        "Moveable": false,
+        "Collapsible": true,
+        "IsCollapsed": false
+      }
+    ]
+  },
+  "Levels": [
+    /*{
+      "LevelId": "Overworld",
+      "Label": "KennyGen",
+      "Enabled": true,
+      "DefaultZoom": 2,
+      "MinZoom": 0,
+      "MaxZoom": 4,
+      "TileSize": 256,
+      "BaseLayer": "Texture",
+      "Layers": [
+        /*{
+          "LayerId": "Biome",
+          "Label": "Biomes",
+          "Enabled": true,
+          "Default": false,
+          "Renderer": "Biome",
+          "BlendMode": "Color"
+        }*/
+    //]
+    //},
+    //{
+    //  "LevelId": "Overworld",
+    //  "Label": "KennyGen",
+    //  "Enabled": true,
+    //  "DefaultZoom": 4,
+    //  "MinZoom": 2,
+    //  "MaxZoom": 6,
+    //  "TileSize": 256,
+    //  "Renderer": {
+    //    "Type": "texture",
+    //    "PostProcessors": [
+    //      "HeightShadow",
+    //      "Lighting",
+    //      "DebugGrid"
+    //    ],
+    //    "ResourcePack": "MiMap/Sphax_16.zip"
+    //  },
+    //  "Layers": [
+    //    {
+    //      "LayerId": "biome",
+    //      "Label": "Biomes",
+    //      "Default": true,
+    //      "Renderer": {
+    //        "Type": "biome"
+    //      }
+    //    }
+    //  ]
+    //},
+    {
+      "LevelId": "Overworld",
+      "Label": "Phain",
+      "Enabled": true,
+      "DefaultZoom": 1,
+      "MinZoom": 0,
+      "MaxZoom": 5,
+      "TileSize": 256,
+      "Renderer": {
+        "Type": "texture",
+        "PostProcessors": [
+          "HeightShadow",
+          "Lighting",
+          "DebugGrid"
+        ],
+        "ResourcePack": "MiMap/John Smith Legacy JSC 18w10d.zip"
+      },
+      "Layers": [
+      //  {
+      //    "LayerId": "biome",
+      //    "Label": "Biomes",
+      //    "Default": true,
+      //    "Renderer": {
+      //      "Type": "biome"
+      //    }
+      //  }
+      ]
+    }
+  ]
+}
