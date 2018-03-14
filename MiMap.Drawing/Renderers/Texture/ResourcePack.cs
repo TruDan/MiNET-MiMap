@@ -93,9 +93,12 @@ namespace MiMap.Drawing.Renderers.Texture
                         {
                             TryLoadBlockTexture("lava_still", out img);
                         }
-                        else
+                        else if(!TryLoadBlockTexture(name + "0", out img))
                         {
-                            img = _noTexture;
+	                        if (!TryLoadBlockTexture(name + "1", out img))
+	                        {
+		                        img = _noTexture;
+	                        }
                         }
                     }
                     else

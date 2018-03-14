@@ -22,7 +22,7 @@ namespace MiMap.Plugin.Runners
         private static readonly ILog Log = LogManager.GetLogger(typeof(LevelRunner));
 
         public const int UpdateInterval = 500;
-        public const int MaxChunksPerInterval = 1000;
+        public const int MaxChunksPerInterval = 2048;
 
         private readonly MiNetServer _server;
 
@@ -111,37 +111,46 @@ namespace MiMap.Plugin.Runners
                 }
             }
             return;
-            var sw = Stopwatch.StartNew();
-
-            var chunks = Level.GetLoadedChunks();
-
-            if (chunks.Length == 0)
-                return;
-
-            var i = 0;
-            foreach (var chunk in chunks)
-            {
-                if (i >= MaxChunksPerInterval)
-                    break;
-
-                var coords = new ChunkCoordinates(chunk.x, chunk.z);
-                if (_renderedChunks.Contains(coords))
-                    continue;
-
-                RenderChunk(chunk);
-
-                i++;
-            }
-
-            if (i > 0)
-            {
-                Log.InfoFormat("Updated {0} chunks in {1}ms", i, sw.ElapsedMilliseconds);
-            }
         }
 
         private void GenerateChunks(Level level, int r)
         {
+            var cX = (int)level.SpawnPoint.X >> 4;
+            var cZ = (int)level.SpawnPoint.Z >> 4;
 
+            var x = 0;
+            var y = 0;
+            var t = r;
+            var dx = 0;
+            var dy = -1;
+
+            for (var i = 0; i < (r * r); i++)
+            {
+                if ((-r / 2 <= x) && (x <= r / 2) && (-r / 2 <= y) && (y <= r / 2))
+                {
+                    //Log.InfoFormat("Generating Chunk {0},{1}", x, y);
+                    var coords = new ChunkCoordinates(cX + x, cZ + y);
+                    //ThreadPool.QueueUserWorkItem(c => level.GetChunk((ChunkCoordinates) c), coords);
+
+                    var chunk = level.GetChunk(coords);
+                    RenderChunk(chunk);
+                    (level.WorldProvider as ICachingWorldProvider)?.ClearCachedChunks();
+                    //Thread.Sleep(50);
+                }
+
+                if ((x == y) || ((x < 0) && (x == -y)) || ((x > 0) && (x == 1 - y)))
+                {
+                    t = dx;
+                    dx = -dy;
+                    dy = t;
+                }
+
+                x += dx;
+                y += dy;
+            }
+
+
+            /*
             for (int dx = -r; dx <= r; dx++)
             {
                 for (int dz = -r; dz <= r; dz++)
@@ -155,7 +164,7 @@ namespace MiMap.Plugin.Runners
                     (level.WorldProvider as ICachingWorldProvider)?.ClearCachedChunks();
 
                 }
-            }
+            }*/
         }
 
         private void RenderChunk(ChunkColumn chunk)

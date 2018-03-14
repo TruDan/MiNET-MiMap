@@ -52,7 +52,9 @@
 
     _initControl: function (body) {
 
-        this._layerControlParts._baseLayersList = this._createGroup("Layers", body);
+        this._layerControlParts._baseLayersWrapper = this._createGroup("Layers", body);
+        this._layerControlParts._baseLayersList =
+            L.DomUtil.create("div", "grouped fields", this._layerControlParts._baseLayersWrapper);
 
         this._map.on('zoomend', this._checkDisabledLayers, this);
 
@@ -62,7 +64,9 @@
         }
 
 
-        this._layerControlParts._overlayLayersList = this._createGroup("Overlays", body);
+        this._layerControlParts._overlayLayersWrapper = this._createGroup("Overlays", body);
+        this._layerControlParts._overlayLayersList =
+            L.DomUtil.create("div", "grouped fields", this._layerControlParts._overlayLayersWrapper);
     },
 
     _addLayer: function (layer, name, overlayLayers) {
@@ -130,22 +134,25 @@
 
     _createItem: function (obj) {
 
-        var label,
+        var field, wrapper,
             checked = this._map.hasLayer(obj.layer),
             input, text;
 
+        field = L.DomUtil.create("div", "field");
+
+
+
         if (typeof obj.overlays === 'undefined') {
-            label = L.DomUtil.create('label', 'mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect');
-            input = L.DomUtil.create('input', 'leaflet-control-layers-selector mdl-checkbox__input');
-            text = L.DomUtil.create('span', 'mdl-checkbox__label');
+            wrapper = L.DomUtil.create('div', 'ui checkbox', field);
+            input = L.DomUtil.create('input');
 
             input.type = 'checkbox';
             input.defaultChecked = checked;
         } else {
-            label = L.DomUtil.create('label', 'mdl-radio mdl-js-radio mdl-js-ripple-effect');
+            wrapper = L.DomUtil.create('div', 'ui radio checkbox', field);
             input = this._createRadioElement('leaflet-base-layers', checked);
-            text = L.DomUtil.create('span', 'mdl-radio__label');
         }
+        text = L.DomUtil.create('label');
 
         this._layerControlInputs.push(input);
         input.layerId = L.Util.stamp(obj.layer);
@@ -157,28 +164,27 @@
 
         // Helps from preventing layer control flicker when checkboxes are disabled
         // https://github.com/Leaflet/Leaflet/issues/2771
-        var holder = L.DomUtil.create('div', 'control-group');
-        holder.appendChild(label);
-
-
+        //var holder = L.DomUtil.create('div', 'control-group');
+        //holder.appendChild(label);
 
         text.innerHTML = obj.label;
 
-        label.appendChild(input);
-        label.appendChild(text);
+        wrapper.appendChild(input);
+        wrapper.appendChild(text);
 
         //var container = isOverlay ? this._overlaysList : this._baseLayersList;
         //container.appendChild(holder);
 
         this._checkDisabledLayers();
-        componentHandler.upgradeElement(label);
-        return label;
+        //componentHandler.upgradeElement(label);
+
+        return field;
     },
 
     // IE7 bugs out if you create a radio dynamically, so you have to do it this hacky way (see http://bit.ly/PqYLBe)
     _createRadioElement: function (name, checked) {
 
-        var radioHtml = '<input type="radio" class="leaflet-control-layers-selector mdl-radio__button" name="' +
+        var radioHtml = '<input type="radio" name="' +
             name + '"' + (checked ? ' checked="checked"' : '') + '/>';
 
         var radioFragment = document.createElement('div');

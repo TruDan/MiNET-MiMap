@@ -5,9 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Biome Map</title>
 
-    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&lang=en" />
-    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
-    <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.light_blue-pink.min.css" />
+    <!--<link rel="stylesheet" href="Styles/mimap-ui.min.css" />-->
 
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.1.0/dist/leaflet.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/0.2.6/gridstack.min.css" />
@@ -15,7 +13,7 @@
 
     <link rel="stylesheet" type="text/css" href="Styles/mimap.min.css" />
 </head>
-<body onload="initMap()">
+<body onload="initMap()" class="dark-theme">
     <div class="header">
         <div class="brand">
             <i class="material-icons">map</i> <h1>MiMap</h1>
@@ -26,16 +24,13 @@
     </div>
     <div id="map"></div>
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-    <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.13/semantic.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.6.0/Sortable.min.js"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/reconnecting-websocket/1.0.0/reconnecting-websocket.min.js"></script>
-    <script src="https://unpkg.com/leaflet@1.1.0/dist/leaflet.js"
-            integrity="sha512-mNqn2Wg7tSToJhvHcqfzLMU6J4mkOImSPTxVZAdo+lcPlk+GhZmYgACEe0x35K7YzW1zJ7XyJV/TT1MrdXvMcA=="
-            crossorigin=""></script>
+    <script src="https://unpkg.com/leaflet@1.1.0/dist/leaflet.js"integrity="sha512-mNqn2Wg7tSToJhvHcqfzLMU6J4mkOImSPTxVZAdo+lcPlk+GhZmYgACEe0x35K7YzW1zJ7XyJV/TT1MrdXvMcA=="crossorigin=""></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-minimap/3.5.0/Control.MiniMap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-hash/0.2.1/leaflet-hash.min.js"></script>
-    <script src="Lib/Leaflet.Toolbar/leaflet.toolbar.min.js"></script>
 
     <script src="Scripts/socket.js"></script>
 
@@ -44,6 +39,7 @@
     <script src="Scripts/Controls/MiMapLayerControl.js"></script>
 
     <script src="Scripts/MiMapTileLayer.js"></script>
+    <script src="Scripts/MiMapWidgetManager.js"></script>
     <script src="Scripts/MiMap.js"></script>
 </body>
 </html>

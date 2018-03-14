@@ -52,7 +52,8 @@ namespace MiMap.Drawing.Utils
             var g = Graphics.FromImage(bitmap);
             g.SmoothingMode = SmoothingMode.HighQuality;
             g.CompositingQuality = CompositingQuality.HighQuality;
-            g.InterpolationMode = InterpolationMode.NearestNeighbor;
+            //g.InterpolationMode = InterpolationMode.NearestNeighbor;
+            g.InterpolationMode = InterpolationMode.HighQualityBicubic;
             g.PixelOffsetMode = PixelOffsetMode.HighQuality;
             g.PageUnit = GraphicsUnit.Pixel;
             return g;

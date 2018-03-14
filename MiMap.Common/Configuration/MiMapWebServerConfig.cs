@@ -15,5 +15,7 @@ namespace MiMap.Common.Configuration
 
         public Boolean Enabled { get; set; } = true;
 
+        public MiMapWidgetConfig[] Widgets { get; set; } = new MiMapWidgetConfig[0];
+
     }
 }

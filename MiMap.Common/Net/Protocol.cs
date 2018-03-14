@@ -8,6 +8,8 @@
         public static readonly int LevelMeta = 3;
         public static readonly int ListPlayers = 4;
         public static readonly int TileSubscribe = 5;
+        public static readonly int WidgetUpdate = 6;
+        public static readonly int WidgetElementUpdate = 7;
     }
 }
 

@@ -15,18 +15,18 @@ namespace MiMap.Drawing.Renderers.Base
 
         public static readonly byte[] FoilageBlocks = { 2, 18, 111, 161 };
 
-        private ResourcePack ResourcePack { get; }
+        private Texture.ResourcePack ResourcePack { get; }
         private BiomeUtils BiomeUtils { get; }
 
         public TextureLayerRenderer(TextureRendererConfig config)
         {
             if(config.ResourcePack.Equals("default", System.StringComparison.InvariantCultureIgnoreCase))
             {
-                ResourcePack = new ResourcePack();
+                ResourcePack = new Texture.ResourcePack();
             }
             else
             {
-                ResourcePack = new ResourcePack(config.ResourcePack);
+                ResourcePack = new Texture.ResourcePack(config.ResourcePack);
             }
 
             BiomeUtils = new BiomeUtils();

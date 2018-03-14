@@ -7,6 +7,8 @@
 
         public int BlockId { get; set; }
 
+        public byte BlockMeta { get; set; }
+
         public byte Height { get; set; }
 
         public byte BiomeId { get; set; }

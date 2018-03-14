@@ -16,6 +16,7 @@
     this.overlayLayers = {};
 
     this.layersControl = null;
+    this._widgetManager = null;
 
     this.activeLayer = null;
 
@@ -84,7 +85,7 @@
         $this.chunkinfo = L.control.chunkInfo({ position: 'topright' });
         //$this.chunkinfo.addTo($this.map);
 
-        //$this.hash = new L.Hash($this.map);
+        $this.hash = new L.Hash($this.map);
     };
 
     this.initLayerControl = function () {
@@ -112,6 +113,8 @@
 
     this.onMapLoad = function (e) {
         this.initDocking();
+
+        this._widgetManager = new MiMapWidgetManager(this.$map);
     };
 
     this.initDocking = function () {

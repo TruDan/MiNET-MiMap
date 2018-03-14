@@ -11,7 +11,7 @@ namespace MiMap.Common.Data
         {
             return new BlockBounds(
                 new BlockPosition(X << 9, Z << 9),
-                new BlockPosition((X + 1) << 9, (Z + 1) << 9)
+                new BlockPosition(((X + 1) << 9) - 1, ((Z + 1) << 9) - 1)
             );
         }
 
@@ -19,7 +19,7 @@ namespace MiMap.Common.Data
         {
             return new ChunkBounds(
                 new ChunkPosition(X << 5, Z << 5),
-                new ChunkPosition((X + 1) << 5, (Z + 1) << 5)
+                new ChunkPosition(((X + 1) << 5) - 1, ((Z + 1) << 5) - 1)
                 );
         }
     }

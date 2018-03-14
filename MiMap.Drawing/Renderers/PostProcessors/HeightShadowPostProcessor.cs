@@ -85,57 +85,58 @@ namespace MiMap.Drawing.Renderers.PostProcessors
         {
             var rect = layer.GetBlockRectangle(column.Position);
 
+            int actSizeTop = 0, actSizeLeft = 0, actSizeRight = 0, actSizeBottom = 0;
 
             if (sizeTop > 0)
             {
-                var size = (int)MathUtils.Clamp(Math.Round(MaxShadowSize * (MathUtils.Clamp(sizeTop * ShadowSizeMultiplier, 0f, 1f))), 1f, MaxShadowSize);
-                for (int i = 1; i <= size; i++)
+                actSizeTop = (int)MathUtils.Clamp(Math.Round(MaxShadowSize * (MathUtils.Clamp(sizeTop * ShadowSizeMultiplier, 0.25f, 1f))), 1f, MaxShadowSize);
+                for (int i = 0; i < actSizeTop; i++)
                 {
-                    using (var pen = new Pen(Color.FromArgb((int)(MathUtils.Clamp(sizeTop * AlphaMultiplier, 8f, 255f) / size) * i
+                    using (var pen = new Pen(Color.FromArgb((int)(MathUtils.Clamp(sizeTop * AlphaMultiplier, 64f, 255f) / actSizeTop) * (i + 1)
                         , Color.Black)))
                     {
-                        graphics.DrawLine(pen, rect.Left, rect.Top - i, rect.Right, rect.Top - i);
-                    }
-                }
-            }
-
-            if (sizeLeft > 0)
-            {
-                var size = (int)MathUtils.Clamp(Math.Round(MaxShadowSize * (MathUtils.Clamp(sizeLeft * ShadowSizeMultiplier, 0f, 1f))), 1f, MaxShadowSize);
-                for (int i = 1; i <= size; i++)
-                {
-                    using (var pen = new Pen(Color.FromArgb((int)(MathUtils.Clamp(sizeLeft * AlphaMultiplier, 8f, 255f) / size) * i,
-                        Color.Black)))
-                    {
-                        graphics.DrawLine(pen, rect.Left - i, rect.Top, rect.Left - i, rect.Bottom);
-                    }
-                }
-            }
-
-            if (sizeRight > 0)
-            {
-                var size = (int)MathUtils.Clamp(Math.Round(MaxShadowSize * (MathUtils.Clamp(sizeRight * ShadowSizeMultiplier, 0f, 1f))), 1f, MaxShadowSize);
-                for (int i = 1; i <= size; i++)
-                {
-                    using (var pen =
-                        new Pen(Color.FromArgb((int)(MathUtils.Clamp(sizeRight * AlphaMultiplier, 8f, 255f) / size) * i,
-                            Color.Black)))
-                    {
-                        graphics.DrawLine(pen, rect.Right + i, rect.Top, rect.Right + i, rect.Bottom);
+                        graphics.DrawLine(pen, rect.Left, rect.Top + i, rect.Right, rect.Top + i);
                     }
                 }
             }
 
             if (sizeBottom > 0)
             {
-                var size = (int)MathUtils.Clamp(Math.Round(MaxShadowSize * (MathUtils.Clamp(sizeBottom * ShadowSizeMultiplier, 0f, 1f))), 1f, MaxShadowSize);
-                for (int i = 1; i <= size; i++)
+                actSizeBottom = (int)MathUtils.Clamp(Math.Round(MaxShadowSize * (MathUtils.Clamp(sizeBottom * ShadowSizeMultiplier, 0.25f, 1f))), 1f, MaxShadowSize);
+                for (int i = 0; i < actSizeBottom; i++)
                 {
                     using (var pen =
-                        new Pen(Color.FromArgb((int)(MathUtils.Clamp(sizeBottom * AlphaMultiplier, 8f, 255f) / size) * i,
+                        new Pen(Color.FromArgb((int)(MathUtils.Clamp(sizeBottom * AlphaMultiplier, 64f, 255f) / actSizeBottom) * (i + 1),
                             Color.Black)))
                     {
-                        graphics.DrawLine(pen, rect.Left, rect.Bottom + i, rect.Right, rect.Bottom + i);
+                        graphics.DrawLine(pen, rect.Left, rect.Bottom - actSizeBottom + i, rect.Right, rect.Bottom - actSizeBottom + i);
+                    }
+                }
+            }
+
+            if (sizeLeft > 0)
+            {
+                actSizeLeft = (int)MathUtils.Clamp(Math.Round(MaxShadowSize * (MathUtils.Clamp(sizeLeft * ShadowSizeMultiplier, 0.25f, 1f))), 1f, MaxShadowSize);
+                for (int i = 0; i < actSizeLeft; i++)
+                {
+                    using (var pen = new Pen(Color.FromArgb((int)(MathUtils.Clamp(sizeLeft * AlphaMultiplier, 64f, 255f) / actSizeLeft) * (i + 1),
+                        Color.Black)))
+                    {
+                        graphics.DrawLine(pen, rect.Left + i, rect.Top, rect.Left + i, rect.Bottom);
+                    }
+                }
+            }
+
+            if (sizeRight > 0)
+            {
+                actSizeRight = (int)MathUtils.Clamp(Math.Round(MaxShadowSize * (MathUtils.Clamp(sizeRight * ShadowSizeMultiplier, 0.25f, 1f))), 1f, MaxShadowSize);
+                for (int i = 0; i < actSizeRight; i++)
+                {
+                    using (var pen =
+                        new Pen(Color.FromArgb((int)(MathUtils.Clamp(sizeRight * AlphaMultiplier, 64f, 255f) / actSizeRight) * (i + 1),
+                            Color.Black)))
+                    {
+                        graphics.DrawLine(pen, rect.Right - actSizeRight + i, rect.Top, rect.Right - actSizeRight + i, rect.Bottom);
                     }
                 }
             }

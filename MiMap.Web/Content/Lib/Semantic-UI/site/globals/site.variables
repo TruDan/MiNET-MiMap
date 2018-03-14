@@ -1,0 +1,5 @@
+﻿@importGoogleFonts : true;
+
+@pageBackground      : #212121;
+@textColor           : #F9F9F9;
+@solidBorderColor	 : #000000;

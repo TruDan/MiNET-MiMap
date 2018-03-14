@@ -54,7 +54,7 @@ namespace MiMap.Drawing.Layers
             var postProcessors = new List<IPostProcessor>();
             foreach (var pp in config.Renderer.PostProcessors)
             {
-                var p = PostProcessorFactory.CreateLayerRenderer(pp);
+                var p = PostProcessorFactory.CreatePostProcessor(pp);
                 if (p != null)
                 {
                     postProcessors.Add(p);

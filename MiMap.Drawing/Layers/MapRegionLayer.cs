@@ -8,6 +8,7 @@ using MiMap.Common;
 using MiMap.Common.Data;
 using MiMap.Drawing.Layers;
 using MiMap.Drawing.Utils;
+using Size = MiMap.Common.Data.Size;
 
 namespace MiMap.Drawing
 {
@@ -48,24 +49,29 @@ namespace MiMap.Drawing
 
         private void Load()
         {
+            var size = new Size(Layer.Renderer.RenderScale.Width * (1 << 9),
+                Layer.Renderer.RenderScale.Height * (1 << 9));
             lock (_ioSync)
             {
                 //Log.InfoFormat("Loading Tile {0},{1}@{2}", Position.X, Position.Z, Position.Zoom);
-                Bitmap bitmap;
+                Bitmap bitmap = null;
                 if (File.Exists(FilePath))
                 {
                     using (var fs = new FileStream(FilePath, FileMode.Open, FileAccess.ReadWrite))
                     {
                         using (var img = Image.FromStream(fs))
                         {
-                            bitmap = new Bitmap(img);
+                            if (img.Width == size.Width && img.Height == size.Height)
+                            {
+                                bitmap = new Bitmap(img);
+                            }
                         }
                     }
                 }
-                else
+
+                if (bitmap == null)
                 {
-                    bitmap = new Bitmap(Layer.Renderer.RenderScale.Width * (1 << 9),
-                        Layer.Renderer.RenderScale.Height * (1 << 9));
+                    bitmap = new Bitmap(size.Width, size.Height);
                     IsNew = true;
                 }
 
@@ -152,6 +158,28 @@ namespace MiMap.Drawing
             {
                 x = (int)BitmapBounds.Width + x;
             }
+
+            if (z < 0)
+            {
+                z = (int)BitmapBounds.Height + z;
+            }
+
+            return new Rectangle(x, z, w, h);
+        }
+
+        public Rectangle GetChunkRectangle(ChunkPosition pos)
+        {
+            var w = Layer.Renderer.RenderScale.Width * 16;
+            var h = Layer.Renderer.RenderScale.Height * 16;
+
+            var x = (pos.X % (1 << 5)) * w;
+            var z = (pos.Z % (1 << 5)) * h;
+
+            if (x < 0)
+            {
+                x = (int)BitmapBounds.Width + x;
+            }
+
             if (z < 0)
             {
                 z = (int)BitmapBounds.Height + z;

@@ -20,7 +20,8 @@ namespace MiMap.Drawing.Renderers.PostProcessors
             // Register Defaults
             RegisterRenderer("Lighting", typeof(LightingPostProcessor));
             RegisterRenderer("HeightShadow", typeof(HeightShadowPostProcessor));
-            
+            RegisterRenderer("DebugGrid", typeof(DebugGridPostProcessor));
+
         }
 
         public static void RegisterRenderer(string id, Type type)
@@ -50,13 +51,13 @@ namespace MiMap.Drawing.Renderers.PostProcessors
             Log.ErrorFormat("Failed to register PostProcessor type {0} - No Valid constructor", type.FullName);
         }
 
-        public static IPostProcessor CreateLayerRenderer(string name)
+        public static IPostProcessor CreatePostProcessor(string name)
         {
             Type type;
-            if (PostProcessorTypes.TryGetValue(name, out type))
+            if (PostProcessorTypes.TryGetValue(name.ToLowerInvariant(), out type))
             {
                 return Activator.CreateInstance(type) as IPostProcessor;
-                
+
             }
             return null;
         }

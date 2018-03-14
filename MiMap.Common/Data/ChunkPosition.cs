@@ -10,7 +10,7 @@
         {
             return new BlockBounds(
                 new BlockPosition(X << 4, Z << 4),
-                new BlockPosition((X + 1) << 4, (Z + 1) << 4)
+                new BlockPosition(((X + 1) << 4) - 1, ((Z + 1) << 4) - 1)
             );
         }
 

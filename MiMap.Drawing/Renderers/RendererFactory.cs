@@ -9,6 +9,7 @@ using MiMap.Common;
 using MiMap.Common.Configuration;
 using MiMap.Drawing.Renderers.Base;
 using MiMap.Drawing.Renderers.Overlay;
+using MiMap.Drawing.Renderers.ResourcePack;
 
 namespace MiMap.Drawing.Renderers
 {
@@ -25,10 +26,11 @@ namespace MiMap.Drawing.Renderers
             // Base Types
             RegisterRenderer("Default", typeof(DefaultLayerRenderer));
             RegisterRenderer("Texture", typeof(TextureLayerRenderer));
+	        RegisterRenderer("ResourcePack", typeof(ResourcePackLayerRenderer));
 
-            // Overlay Types
+			// Overlay Types
 
-            RegisterRenderer("Biome", typeof(BiomeOverlayRenderer));
+			RegisterRenderer("Biome", typeof(BiomeOverlayRenderer));
             RegisterRenderer("HeightMap", typeof(HeightMapOverlayRenderer));
         }
 
@@ -69,7 +71,7 @@ namespace MiMap.Drawing.Renderers
                 }
                 else
                 {
-                    Log.WarnFormat("Invalid Renderer constructor {0}::{1}", type.FullName, string.Join(", ",cParams.Select(p1 => p1.ParameterType.Name)));
+                    Log.WarnFormat("Invalid Renderer constructor {0}::{1}", type.FullName, string.Join(", ", cParams.Select(p1 => p1.ParameterType.Name)));
                 }
             }
 
@@ -79,7 +81,7 @@ namespace MiMap.Drawing.Renderers
         public static ILayerRenderer CreateLayerRenderer(MiMapRendererConfig config)
         {
             RendererDefinition def;
-            if (RendererTypes.TryGetValue(config.Type, out def))
+            if (RendererTypes.TryGetValue(config.Type.ToLowerInvariant(), out def))
             {
                 return def.Create(config);
             }
@@ -100,7 +102,7 @@ namespace MiMap.Drawing.Renderers
 
             public RendererDefinition(Type rendererType) : this(rendererType, null)
             {
-                
+
             }
 
             public ILayerRenderer Create(MiMapRendererConfig config)

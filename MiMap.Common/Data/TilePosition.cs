@@ -13,7 +13,7 @@ namespace MiMap.Common.Data
 
         public RegionPosition GetRegionPosition()
         {
-            return new RegionPosition(X >> Zoom, Z >> Zoom);
+            return new RegionPosition(X >> Zoom, -(Z >> Zoom));
         }
 
         public ChunkBounds GetChunkBounds()

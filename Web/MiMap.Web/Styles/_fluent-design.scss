@@ -1,0 +1,66 @@
+﻿
+//
+// Fonts
+// ------------------------------
+@font-face {
+    font-family: winjs-symbols;
+    src: url(../fonts/glyphs/winjs-symbols.eot);
+    src: url(../fonts/glyphs/winjs-symbols.eot#iefix) format("embedded-opentype"),url(../fonts/glyphs/winjs-symbols.ttf) format("truetype")
+}
+
+@font-face {
+    font-family: Selawik;
+    src: url(../fonts/selawk.eot);
+    src: url(../fonts/selawk.eot#iefix) format("embedded-opentype"),url(../fonts/selawk.ttf) format("truetype")
+}
+
+@font-face {
+    font-family: "Selawik Bold";
+    src: url(../fonts/selawkb.eot);
+    src: url(../fonts/selawkb.eot#iefix) format("embedded-opentype"),url(../fonts/selawkb.ttf) format("truetype")
+}
+
+@font-face {
+    font-family: "Selawik Light";
+    src: url(../fonts/selawkl.eot);
+    src: url(../fonts/selawkl.eot#iefix) format("embedded-opentype"),url(../fonts/selawkl.ttf) format("truetype")
+}
+
+@font-face {
+    font-family: "Selawik Semibold";
+    src: url(../fonts/selawksb.eot);
+    src: url(../fonts/selawksb.eot#iefix) format("embedded-opentype"),url(../fonts/selawksb.ttf) format("truetype")
+}
+
+@font-face {
+    font-family: "Selawik Semilight";
+    src: url(../fonts/selawksl.eot);
+    src: url(../fonts/selawksl.eot#iefix) format("embedded-opentype"),url(../fonts/selawksl.ttf) format("truetype")
+}
+
+
+//
+// Override Bootstrap Variables
+// ------------------------------
+$enable-rounded: false;
+$enable-shadows: true;
+$enable-gradients: false;
+$enable-transitions: true;
+$enable-grid-classes: true;
+$enable-caret: true;
+$enable-print-styles: true;
+
+$body-bg: #1A1A1A;
+$body-color: #F2F2F2;
+
+$brand-color: #0078D7;
+
+
+
+$font-family-sans-serif: "Segoe UI Light", "Segoe UI", "Selawik Light", Tahoma, Verdana, Arial, sans-serif;
+
+
+//
+// Import Bootstrap
+// ------------------------------
+@import "../node_modules/bootstrap/scss/bootstrap";

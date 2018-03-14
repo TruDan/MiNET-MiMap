@@ -26,7 +26,7 @@
         this._map = map;
 
         var control = this.getControl();
-        componentHandler.upgradeElement(control);
+        // componentHandler.upgradeElement(control);
         return control;
     },
 
@@ -83,7 +83,7 @@
         var labelDom = L.DomUtil.create('h1', '', rootDom);
         labelDom.innerHTML = label;
 
-        var groupBodyDom = L.DomUtil.create('div', 'mimap-control-group-body', rootDom);
+        var groupBodyDom = L.DomUtil.create('div', 'mimap-control-group-body ui form', rootDom);
 
         return groupBodyDom;
     }

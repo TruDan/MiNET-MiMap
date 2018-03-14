@@ -1,0 +1,482 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{4F029E79-C56F-4CA0-BDAB-0F07915BC12D}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>MiMap.Web</RootNamespace>
+    <AssemblyName>MiMap.Web</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Fleck, Version=0.14.0.59, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Fleck.0.14.0.59\lib\net40\Fleck.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.4.0.0\lib\net451\Microsoft.Owin.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.FileSystems, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.FileSystems.4.0.0\lib\net451\Microsoft.Owin.FileSystems.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Host.HttpListener, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Host.HttpListener.4.0.0\lib\net451\Microsoft.Owin.Host.HttpListener.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Hosting, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Hosting.4.0.0\lib\net451\Microsoft.Owin.Hosting.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.StaticFiles, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.StaticFiles.4.0.0\lib\net451\Microsoft.Owin.StaticFiles.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.11.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
+      <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WebSocketProxy, Version=1.0.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\WebSocketProxy.1.0.2\lib\net45\WebSocketProxy.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Middleware\NoCacheMiddleware.cs" />
+    <Compile Include="MiMapWebServer.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Sockets\WsConnection.cs" />
+    <Compile Include="Sockets\WsServer.cs" />
+    <Compile Include="Utils\NetSh.cs" />
+    <Compile Include="Utils\UacHelper.cs" />
+    <Compile Include="Widgets\Elements\TextElement.cs" />
+    <Compile Include="Widgets\IHttpWidget.cs" />
+    <Compile Include="Widgets\IWidget.cs" />
+    <Compile Include="Widgets\Widget.cs" />
+    <Compile Include="Widgets\Elements\WidgetElement.cs" />
+    <Compile Include="Widgets\Elements\WidgetElementGroup.cs" />
+    <Compile Include="Widgets\WidgetAttribute.cs" />
+    <Compile Include="Widgets\WidgetFactory.cs" />
+    <Compile Include="Widgets\WidgetManager.cs" />
+    <Compile Include="Widgets\Elements\WidgetElementType.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Content\index.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Content\Scripts\Controls\chunkinfo.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Content\Scripts\MiMap.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Content\Scripts\socket.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Content\Styles\mimap.scss" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Content\Styles\mimap.css">
+      <DependentUpon>mimap.scss</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Content\Styles\mimap.min.css">
+      <DependentUpon>mimap.css</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.5.2">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.5.2 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="compilerconfig.json" />
+    <None Include="compilerconfig.json.defaults">
+      <DependentUpon>compilerconfig.json</DependentUpon>
+    </None>
+    <None Include="Content\Lib\Semantic-UI\definitions\collections\breadcrumb.less" />
+    <None Include="Content\Lib\Semantic-UI\definitions\collections\form.less" />
+    <None Include="Content\Lib\Semantic-UI\definitions\collections\grid.less" />
+    <None Include="Content\Lib\Semantic-UI\definitions\collections\menu.less" />
+    <None Include="Content\Lib\Semantic-UI\definitions\collections\message.less" />
+    <None Include="Content\Lib\Semantic-UI\definitions\collections\table.less" />
+    <None Include="Content\Lib\Semantic-UI\definitions\elements\button.less" />
+    <None Include="Content\Lib\Semantic-UI\definitions\elements\container.less" />
+    <None Include="Content\Lib\Semantic-UI\definitions\elements\divider.less" />
+    <None Include="Content\Lib\Semantic-UI\definitions\elements\flag.less" />
+    <None Include="Content\Lib\Semantic-UI\definitions\elements\header.less" />
+    <None Include="Content\Lib\Semantic-UI\definitions\elements\icon.less" />
+    <None Include="Content\Lib\Semantic-UI\definitions\elements\image.less" />
+    <None Include="Content\Lib\Semantic-UI\definitions\elements\input.less" />
+    <None Include="Content\Lib\Semantic-UI\definitions\elements\label.less" />
+    <None Include="Content\Lib\Semantic-UI\definitions\elements\list.less" />
+    <None Include="Content\Lib\Semantic-UI\definitions\elements\loader.less" />
+    <None Include="Content\Lib\Semantic-UI\definitions\elements\rail.less" />
+    <None Include="Content\Lib\Semantic-UI\definitions\elements\reveal.less" />
+    <None Include="Content\Lib\Semantic-UI\definitions\elements\segment.less" />
+    <None Include="Content\Lib\Semantic-UI\definitions\elements\step.less" />
+    <None Include="Content\Lib\Semantic-UI\definitions\globals\reset.less" />
+    <None Include="Content\Lib\Semantic-UI\definitions\globals\site.less" />
+    <None Include="Content\Lib\Semantic-UI\definitions\modules\accordion.less" />
+    <None Include="Content\Lib\Semantic-UI\definitions\modules\checkbox.less" />
+    <None Include="Content\Lib\Semantic-UI\definitions\modules\dimmer.less" />
+    <None Include="Content\Lib\Semantic-UI\definitions\modules\dropdown.less" />
+    <None Include="Content\Lib\Semantic-UI\definitions\modules\embed.less" />
+    <None Include="Content\Lib\Semantic-UI\definitions\modules\modal.less" />
+    <None Include="Content\Lib\Semantic-UI\definitions\modules\nag.less" />
+    <None Include="Content\Lib\Semantic-UI\definitions\modules\popup.less" />
+    <None Include="Content\Lib\Semantic-UI\definitions\modules\progress.less" />
+    <None Include="Content\Lib\Semantic-UI\definitions\modules\rating.less" />
+    <None Include="Content\Lib\Semantic-UI\definitions\modules\search.less" />
+    <None Include="Content\Lib\Semantic-UI\definitions\modules\shape.less" />
+    <None Include="Content\Lib\Semantic-UI\definitions\modules\sidebar.less" />
+    <None Include="Content\Lib\Semantic-UI\definitions\modules\sticky.less" />
+    <None Include="Content\Lib\Semantic-UI\definitions\modules\tab.less" />
+    <None Include="Content\Lib\Semantic-UI\definitions\modules\transition.less" />
+    <None Include="Content\Lib\Semantic-UI\definitions\views\ad.less" />
+    <None Include="Content\Lib\Semantic-UI\definitions\views\card.less" />
+    <None Include="Content\Lib\Semantic-UI\definitions\views\comment.less" />
+    <None Include="Content\Lib\Semantic-UI\definitions\views\feed.less" />
+    <None Include="Content\Lib\Semantic-UI\definitions\views\item.less" />
+    <None Include="Content\Lib\Semantic-UI\definitions\views\statistic.less" />
+    <None Include="Content\Lib\Semantic-UI\package.json" />
+    <None Include="Content\Lib\Semantic-UI\semantic.less" />
+    <None Include="Content\Lib\Semantic-UI\site\globals\site.variables" />
+    <None Include="Content\Lib\Semantic-UI\site\modules\checkbox.variables" />
+    <None Include="Content\Lib\Semantic-UI\theme.config" />
+    <None Include="Content\Lib\Semantic-UI\theme.config.example" />
+    <None Include="Content\Lib\Semantic-UI\theme.less" />
+    <None Include="Content\Lib\Semantic-UI\themes\amazon\elements\button.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\amazon\elements\button.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\amazon\globals\site.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\basic\assets\fonts\icons.eot" />
+    <None Include="Content\Lib\Semantic-UI\themes\basic\assets\fonts\icons.ttf" />
+    <None Include="Content\Lib\Semantic-UI\themes\basic\assets\fonts\icons.woff" />
+    <None Include="Content\Lib\Semantic-UI\themes\basic\collections\table.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\basic\collections\table.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\basic\elements\button.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\basic\elements\button.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\basic\elements\icon.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\basic\elements\icon.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\basic\elements\step.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\basic\elements\step.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\basic\globals\reset.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\basic\globals\reset.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\basic\modules\progress.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\basic\modules\progress.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\basic\views\card.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\basic\views\card.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\bookish\elements\header.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\bookish\elements\header.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\bootstrap3\elements\button.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\bootstrap3\elements\button.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\chubby\collections\form.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\chubby\collections\form.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\chubby\collections\menu.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\chubby\collections\menu.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\chubby\elements\button.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\chubby\elements\button.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\chubby\elements\header.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\chubby\elements\header.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\chubby\modules\accordion.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\chubby\modules\accordion.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\chubby\views\comment.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\chubby\views\comment.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\classic\collections\table.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\classic\collections\table.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\classic\elements\button.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\classic\elements\button.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\classic\elements\header.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\classic\elements\header.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\classic\modules\progress.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\classic\modules\progress.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\classic\views\card.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\classic\views\card.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\colored\modules\checkbox.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\colored\modules\checkbox.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\assets\fonts\icons.eot" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\assets\fonts\icons.ttf" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\assets\fonts\icons.woff" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\assets\fonts\icons.woff2" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\collections\breadcrumb.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\collections\breadcrumb.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\collections\form.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\collections\form.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\collections\grid.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\collections\grid.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\collections\menu.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\collections\menu.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\collections\message.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\collections\message.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\collections\table.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\collections\table.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\elements\button.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\elements\button.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\elements\container.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\elements\container.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\elements\divider.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\elements\divider.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\elements\flag.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\elements\flag.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\elements\header.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\elements\header.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\elements\icon.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\elements\icon.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\elements\image.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\elements\image.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\elements\input.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\elements\input.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\elements\label.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\elements\label.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\elements\list.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\elements\list.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\elements\loader.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\elements\loader.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\elements\rail.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\elements\rail.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\elements\reveal.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\elements\reveal.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\elements\segment.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\elements\segment.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\elements\step.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\elements\step.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\globals\reset.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\globals\reset.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\globals\site.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\globals\site.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\modules\accordion.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\modules\accordion.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\modules\chatroom.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\modules\chatroom.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\modules\checkbox.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\modules\checkbox.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\modules\dimmer.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\modules\dimmer.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\modules\dropdown.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\modules\dropdown.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\modules\embed.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\modules\embed.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\modules\modal.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\modules\modal.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\modules\nag.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\modules\nag.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\modules\popup.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\modules\popup.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\modules\progress.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\modules\progress.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\modules\rating.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\modules\rating.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\modules\search.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\modules\search.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\modules\shape.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\modules\shape.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\modules\sidebar.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\modules\sidebar.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\modules\sticky.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\modules\sticky.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\modules\tab.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\modules\tab.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\modules\transition.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\modules\transition.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\modules\video.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\modules\video.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\views\ad.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\views\ad.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\views\card.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\views\card.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\views\comment.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\views\comment.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\views\feed.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\views\feed.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\views\item.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\views\item.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\views\statistic.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\default\views\statistic.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\duo\elements\loader.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\duo\elements\loader.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\fixed-width\collections\grid.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\fixed-width\collections\grid.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\fixed-width\modules\modal.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\fixed-width\modules\modal.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\flat\collections\form.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\flat\collections\form.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\flat\globals\site.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\flat\globals\site.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\github\assets\fonts\octicons-local.ttf" />
+    <None Include="Content\Lib\Semantic-UI\themes\github\assets\fonts\octicons.ttf" />
+    <None Include="Content\Lib\Semantic-UI\themes\github\assets\fonts\octicons.woff" />
+    <None Include="Content\Lib\Semantic-UI\themes\github\collections\breadcrumb.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\github\collections\form.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\github\collections\form.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\github\collections\grid.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\github\collections\menu.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\github\collections\menu.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\github\collections\message.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\github\collections\message.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\github\collections\table.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\github\elements\button.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\github\elements\button.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\github\elements\header.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\github\elements\icon.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\github\elements\icon.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\github\elements\image.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\github\elements\input.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\github\elements\input.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\github\elements\label.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\github\elements\label.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\github\elements\segment.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\github\elements\segment.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\github\elements\step.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\github\elements\step.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\github\globals\site.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\github\modules\dropdown.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\github\modules\dropdown.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\github\modules\popup.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\gmail\collections\message.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\gmail\collections\message.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\instagram\views\card.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\instagram\views\card.variables" />
+    <EmbeddedResource Include="Content\Lib\Semantic-UI\themes\material\assets\fonts\icons.eot" />
+    <EmbeddedResource Include="Content\Lib\Semantic-UI\themes\material\assets\fonts\icons.ttf" />
+    <EmbeddedResource Include="Content\Lib\Semantic-UI\themes\material\assets\fonts\icons.woff" />
+    <EmbeddedResource Include="Content\Lib\Semantic-UI\themes\material\assets\fonts\icons.woff2" />
+    <None Include="Content\Lib\Semantic-UI\themes\material\collections\menu.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\material\collections\menu.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\material\elements\button.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\material\elements\button.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\material\elements\header.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\material\elements\header.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\material\elements\icon.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\material\elements\icon.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\material\globals\site.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\material\globals\site.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\material\modules\dropdown.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\material\modules\dropdown.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\material\modules\modal.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\material\modules\modal.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\pulsar\elements\loader.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\pulsar\elements\loader.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\raised\elements\button.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\raised\elements\button.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\resetcss\globals\reset.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\resetcss\globals\reset.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\round\elements\button.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\round\elements\button.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\rtl\globals\site.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\rtl\globals\site.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\striped\modules\progress.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\striped\modules\progress.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\timeline\views\feed.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\timeline\views\feed.variables" />
+    <None Include="Content\Lib\Semantic-UI\themes\twitter\elements\button.overrides" />
+    <None Include="Content\Lib\Semantic-UI\themes\twitter\elements\button.variables" />
+    <EmbeddedResource Include="Content\Styles\mimap-ui.less" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MiMap.Common\MiMap.Common.csproj">
+      <Project>{eaf5f683-470d-41a6-a69f-c6510f07e466}</Project>
+      <Name>MiMap.Common</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Content\Scripts\Controls\MiMapControl.js" />
+    <EmbeddedResource Include="Content\Scripts\Controls\MiMapLayerControl.js" />
+    <EmbeddedResource Include="Content\Scripts\MiMapTileLayer.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Content\Scripts\MiMapWidgetManager.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Content\Lib\Semantic-UI\.gitignore" />
+    <Content Include="Content\Lib\Semantic-UI\definitions\behaviors\api.js" />
+    <Content Include="Content\Lib\Semantic-UI\definitions\behaviors\colorize.js" />
+    <Content Include="Content\Lib\Semantic-UI\definitions\behaviors\form.js" />
+    <Content Include="Content\Lib\Semantic-UI\definitions\behaviors\state.js" />
+    <Content Include="Content\Lib\Semantic-UI\definitions\behaviors\visibility.js" />
+    <Content Include="Content\Lib\Semantic-UI\definitions\behaviors\visit.js" />
+    <Content Include="Content\Lib\Semantic-UI\definitions\globals\site.js" />
+    <Content Include="Content\Lib\Semantic-UI\definitions\modules\accordion.js" />
+    <Content Include="Content\Lib\Semantic-UI\definitions\modules\checkbox.js" />
+    <Content Include="Content\Lib\Semantic-UI\definitions\modules\dimmer.js" />
+    <Content Include="Content\Lib\Semantic-UI\definitions\modules\dropdown.js" />
+    <Content Include="Content\Lib\Semantic-UI\definitions\modules\embed.js" />
+    <Content Include="Content\Lib\Semantic-UI\definitions\modules\modal.js" />
+    <Content Include="Content\Lib\Semantic-UI\definitions\modules\nag.js" />
+    <Content Include="Content\Lib\Semantic-UI\definitions\modules\popup.js" />
+    <Content Include="Content\Lib\Semantic-UI\definitions\modules\progress.js" />
+    <Content Include="Content\Lib\Semantic-UI\definitions\modules\rating.js" />
+    <Content Include="Content\Lib\Semantic-UI\definitions\modules\search.js" />
+    <Content Include="Content\Lib\Semantic-UI\definitions\modules\shape.js" />
+    <Content Include="Content\Lib\Semantic-UI\definitions\modules\sidebar.js" />
+    <Content Include="Content\Lib\Semantic-UI\definitions\modules\sticky.js" />
+    <Content Include="Content\Lib\Semantic-UI\definitions\modules\tab.js" />
+    <Content Include="Content\Lib\Semantic-UI\definitions\modules\transition.js" />
+    <Content Include="Content\Lib\Semantic-UI\package.js" />
+    <Content Include="Content\Lib\Semantic-UI\themes\basic\assets\fonts\icons.svg" />
+    <Content Include="Content\Lib\Semantic-UI\themes\default\assets\fonts\icons.svg" />
+    <Content Include="Content\Lib\Semantic-UI\themes\default\assets\images\flags.png" />
+    <Content Include="Content\Lib\Semantic-UI\themes\github\assets\fonts\octicons.svg" />
+    <EmbeddedResource Include="Content\Lib\Semantic-UI\themes\material\assets\fonts\icons.svg" />
+    <EmbeddedResource Include="Content\Styles\mimap-ui.css">
+      <DependentUpon>mimap-ui.less</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Content\Styles\mimap-ui.min.css">
+      <DependentUpon>mimap-ui.css</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
