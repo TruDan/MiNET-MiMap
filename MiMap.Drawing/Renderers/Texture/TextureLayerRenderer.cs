@@ -29,7 +29,7 @@ namespace MiMap.Drawing.Renderers.Base
                 ResourcePack = new Texture.ResourcePack(config.ResourcePack);
             }
 
-            BiomeUtils = new BiomeUtils();
+            BiomeUtils = new BiomeUtils(); 
             BiomeUtils.PrecomputeBiomeColors();
         }
 
