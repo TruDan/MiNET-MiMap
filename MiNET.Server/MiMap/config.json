@@ -72,13 +72,13 @@
       "MaxZoom": 5,
       "TileSize": 256,
       "Renderer": {
-        "Type": "texture",
+        "Type": "ResourcePack",
         "PostProcessors": [
           "HeightShadow",
           "Lighting",
           "DebugGrid"
         ],
-        "ResourcePack": "MiMap/John Smith Legacy JSC 18w10d.zip"
+        "ResourcePack": "default"
       },
       "Layers": [
       //  {

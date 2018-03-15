@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Text;
@@ -11,12 +12,14 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using ImageMagick;
 using MiMap.Common.Data;
+using MiMap.Drawing.Properties;
 using MiMap.Drawing.Utils;
 using MiMap.ResourcePackLib;
 using MiMap.ResourcePackLib.Json;
 using MiMap.ResourcePackLib.Json.BlockStates;
 using MiMap.ResourcePackLib.Json.Models;
 using MiNET.Blocks;
+using MiNET.Worlds;
 using Size = MiMap.Common.Data.Size;
 
 namespace MiMap.Drawing.Renderers.ResourcePack
@@ -32,7 +35,7 @@ namespace MiMap.Drawing.Renderers.ResourcePack
 		{
 			if (config.ResourcePack.Equals("default", System.StringComparison.InvariantCultureIgnoreCase))
 			{
-				ResourcePack = new MinecraftResourcePack();
+				ResourcePack = new MinecraftResourcePack(new MemoryStream(Resources._default));
 			}
 			else
 			{
@@ -67,12 +70,43 @@ namespace MiMap.Drawing.Renderers.ResourcePack
 
 					var rect = new RectangleF(bounds.X + relativeBounds.X, bounds.Y + relativeBounds.Y, relativeBounds.Width, relativeBounds.Height);
 
+					//	Bitmap texture;
+					bool doTint = false;
+					Bitmap faceTexture = null;
+					int x = 0, y = 0, width = 16, height = 16;
 					if (modelElement.Faces.TryGetValue(BlockFace.Up, out var face))
 					{
-						var srcRect = new Rectangle(face.UV.X1, face.UV.Y1, face.UV.X2-face.UV.X1, face.UV.Y2-face.UV.Y1);
-						using (var br = new TextureBrush(face.Texture, srcRect))
+						doTint = face.TintIndex > 0;
+						if (ResourcePack.TryGetTexture(model, face.TextureName, out faceTexture))
 						{
-							graphics.FillRectangle(br, rect);
+							x = face.UV.X1;
+							y = face.UV.Y1;
+							width = face.UV.X2 - face.UV.X1;
+							height = face.UV.Y2 - face.UV.Y1;
+						}
+					}
+
+					if (faceTexture == null)
+					{
+						var str = model.TextureDefinitions.FirstOrDefault();
+						ResourcePack.TryGetTexture(model, str.Value, out faceTexture);
+					}
+
+					if (faceTexture != null)
+					{
+						var srcRect = new RectangleF(x, y, width, height);
+						graphics.DrawImage(faceTexture, rect, srcRect, GraphicsUnit.Pixel);
+
+						if (doTint)
+						{
+							var biome = BiomeUtils.GetBiome(blockColumn.BiomeId);
+							var c = Color.FromArgb(biome.Foliage);
+							var tint = Color.FromArgb(128, c.R, c.G, c.B);
+
+							using (SolidBrush solidBrush = new SolidBrush(tint))
+							{
+								graphics.FillRectangle(solidBrush, rect);
+							}
 						}
 					}
 				}

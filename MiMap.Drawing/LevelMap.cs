@@ -93,7 +93,7 @@ namespace MiMap.Drawing
             var baseLayer = new MapLayer(this, new MiMapLevelLayerConfig()
             {
                 LayerId = "base",
-                BlendMode = BlendMode.Normal,
+                BlendMode = BlendMode.Overlay,
                 Default = config.Enabled,
                 Enabled = config.Enabled,
                 Label = config.Label,
@@ -156,14 +156,30 @@ namespace MiMap.Drawing
             var region = GetRegionLayer(update.Position.GetRegionPosition());
             region.Update(update);
 
-            var layers = Layers;
+	        var layers = Layers;
+	     //   Task[] tasks = new Task[layers.Length];
+	        if (layers.Length > 0)
+	        {
+		        for (var index = 0; index < layers.Length; index++)
+		        {
+			        var l = layers[index];
+					l.UpdateBlockColumn(update);
+			       // tasks[index] = Task.Run(() => l.UpdateBlockColumn(update));
+
+			        // l.ProcessUpdate();
+		        }
+	        }
+
+	       // Task.WaitAll(tasks);
+
+			/*var layers = Layers;
             if (layers.Length > 0)
             {
                 foreach (var layer in layers)
                 {
                     layer.UpdateBlockColumn(update);
                 }
-            }
+            }*/
         }
 
         private void UpdateMeta()
@@ -193,35 +209,21 @@ namespace MiMap.Drawing
                 Directory.CreateDirectory(TilesDirectory);
 
                 UpdateMeta();
-                /*
-                lock (_regionSync)
-                {
-                    foreach (var r in _regions.Values)
-                    {
-                        r.Save();
-                    }
-                }
 
-                foreach (var l in Layers.ToArray())
-                {
-                    l.ProcessUpdate();
-                }*/
-
-                lock (_regionSync)
-                {
-
-                    //Parallel.ForEach(_regions.Values.ToArray(), region => region.Save());
-                }
                 var layers = Layers;
+			//	Task[] tasks = new Task[layers.Length];
                 if (layers.Length > 0)
                 {
-                    foreach (var l in layers)
-                    {
-                        //Log.InfoFormat("Updating layer {0}", l.LayerId);
-                        l.ProcessUpdate();
-                    }
+	                for (var index = 0; index < layers.Length; index++)
+	                {
+		                var l = layers[index];
+						l.ProcessUpdate();
+					//	tasks[index] = Task.Run(() => l.ProcessUpdate());
+	                }
                 }
-                //Parallel.ForEach(Layers, (layer) => layer.ProcessUpdate());
+
+	           // Task.WaitAll(tasks);
+	            // Parallel.ForEach(layers, (layer) => layer.ProcessUpdate());
 
             }
             finally

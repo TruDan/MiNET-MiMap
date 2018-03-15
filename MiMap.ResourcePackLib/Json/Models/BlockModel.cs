@@ -31,9 +31,6 @@ namespace MiMap.ResourcePackLib.Json.Models
 		[JsonProperty("textures")]
 		public Dictionary<string, string> TextureDefinitions { get; set; } = new Dictionary<string, string>();
 
-		[JsonIgnore]
-		public Dictionary<string, Bitmap> Textures { get; set; } = new Dictionary<string, Bitmap>();
-
 		/// <summary>
 		/// Contains all the elements of the model. they can only have cubic forms. If both "parent" and "elements" are set, the "elements" tag overrides the "elements" tag from the previous model.
 		/// </summary>

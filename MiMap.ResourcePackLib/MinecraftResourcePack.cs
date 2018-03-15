@@ -16,6 +16,7 @@ namespace MiMap.ResourcePackLib
 {
     public class MinecraftResourcePack : IDisposable
     {
+		
         public IReadOnlyDictionary<string, BlockState> BlockStates
         {
             get { return _blockStates; }
@@ -85,6 +86,11 @@ namespace MiMap.ResourcePackLib
 
         private bool TryGetBlockModel(string modelName, out BlockModel model)
         {
+	        if (_blockModelsCache.TryGetValue(modelName, out model))
+	        {
+		        return true;
+	        }
+
             model = null;
 
             var modelFile =
@@ -118,11 +124,13 @@ namespace MiMap.ResourcePackLib
             }
         }
 
-        private bool TryGetTexture(BlockModel model, string textureName, out Bitmap texture)
+	    public bool TryGetTexture(BlockModel model, string textureName, out Bitmap texture)
         {
             if (textureName.StartsWith("#"))
             {
-                if (model.TextureDefinitions.TryGetValue(textureName.TrimStart('#'), out textureName))
+	            textureName = textureName.TrimStart('#');
+
+				if (model.TextureDefinitions.TryGetValue(textureName, out textureName))
                 {
                     return TryGetTexture(model, textureName, out texture);
                 }
@@ -171,45 +179,27 @@ namespace MiMap.ResourcePackLib
                         }
                     }
 
-                    foreach (var kvp in parent.Textures)
+                   /* foreach (var kvp in parent.Textures)
                     {
                         if (!model.Textures.ContainsKey(kvp.Key))
                         {
                             model.Textures.Add(kvp.Key, kvp.Value);
                         }
-                    }
+                    }*/
                 }
             }
 
 
             foreach (var textureDef in model.TextureDefinitions.OrderBy(e => e.Value.StartsWith("#")).ToArray())
             {
-                //Debug.WriteLine("Lookup Texture {2}: {0} {1}", textureDef.Key, textureDef.Value, model.Name);
-                if (!model.Textures.ContainsKey(textureDef.Key))
-                {
-                    Bitmap texture;
-                    if (TryGetTexture(model, textureDef.Value, out texture))
-                    {
-                        model.Textures[textureDef.Key] = texture;
-                    }
-                }
-            }
+	            if (TryGetTexture(model, textureDef.Value, out _))
+	            {
 
-
-            foreach (var element in model.Elements)
-            {
-                foreach (var face in element.Faces)
-                {
-                    face.Value.Texture = GetBitmapFromBlockModel(model, face.Value.TextureName);
-                    if (face.Value.Texture == null)
-                    {
-                        //Debug.WriteLine("Failed to find texture for face {0} on block {1}", face.Key, model.Name);
-                    }
-                }
+	            }
             }
         }
 
-        private Bitmap GetBitmapFromBlockModel(BlockModel model, string textureRef)
+        /*private Bitmap GetBitmapFromBlockModel(BlockModel model, string textureRef)
         {
             if (textureRef.StartsWith("#"))
             {
@@ -237,7 +227,7 @@ namespace MiMap.ResourcePackLib
 
                 return texture;
             }
-        }
+        }*/
 
         private void ProcessBlockState(BlockState blockState)
         {
@@ -261,18 +251,32 @@ namespace MiMap.ResourcePackLib
         {
             if (TryGetBlockStateName(GetBlockStateId(blockId, blockMeta), out var blockStateName))
             {
-	            if (blockStateName.Contains("["))
-	            {
-		            var match = Regex.Match(blockStateName, @"^(?'state'.+)\[(?'variant'.+)\]$");
-					
-		            if (TryGetBlockState(match.Groups["state"].ToString(), out var blockState))
-		            {
-			            if (blockState.Variants.TryGetValue(match.Groups["variant"].ToString(), out blockStateVariant))
-			            {
-				            return true;
-						}
+	            blockStateName = blockStateName.Replace("minecraft:", "");
+	            var split = blockStateName.Split('[', ']');
 
-						if (blockState.Variants.TryGetValue("normal", out blockStateVariant))
+				//Debug.WriteLine("Val: " + blockStateName + " | Split: " + split.Length);
+				if (split.Length > 0)
+				{
+					//var match = Regex.Match(blockStateName, @"^(?'state'.+)\[(?'variant'.+)\]$");
+					string d = string.Empty;
+					string name = split[0];
+					if (split.Length > 1)
+					{
+						d = split[1];
+						name = FixBlockStateNaming(name, ParseData(split[1]));
+					}
+
+					if (TryGetBlockState(name, out var blockState))
+		            {
+			            if (split.Length > 1)
+			            {
+				            if (blockState.Variants.TryGetValue(d, out blockStateVariant))
+				            {
+					            return true;
+				            }
+			            }
+
+			            if (blockState.Variants.TryGetValue("normal", out blockStateVariant))
 						{
 							return true;
 						}
@@ -290,7 +294,156 @@ namespace MiMap.ResourcePackLib
             return false;
         }
 
-        public bool TryGetBlockState(string blockStateId, out BlockState blockState)
+	    private static Dictionary<string, string> ParseData(string variant)
+	    {
+		    Dictionary<string, string> values = new Dictionary<string, string>();
+
+		    string[] splitVariants = variant.Split(',');
+		    foreach (var split in splitVariants)
+		    {
+			    string[] splitted = split.Split('=');
+			    if (splitted.Length <= 1)
+			    {
+				    continue;
+			    }
+
+			    string key = splitted[0];
+			    string value = splitted[1];
+
+			    values.Add(key, value);
+		    }
+
+		    return values;
+	    }
+
+		private static string FixBlockStateNaming(string name, Dictionary<string, string> data)
+		{
+			string color = null;
+			data.TryGetValue("color", out color);
+
+			string variant = null;
+			data.TryGetValue("variant", out variant);
+
+			string type = null;
+			data.TryGetValue("type", out type);
+			int level = 8;
+			if (data.TryGetValue("level", out string lvl))
+			{
+				int.TryParse(lvl, out level);
+			}
+
+			//string half = null;
+			//data.TryGetValue("half", out half);
+
+			if (name.Contains("wooden_slab") && !string.IsNullOrWhiteSpace(variant))
+			{
+				if (!string.IsNullOrWhiteSpace(variant))
+				{
+					name = $"{variant}_slab";
+				}
+			}
+			else if (name.Contains("leaves") && !string.IsNullOrWhiteSpace(variant))
+			{
+				name = $"{variant}_leaves";
+			}
+			else if (name.Contains("log") && !string.IsNullOrWhiteSpace(variant))
+			{
+				name = $"{variant}_log";
+			}
+			else if (name.StartsWith("red_flower") && !string.IsNullOrWhiteSpace(type))
+			{
+				name = $"{type}";
+			}
+			else if (name.StartsWith("yellow_flower") && !string.IsNullOrWhiteSpace(type))
+			{
+				name = $"{type}";
+			}
+			else if (name.StartsWith("sapling") && !string.IsNullOrWhiteSpace(type))
+			{
+				name = $"{type}_sapling";
+			}
+			else if (name.StartsWith("planks") && !string.IsNullOrWhiteSpace(variant))
+			{
+				name = $"{variant}_planks";
+			}
+			else if (name.StartsWith("double_stone_slab") && !string.IsNullOrWhiteSpace(variant))
+			{
+				name = $"{variant}_double_slab";
+			}
+			else if (name.StartsWith("double_plant") && !string.IsNullOrWhiteSpace(variant))
+			{
+				if (variant.Equals("sunflower", StringComparison.InvariantCultureIgnoreCase))
+				{
+					name = "sunflower";
+				}
+				else if (variant.Equals("paeonia", StringComparison.InvariantCultureIgnoreCase))
+				{
+					name = "paeonia";
+				}
+				else if (variant.Equals("syringa", StringComparison.InvariantCultureIgnoreCase))
+				{
+					name = "syringa";
+				}
+				else
+				{
+					name = $"double_{variant}";
+				}
+			}
+			else if (name.StartsWith("deadbush"))
+			{
+				name = "dead_bush";
+			}
+			else if (name.StartsWith("tallgrass"))
+			{
+				name = "tall_grass";
+			}
+			else if (!string.IsNullOrWhiteSpace(color))
+			{
+				name = $"{color}_{name}";
+			}
+
+			/*if (name.Equals("water", StringComparison.InvariantCultureIgnoreCase))
+			{
+				return manager =>
+				{
+					var w = StationairyWaterModel;
+					w.Level = level;
+					return w;
+				};
+			}
+			else if (name.Equals("flowing_water", StringComparison.InvariantCultureIgnoreCase))
+			{
+				return manager =>
+				{
+					var w = FlowingWaterModel;
+					w.Level = level;
+					return w;
+				};
+			}
+			if (name.Equals("lava", StringComparison.InvariantCultureIgnoreCase))
+			{
+				return manager =>
+				{
+					var w = StationairyLavaModel;
+					w.Level = level;
+					return w;
+				};
+			}
+			else if (name.Equals("flowing_lava", StringComparison.InvariantCultureIgnoreCase))
+			{
+				return manager =>
+				{
+					var w = FlowingLavaModel;
+					w.Level = level;
+					return w;
+				};
+			}*/
+
+			return name;
+		}
+
+
+		public bool TryGetBlockState(string blockStateId, out BlockState blockState)
         {
             return _blockStates.TryGetValue(blockStateId.ToLowerInvariant(), out blockState);
         }

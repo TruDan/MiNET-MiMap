@@ -16,9 +16,6 @@ namespace MiMap.ResourcePackLib.Json.Models
 		[JsonProperty("texture")]
 		public string TextureName { get; set; }
 
-		[JsonIgnore]
-		public Bitmap Texture { get; set; }
-
 		/// <summary>
 		/// Specifies whether a face does not need to be rendered when there is a block touching it in the specified position. The position can be: down, up, north, south, west, or east. It will also determine which side of the block to use the light level from for lighting the face, and if unset, defaults to the side.
 		/// </summary>

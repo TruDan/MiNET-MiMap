@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 using log4net;
 using MiMap.Common.Data;
 using MiMap.Drawing.Events;
@@ -58,7 +61,7 @@ namespace MiMap.Drawing
 
             private Bitmap _bitmap;
             private readonly object _bitmapSync = new object();
-
+	        internal int _updateLock = 0;
             public TileScaleEntry(RegionPosition regionPos, MapRegionLayer region)
             {
                 Position = regionPos;
@@ -69,11 +72,6 @@ namespace MiMap.Drawing
             public Bitmap GetBitmap()
             {
                 return _region.GetBitmap();
-                if (_bitmap == null) _bitmap = _region.GetBitmap();
-                lock (_bitmapSync)
-                {
-                    return (Bitmap)_bitmap.Clone();
-                }
             }
 
             public bool IsRegionDirty(BlockBounds bounds)
@@ -113,15 +111,15 @@ namespace MiMap.Drawing
 
             private Size TileSize { get; }
 
-            private readonly Queue<TileScaleEntry> _updates = new Queue<TileScaleEntry>();
+         //   private readonly ConcurrentQueue<TileScaleEntry> _updates = new ConcurrentQueue<TileScaleEntry>();
 
-            private readonly List<TileScaleEntry> _processing = new List<TileScaleEntry>();
+        //    private readonly List<TileScaleEntry> _processing = new List<TileScaleEntry>();
 
-            private readonly object _queueSync = new object();
+      //      private readonly object _queueSync = new object();
 
-            private Timer _timer;
-            private readonly object _taskSync = new object();
+      //      private readonly object _taskSync = new object();
 
+	        private Timer _timer;
             public TileScalerRunner(TileScaler baseScaler, string basePath, int zoom, Size renderScale, Size tileSize)
             {
                 Scaler = baseScaler;
@@ -131,81 +129,66 @@ namespace MiMap.Drawing
                 RegionTileSize = new Size((renderScale.Width * (1 << 9)) / Scale, (renderScale.Height * (1 << 9)) / Scale);
                 TileSize = tileSize;
 
-                _timer = new Timer(TimerCallback, null, ExecInterval, ExecInterval);
+			//	_timer = new Timer(TimerCallback, null, 0, ExecInterval);
             }
 
             public void Enqueue(TileScaleEntry entry)
             {
-                lock (_queueSync)
+              //  lock (_queueSync)
                 {
-                    if (_updates.Contains(entry)) return;
-                    _updates.Enqueue(entry);
+                    //if (_updates.(entry)) return;
+                   // _updates.Enqueue(entry);
+			
+					//_updates.Enqueue(entry);
+	                DoTask(entry);
                 }
             }
 
             private void TimerCallback(object state)
             {
-                if (!Monitor.TryEnter(_taskSync))
+           //     if (!Monitor.TryEnter(_taskSync, 0))
                 {
                     return;
                 }
 
                 try
                 {
-                    DoTask();
+                    DoTask(null);
                 }
                 finally
                 {
-                    Monitor.Exit(_taskSync);
+           //         Monitor.Exit(_taskSync);
                 }
             }
 
-            private void DoTask()
-            {
-                while (_updates.Count > 0)
-                {
-                    TileScaleEntry entry;
+	        private void DoTask(TileScaleEntry e)
+	        {
+		//         while (_updates.TryDequeue(out TileScaleEntry e))
+		        {
+			        if (Interlocked.CompareExchange(ref e._updateLock, 1, 0) == 0)
+			        {
+				        return;
+			        }
 
-                    lock (_queueSync)
-                    {
-                        entry = _updates.Peek();
+			        ThreadPool.QueueUserWorkItem((o) =>
+			        {
+				        try
+				        {
+					        ScaleRegion(e);
+				        }
+				        catch (Exception ex)
+				        {
+					        Log.Error("Exception during region scale " + e.Position, ex);
+				        }
+				        finally
+				        {
+					        Interlocked.CompareExchange(ref e._updateLock, 0, 1);
+				        }
+			        });
+		        }
+	        }
 
-                        if (_processing.Contains(entry))
-                        {
-                            _updates.Enqueue(_updates.Dequeue());
-                            if (Equals(_updates.Peek()?.Position, entry.Position))
-                                return;
-                        }
-
-                        _updates.Dequeue();
-                        _processing.Add(entry);
-                    }
-
-                    ThreadPool.QueueUserWorkItem((o) =>
-                    {
-                        //using (entry)
-                        {
-                            try
-                            {
-                                ScaleRegion(entry);
-                            }
-                            catch (Exception ex)
-                            {
-                                Log.Error("Exception during region scale " + entry.Position, ex);
-                            }
-                            finally
-                            {
-                                lock (_queueSync)
-                                {
-                                    _processing.Remove(entry);
-                                }
-                            }
-                        }
-                    });
-                }
-            }
-
-            private void ScaleRegion(TileScaleEntry entry)
+	        private void ScaleRegion(TileScaleEntry entry)
             {
                 var sw = Stopwatch.StartNew();
                 var regionPos = entry.Position;
@@ -231,16 +214,18 @@ namespace MiMap.Drawing
                             if (!entry.IsRegionDirty(tilePos.GetBlockBounds()))
                                 continue;
 
-                            Bitmap img;
-                            lock (sync)
+                           // lock (sync)
                             {
-                                img = baseImg.Clone(
-                                    new Rectangle(tX * RegionTileSize.Width, tZ * RegionTileSize.Height,
-                                        RegionTileSize.Width, RegionTileSize.Height), format);
+	                            using (Bitmap img = baseImg.Clone(
+		                            new Rectangle(tX * RegionTileSize.Width, tZ * RegionTileSize.Height,
+			                            RegionTileSize.Width, RegionTileSize.Height), format))
+	                            {
+									DrawTile(img, tilePos);
+	                            }
                             }
 
 
-                            DrawTile(img, tilePos);
+                           // DrawTile(ref img, tilePos);
                             Scaler.OnTileUpdated?.Invoke(this,
                                 new TileUpdateEventArgs(Scaler.LevelId, Scaler.LayerId, tilePos));
                         } //);
@@ -250,24 +235,22 @@ namespace MiMap.Drawing
                 //Log.InfoFormat("Scaled Region {0} to Zoom Level {1} in {2}ms", regionPos, Zoom, sw.ElapsedMilliseconds);
             }
 
-            private void DrawTile(Bitmap baseBitmap, TilePosition tilePos)
-            {
-                using (baseBitmap)
-                {
-                    using (var tileImg = new Bitmap(TileSize.Width, TileSize.Height))
-                    {
-                        using (var g = tileImg.GetGraphics())
-                        {
-                            g.DrawImage(baseBitmap, new Rectangle(0, 0, TileSize.Width, TileSize.Height));
-                        }
+	        private void DrawTile(Bitmap baseBitmap, TilePosition tilePos)
+	        {
+		        using (var tileImg = new Bitmap(TileSize.Width, TileSize.Height))
+		        {
+			        using (var g = tileImg.GetGraphics())
+			        {
+				        g.DrawImage(baseBitmap, new Rectangle(0, 0, TileSize.Width, TileSize.Height));
+			        }
 
-                        var tilePath = Path.Combine(BasePath, tilePos.Zoom.ToString(),
-                            tilePos.X + "_" + tilePos.Z + ".png");
-                        tileImg.SaveToFile(tilePath);
-                        //Log.InfoFormat("Saved Tile {0} to {1}", tilePos, tilePath);
-                    }
-                }
-            }
+			        var tilePath = Path.Combine(BasePath, tilePos.Zoom.ToString(),
+				        tilePos.X + "_" + tilePos.Z + ".png");
+
+			        tileImg.SaveToFile(tilePath);
+			        //Log.InfoFormat("Saved Tile {0} to {1}", tilePos, tilePath);
+		        }
+	        }
         }
     }
 }

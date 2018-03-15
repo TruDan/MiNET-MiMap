@@ -97,6 +97,9 @@
     <None Include="MiMap\Sphax_16.zip">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="server.kennyvv.conf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="server.trudan.conf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

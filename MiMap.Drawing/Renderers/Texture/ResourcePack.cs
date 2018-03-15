@@ -66,6 +66,7 @@ namespace MiMap.Drawing.Renderers.Texture
 
         private void LoadResourcePack()
         {
+			//foreach(var block in )
             foreach (var kvp in BlockFactory.NameToId)
             {
                 var name = kvp.Key;
